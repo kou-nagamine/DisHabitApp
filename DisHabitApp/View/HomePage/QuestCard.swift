@@ -26,18 +26,33 @@ struct CardScrollView: View {
             LazyVStack(spacing: 18) {
                 ForEach(cards) { card in
                     HStack (spacing: 0){
-                        VStack(alignment: .leading, spacing: 7) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text(card.title)
                                 .font(.title2)
                                 .fontWeight(.bold)
                             Text("クリア率：50%")
                                 .font(.callout)
                         }
-                        
+                        Spacer()
+                        Image(systemName: "play")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .padding(20)
+                            .padding(.leading, 5)
+                            .background(.cyan.gradient.opacity(0.1), in: Circle())
+                            .overlay {
+                                Circle()
+                                    .stroke(lineWidth: 4)
+                                    .fill(.gray.gradient)
+                            }
+                            .mask {
+                                Circle()
+                            }
+                            .padding(23)
                     }
-                    .frame(width: screenWidth * 0.8, height: 80, alignment: .topLeading)
+                    .frame(width: screenWidth * 0.8, height: 80, alignment: .leading)
                     .padding(.leading, 20)
-                    .padding(.top, 15)
+                    .padding(.vertical, 10)
                     .background(card.color)
                     .matchedGeometryEffect(id: "background-\(card.id)", in: namespace)
                     .overlay {
