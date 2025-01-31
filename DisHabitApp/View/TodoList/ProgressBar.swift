@@ -49,6 +49,45 @@ struct DetailProgressBar: View {
     }
 }
 
+struct QuestCaardProgressBar: View {
+    
+    var totalTasks: Int
+    @State var completedTasks: Int
+    
+    var screenWidth: CGFloat {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
+            return 0
+        }
+        return window.screen.bounds.width
+    }
+    
+    var body: some View {
+        VStack (spacing: 0){
+            HStack (spacing: 0){
+                Text("進行中")
+                    .font(.callout)
+                    .fontWeight(.bold)
+                Spacer()
+                Text("1/4")
+                    .font(.callout)
+                    .fontWeight(.bold)
+            }
+            .padding(.horizontal, 4)
+            HStack(spacing: 2) {
+                ForEach(0..<totalTasks, id: \.self) { index in
+                    ProgressBarPart(
+                        isFilled: index < completedTasks,
+                        width: (screenWidth * 0.77) / CGFloat(4),
+                        height: 8,
+                        CRadius: 30
+                    )
+                }
+            }
+        }
+    }
+}
+
 struct ProgressBarPart: View {
     var isFilled: Bool
     var width: CGFloat
@@ -60,4 +99,8 @@ struct ProgressBarPart: View {
             .frame(width: width, height: height)
             .foregroundStyle(isFilled ? .blue : .gray)
     }
+}
+
+#Preview{
+    HomePageView()
 }
