@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @Namespace var testNamespace
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        TodoListView(
+            card: CardData(title: "漫画1巻", color: .white),
+            namespace: testNamespace,
+            onDismiss: {
+                print("test")
+            }
+        )
     }
 }
 

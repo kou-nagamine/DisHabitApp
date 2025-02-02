@@ -96,3 +96,7 @@ public enum Option: CaseIterable {
         }
     }
 }
+
+#Preview {
+    ContentView()
+}

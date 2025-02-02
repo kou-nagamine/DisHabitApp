@@ -96,3 +96,7 @@ struct TodoListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+#Preview {
+    ContentView()
+}
