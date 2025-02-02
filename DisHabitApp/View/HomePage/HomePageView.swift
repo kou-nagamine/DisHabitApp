@@ -113,9 +113,11 @@ struct HomePageView: View {
                     let size = $0.size
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 0) {
+                            /// quest page
                             CardScrollView(cards: cards, namespace: namespace, selectCard: $selectCard)
                                 .id(ScrollableTabItem.chats)
                                 .containerRelativeFrame(.horizontal)
+                            /// reward page
                             ScrollView(.vertical) {
                                 VStack(spacing: 0){
                                     Text("to be continue")
