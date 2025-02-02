@@ -38,7 +38,6 @@ extension View {
                 .foregroundStyle(.black)
             
             self
-                .symbolVariant(.fill)
                 .foregroundStyle(.white)
                 .mask {
                     GeometryReader {
@@ -52,4 +51,8 @@ extension View {
                 }
         }
     }
+}
+
+#Preview {
+    HomePageView()
 }
