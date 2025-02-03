@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @Namespace var testNamespace
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        HomePageView()
     }
 }
 

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TodoListView: View {
     
+    @EnvironmentObject var dateModel : DateModel
     let card: CardData
     let namespace: Namespace.ID
     let onDismiss: () -> Void
@@ -53,7 +54,7 @@ struct TodoListView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 30)
                     // ProgressBar
-                    DetailProgressBar(totalTasks: 4, completedTasks: 1)
+                    DetailProgressBar()
                 }
                 .padding(.bottom, 20)
             }
@@ -67,7 +68,7 @@ struct TodoListView: View {
                     .padding(.bottom, 20)
                 // todoList
                 ScrollView {
-                    MultiCheckBox()
+                    MultiCheckBox(selection: $dateModel.selection ,options: Option.allCases)
                 }
                 .frame(maxHeight: .infinity)
             }
@@ -95,4 +96,9 @@ struct TodoListView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
+
+#Preview {
+    HomePageView()
+        .environmentObject(DateModel())
 }
