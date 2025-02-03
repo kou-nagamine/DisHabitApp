@@ -48,7 +48,7 @@ struct MultiCheckBox: View {
                         }
                         .padding(.leading, 20)
                     // text
-                    Text("aaaa")
+                    Text(option.name)
                         .font(.body)
                         .foregroundStyle(.primary)
                         .strikethrough(isSelected)

@@ -10,9 +10,9 @@ import SwiftUI
 
 struct CardScrollView: View {
     @State private var selectedCardID: UUID? = nil
-    let cards: [CardData] // 外部からカードデータを受け取る
-    let namespace: Namespace.ID // 外部からNamespaceを受け取る
-    @Binding var selectCard: CardData? // 選択したカードを管理するためのBinding
+    let cards: [CardData]
+    let namespace: Namespace.ID
+    @Binding var selectCard: CardData?
     
     var screenWidth: CGFloat {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -24,7 +24,7 @@ struct CardScrollView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            LazyVStack(spacing: 18) {
+            VStack(spacing: 18) {
                 ForEach(cards) { card in
                     VStack (spacing: 0) {
                         HStack (spacing: 0){
@@ -36,22 +36,24 @@ struct CardScrollView: View {
                                     .font(.callout)
                             }
                             Spacer()
-                            Image(systemName: "play")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .padding(20)
-                                .padding(.leading, 5)
-                                .background(.cyan.gradient.opacity(0.1), in: Circle())
-                                .overlay {
+                            if selectedCardID == card.id {
+                                ZStack {
                                     Circle()
-                                        .stroke(lineWidth: 4)
-                                        .fill(.gray.gradient)
-                                }
-                                .mask {
+                                        .stroke(lineWidth: 7)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundStyle(.gray.opacity(0.3))
                                     Circle()
+                                        .trim(from: 0, to: 0)
+                                        .stroke(style: StrokeStyle(lineWidth: 18, lineCap: .round, lineJoin: .round))
+                                        .frame(width: 60, height: 60)
+                                        .foregroundStyle(LinearGradient(gradient: Gradient(colors: [.purple, .pink]), startPoint: .top, endPoint: .bottom))
+                                    // Percentage text
+                                    HStack(alignment: .bottom, spacing: 0) {
+                                        Text("0\(Text("%").font(.callout))").font(.title2).monospacedDigit()
+                                    }
                                 }
-                                .padding(23)
-                                .onTapGesture {
+                            } else {
+                                Button (action: {
                                     Task {
                                         withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                                             if selectedCardID == card.id {
@@ -66,17 +68,21 @@ struct CardScrollView: View {
                                             selectCard = card
                                         }
                                     }
+                                }) {
+                                    Image(systemName: "play.circle")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 60, height: 60)
+                                        .background(.cyan.gradient.opacity(0.1), in: Circle())
                                 }
+                            }
                         }
-                        Spacer()
+                        .padding(.horizontal, 25)
+                        .padding(.vertical, 25)
                         if selectedCardID == card.id {
                             QuestCaardProgressBar()
-                                .padding(.bottom, 15)
                         }
                     }
-                    .frame(width: screenWidth * 0.8, height: selectedCardID == card.id ? 140 : 80, alignment: .leading)
-                    .padding(.leading, 20)
-                    .padding(.vertical, 10)
                     .background(card.color)
                     .matchedGeometryEffect(id: "background-\(card.id)", in: namespace)
                     .overlay {
@@ -87,6 +93,7 @@ struct CardScrollView: View {
                     .mask {
                         RoundedRectangle(cornerRadius: 15)
                     }
+                    .padding(.horizontal)
                     .onTapGesture {
                         withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                             selectCard = card
@@ -94,7 +101,6 @@ struct CardScrollView: View {
                     }
                 }
             }
-            .padding(.bottom, 80)
         }
     }
 }

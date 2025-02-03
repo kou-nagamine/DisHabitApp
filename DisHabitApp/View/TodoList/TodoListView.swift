@@ -53,6 +53,7 @@ struct TodoListView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.leading, 30)
+                        .padding(.bottom, 5)
                     // ProgressBar
                     DetailProgressBar()
                 }

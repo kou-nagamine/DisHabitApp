@@ -36,9 +36,8 @@ struct DetailProgressBar: View {
                 ForEach(0..<taskCounter.allSelectionNumber, id: \.self) { index in
                     ProgressBarPart(
                         isFilled: index < taskCounter.selection.count,
-                        width: (screenWidth - 60) / CGFloat(4),
-                        height: 15,
-                        CRadius: 30
+                        height: 13,
+                        CRadius: 7
                     )
                 }
             }
@@ -50,16 +49,8 @@ struct DetailProgressBar: View {
 struct QuestCaardProgressBar: View {
     @EnvironmentObject var questCardTaskCounter: DateModel
     
-    var screenWidth: CGFloat {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
-            return 0
-        }
-        return window.screen.bounds.width
-    }
-    
     var body: some View {
-        VStack (spacing: 5){
+        VStack {
             HStack (spacing: 0){
                 Text("進行中")
                     .font(.callout)
@@ -68,32 +59,31 @@ struct QuestCaardProgressBar: View {
                 Text("\(questCardTaskCounter.selection.count)/\(questCardTaskCounter.allSelectionNumber)")
                     .font(.callout)
                     .fontWeight(.bold)
-                    .padding(.trailing, 40)
             }
-            HStack (spacing: 1){
+            HStack(spacing: 3) {
                 ForEach(0..<questCardTaskCounter.allSelectionNumber, id: \.self) { index in
                     ProgressBarPart(
                         isFilled: index < questCardTaskCounter.selection.count,
-                        width: (screenWidth * 0.71) / CGFloat(4),
                         height: 8,
                         CRadius: 30
                     )
                 }
-                Spacer()
             }
         }
+        .padding(.horizontal, 25)
+        .padding(.bottom, 20)
     }
 }
 
 struct ProgressBarPart: View {
     var isFilled: Bool
-    var width: CGFloat
     var height: CGFloat
     var CRadius: CGFloat
 
     var body: some View {
         RoundedRectangle(cornerRadius: CRadius)
-            .frame(width: width, height: height)
+            .frame(maxWidth: .infinity)
+            .frame(height: height)
             .foregroundStyle(isFilled ? .blue : .gray)
     }
 }
