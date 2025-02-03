@@ -9,9 +9,7 @@ import Foundation
 import SwiftUI
 
 struct DetailProgressBar: View {
-    
-    var totalTasks: Int
-    @State var completedTasks: Int
+    @EnvironmentObject var taskCounter: DateModel
     
     var screenWidth: CGFloat {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -28,16 +26,16 @@ struct DetailProgressBar: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Text("1/4")
+                Text("\(taskCounter.selection.count)/\(taskCounter.allSelectionNumber)")
                     .font(.title2)
                     .fontWeight(.bold)
             }
             .padding(.horizontal, 30)
             .padding(.bottom, 10)
             HStack(spacing: 2) {
-                ForEach(0..<totalTasks, id: \.self) { index in
+                ForEach(0..<taskCounter.allSelectionNumber, id: \.self) { index in
                     ProgressBarPart(
-                        isFilled: index < completedTasks,
+                        isFilled: index < taskCounter.selection.count,
                         width: (screenWidth - 60) / CGFloat(4),
                         height: 15,
                         CRadius: 30
@@ -50,9 +48,7 @@ struct DetailProgressBar: View {
 }
 
 struct QuestCaardProgressBar: View {
-    
-    var totalTasks: Int
-    @State var completedTasks: Int
+    @EnvironmentObject var questCardTaskCounter: DateModel
     
     var screenWidth: CGFloat {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -63,26 +59,27 @@ struct QuestCaardProgressBar: View {
     }
     
     var body: some View {
-        VStack (spacing: 0){
+        VStack (spacing: 5){
             HStack (spacing: 0){
                 Text("進行中")
                     .font(.callout)
                     .fontWeight(.bold)
                 Spacer()
-                Text("1/4")
+                Text("\(questCardTaskCounter.selection.count)/\(questCardTaskCounter.allSelectionNumber)")
                     .font(.callout)
                     .fontWeight(.bold)
+                    .padding(.trailing, 40)
             }
-            .padding(.horizontal, 4)
-            HStack(spacing: 2) {
-                ForEach(0..<totalTasks, id: \.self) { index in
+            HStack (spacing: 1){
+                ForEach(0..<questCardTaskCounter.allSelectionNumber, id: \.self) { index in
                     ProgressBarPart(
-                        isFilled: index < completedTasks,
-                        width: (screenWidth * 0.77) / CGFloat(4),
+                        isFilled: index < questCardTaskCounter.selection.count,
+                        width: (screenWidth * 0.71) / CGFloat(4),
                         height: 8,
                         CRadius: 30
                     )
                 }
+                Spacer()
             }
         }
     }
@@ -101,6 +98,7 @@ struct ProgressBarPart: View {
     }
 }
 
-#Preview{
+#Preview {
     HomePageView()
+        .environmentObject(DateModel())
 }

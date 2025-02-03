@@ -12,13 +12,7 @@ struct ContentView: View {
     @Namespace var testNamespace
     
     var body: some View {
-        TodoListView(
-            card: CardData(title: "漫画1巻", color: .white),
-            namespace: testNamespace,
-            onDismiss: {
-                print("test")
-            }
-        )
+        HomePageView()
     }
 }
 

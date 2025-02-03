@@ -70,30 +70,8 @@ struct CardScrollView: View {
                         }
                         Spacer()
                         if selectedCardID == card.id {
-                            VStack (spacing: 5){
-                                HStack (spacing: 0){
-                                    Text("進行中")
-                                        .font(.callout)
-                                        .fontWeight(.bold)
-                                    Spacer()
-                                    Text("1/4")
-                                        .font(.callout)
-                                        .fontWeight(.bold)
-                                        .padding(.trailing, 40)
-                                }
-                                HStack (spacing: 1){
-                                    ForEach(0..<4, id: \.self) { index in
-                                        ProgressBarPart(
-                                            isFilled: index < 1,
-                                            width: (screenWidth * 0.71) / CGFloat(4),
-                                            height: 8,
-                                            CRadius: 30
-                                        )
-                                    }
-                                    Spacer()
-                                }
-                            }
-                            .padding(.bottom, 15)
+                            QuestCaardProgressBar()
+                                .padding(.bottom, 15)
                         }
                     }
                     .frame(width: screenWidth * 0.8, height: selectedCardID == card.id ? 140 : 80, alignment: .leading)
@@ -123,4 +101,5 @@ struct CardScrollView: View {
 
 #Preview {
     HomePageView()
+        .environmentObject(DateModel())
 }

@@ -32,10 +32,7 @@ struct HomePageView: View {
     @State private var cards: [CardData] = [
         CardData(title: "漫画1巻", color: .white),
         CardData(title: "ドラマ1話", color: .white),
-        CardData(title: "ONE", color: .white),
-        CardData(title: "ONE", color: .white),
-        CardData(title: "ONE", color: .white),
-        CardData(title: "ONE", color: .white)
+        CardData(title: "映画1本", color: .white),
     ]
     
     var screenWidth: CGFloat {
@@ -164,4 +161,5 @@ struct HomePageView: View {
 
 #Preview {
     HomePageView()
+        .environmentObject(DateModel())
 }
