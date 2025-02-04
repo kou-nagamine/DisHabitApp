@@ -3,10 +3,14 @@ import SwiftUI
 
 struct TodoListView: View {
     
+    // proparty wrapper
     @EnvironmentObject var dateModel : DateModel
+    @State private var showAlert = false
+    
     let card: CardData
     let namespace: Namespace.ID
     let onDismiss: () -> Void
+    
     
     var screenWidth: CGFloat {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -73,7 +77,7 @@ struct TodoListView: View {
             // FloatingButton
             .overlay(alignment: .bottom) {
                 Button {
-                    
+                    showAlert.toggle()
                 } label: {
                     Text("完了")
                         .font(.title3)
