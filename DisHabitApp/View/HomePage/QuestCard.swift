@@ -1,10 +1,3 @@
-//
-//  QuestCard.swift
-//  DisHabitApp
-//
-//  Created by 長峯幸佑 on 2025/01/31.
-//
-
 import Foundation
 import SwiftUI
 
@@ -37,21 +30,7 @@ struct CardScrollView: View {
                             }
                             Spacer()
                             if selectedCardID == card.id {
-                                ZStack {
-                                    Circle()
-                                        .stroke(lineWidth: 7)
-                                        .frame(width: 60, height: 60)
-                                        .foregroundStyle(.gray.opacity(0.3))
-                                    Circle()
-                                        .trim(from: 0, to: 0)
-                                        .stroke(style: StrokeStyle(lineWidth: 18, lineCap: .round, lineJoin: .round))
-                                        .frame(width: 60, height: 60)
-                                        .foregroundStyle(LinearGradient(gradient: Gradient(colors: [.purple, .pink]), startPoint: .top, endPoint: .bottom))
-                                    // Percentage text
-                                    HStack(alignment: .bottom, spacing: 0) {
-                                        Text("0\(Text("%").font(.callout))").font(.title2).monospacedDigit()
-                                    }
-                                }
+                                PieChart()
                             } else {
                                 Button (action: {
                                     Task {

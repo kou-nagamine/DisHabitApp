@@ -1,10 +1,3 @@
-//
-//  Date+Extention.swift
-//  DisHabitApp
-//
-//  Created by 長峯幸佑 on 2025/01/31.
-//
-
 import Foundation
 import SwiftUI
 
