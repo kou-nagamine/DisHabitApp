@@ -18,8 +18,9 @@ struct PieChart: View {
             // Percentage text
             HStack(alignment: .bottom, spacing: 0) {
                 Text("\(Int((CGFloat(dateModel.selection.count) / CGFloat(dateModel.allSelectionNumber)) * 100))\(Text("%").font(.caption2))")
-                    .font(.headline)
+                    .font(.title3)
                     .monospacedDigit()
+                    .padding(.leading, 7)
             }
         }
     }
