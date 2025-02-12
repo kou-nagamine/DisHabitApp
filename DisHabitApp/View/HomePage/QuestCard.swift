@@ -72,7 +72,7 @@ struct CardScrollView: View {
                     .mask {
                         RoundedRectangle(cornerRadius: 15)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 25)
                     .onTapGesture {
                         withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                             selectCard = card
