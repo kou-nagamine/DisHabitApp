@@ -90,6 +90,20 @@ struct TodoListView: View {
                         .contentShape(.rect)
                 }
                 .padding(.bottom, 78)
+                .alert(isPresented: $showAlert) {
+                    VStack {
+                        Text("aaa")
+                        Button("戻る") {
+                            showAlert.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                onDismiss()
+                            }
+                        }
+                    }
+                } background: {
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -97,6 +111,13 @@ struct TodoListView: View {
 }
 
 #Preview {
-    HomePageView()
-        .environmentObject(DateModel())
+    @Namespace var previewNamespace
+    TodoListView(
+        card: CardData(title: "漫画1巻", color: .white),
+        namespace: previewNamespace,
+        onDismiss: {
+            print("aaa")
+        }
+    )
+    .environmentObject(DateModel())
 }

@@ -150,8 +150,6 @@ struct HomePageView: View {
     }
 }
 
-
-
 #Preview {
     HomePageView()
         .environmentObject(DateModel())
