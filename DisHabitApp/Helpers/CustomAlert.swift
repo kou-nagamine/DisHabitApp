@@ -46,7 +46,6 @@ fileprivate struct AlertViewModifier<AlertContent: View, AlertBackground: View> 
                     alertBackgroung
                 }
                 .task {
-                    try? await Task.sleep(for: .seconds(0.02))
                     withAnimation(.easeInOut(duration: 0.5)) {
                         animationValue = true
                     }

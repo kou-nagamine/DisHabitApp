@@ -91,6 +91,7 @@ struct TodoListView: View {
                 }
                 .padding(.bottom, 78)
                 .alert(isPresented: $showAlert) {
+                    /// alertのdialogの見た目
                     VStack {
                         Text("aaa")
                         Button("戻る") {
@@ -100,6 +101,7 @@ struct TodoListView: View {
                             }
                         }
                     }
+                    /// alertの背景
                 } background: {
                     Rectangle()
                         .fill(.primary.opacity(0.35))
@@ -110,14 +112,14 @@ struct TodoListView: View {
     }
 }
 
-#Preview {
-    @Namespace var previewNamespace
-    TodoListView(
-        card: CardData(title: "漫画1巻", color: .white),
-        namespace: previewNamespace,
-        onDismiss: {
-            print("aaa")
-        }
-    )
-    .environmentObject(DateModel())
-}
+//#Preview {
+//    @Namespace var previewNamespace
+//    TodoListView(
+//        card: CardData(title: "漫画1巻", color: .white),
+//        namespace: previewNamespace,
+//        onDismiss: {
+//            print("aaa")
+//        }
+//    )
+//    .environmentObject(DateModel())
+//}

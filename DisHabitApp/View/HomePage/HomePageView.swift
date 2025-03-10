@@ -118,10 +118,10 @@ struct HomePageView: View {
                             .border(Color.red)
                         }
                         .scrollTargetLayout()
-                        .offsetX (completion: { value in
+                        .offsetX { value in
                             let progress = -value / (size.width * CGFloat(ScrollableTabItem.allCases.count - 1)) /// value is device width
                             tabProgress = max(min(progress, 1), 0)
-                        })
+                        }
                     }
                     .scrollPosition(id: $selectedTab)
                     .scrollTargetBehavior(.paging)
@@ -154,3 +154,5 @@ struct HomePageView: View {
     HomePageView()
         .environmentObject(DateModel())
 }
+
+
