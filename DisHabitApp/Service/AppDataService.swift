@@ -7,6 +7,11 @@ protocol AppDataServiceProtocol {
     var objectivesPubisher: AnyPublisher<[Objective], Never> { get }
     var dailyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
 
+    func acceptQuest(questSlotId: UUID)
+    func toggleTaskCompletion(questSlotId: UUID, taskId: UUID)
+    func reportQuestCompletion(questSlotId: UUID)
+    func redeemTicket(questSlotId: UUID)
+
     func editTask(taskId: UUID, newText: String)
 }
 
@@ -129,10 +134,77 @@ class AppDataService: AppDataServiceProtocol {
     }
 
     // ==== Public methods ====
+    func acceptQuest(questSlotId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            questSlot.acceptQuest()
+        }
+    }
+
+    func toggleTaskCompletion(questSlotId: UUID, taskId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
+
+            if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
+                let task = acceptedQuest.acceptedTasks[index]
+                acceptedQuest.acceptedTasks[index] = task.isCompleted ? 
+                    AcceptedTask(originalTask: task.originalTask) :
+                    task.markAsCompleted()
+
+                return QuestSlot(
+                    id: questSlot.id,
+                    quest: questSlot.quest,
+                    acceptedQuest: acceptedQuest
+                )
+            }
+            return questSlot
+        }
+    }
+
+    func reportQuestCompletion(questSlotId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot}
+
+            if !acceptedQuest.isAllTaskCompleted {return questSlot}
+
+            return QuestSlot(
+                id: questSlot.id,
+                quest: questSlot.quest,
+                acceptedQuest: acceptedQuest.reportCompletion()
+            )
+        }
+    }
+
+    func redeemTicket(questSlotId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot}
+
+            acceptedQuest = acceptedQuest.redeemingReward()
+            return QuestSlot(
+                id: questSlot.id,
+                quest: questSlot.quest,
+                acceptedQuest: acceptedQuest
+            )
+        }
+    }
+
+    
+
     func editTask(taskId: UUID, newText: String) {
         updateTask(taskId) { task in
             task.text = newText
             return task
+        }
+    }
+
+
+    // ==== Helper methods of updating handlers ====
+    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
+        var dailyQuestBoards = dailyQuestBoardsSubject.value
+        if let index = dailyQuestBoards.firstIndex(where: { $0.date == Date() }) { // このhandlerは当日のQuestBoardの更新にのみ使われる。
+            dailyQuestBoards[index].questSlots = dailyQuestBoards[index].questSlots.map { questSlot in
+                questSlot.id == questSlotId ? updateHandler(questSlot) : questSlot // 該当のquestSlotを更新する
+            }
+            dailyQuestBoardsSubject.send(dailyQuestBoards)
         }
     }
 
