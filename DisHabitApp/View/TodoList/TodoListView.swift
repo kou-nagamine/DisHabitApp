@@ -90,13 +90,36 @@ struct TodoListView: View {
                         .contentShape(.rect)
                 }
                 .padding(.bottom, 78)
+                .alert(isPresented: $showAlert) {
+                    /// alertのdialogの見た目
+                    VStack {
+                        Text("aaa")
+                        Button("戻る") {
+                            showAlert.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                onDismiss()
+                            }
+                        }
+                    }
+                    /// alertの背景
+                } background: {
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-#Preview {
-    HomePageView()
-        .environmentObject(DateModel())
-}
+//#Preview {
+//    @Namespace var previewNamespace
+//    TodoListView(
+//        card: CardData(title: "漫画1巻", color: .white),
+//        namespace: previewNamespace,
+//        onDismiss: {
+//            print("aaa")
+//        }
+//    )
+//    .environmentObject(DateModel())
+//}
