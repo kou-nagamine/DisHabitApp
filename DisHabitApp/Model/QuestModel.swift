@@ -1,74 +1,124 @@
-//
-//  QuestModel.swift
-//  DisHabitApp
-//
-//  Created by 長峯幸佑 on 2025/03/05.
-//
-
 import Foundation
 
 // 未受注のクエスト
-struct Quest: Codable, Identifiable {
-    var id: String
+class Quest: Identifiable {
+    var id: UUID
     var title: String
     var reward: Reward
     var tasks: [Task]
+
+    init(id: UUID, title: String, reward: Reward, tasks: [Task]) {
+        self.id = id
+        self.title = title
+        self.reward = reward
+        self.tasks = tasks
+    }
     
     // AcceptedQuestを生成するメソッド
     func accept() -> AcceptedQuest {
+        let acceptedTasks = tasks.map { AcceptedTask(originalTask: $0) }
+        let accetedReward = RedeemableReward(originalReward: reward)
+        
         return AcceptedQuest(
-            originalQuest: self,
-            taskProgress: Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, false) })
+            id: id,
+            title: title,
+            reward: accetedReward,
+            acceptedTasks: acceptedTasks
         )
     }
 }
 
-// 受注済みのクエスト
-struct AcceptedQuest: Codable, Identifiable {
-    var originalQuest: Quest // 元のクエスト情報を保持
-    var taskProgress: [String: Bool] // タスクIDと完了状態のマッピング
-    var rewardReceived: Bool = false
+// 受注済みクエスト
+struct AcceptedQuest: Identifiable {
+    var id: UUID
+    var title: String
+    var reward: RedeemableReward // 変更: RewardからRedeemableRewardに
+    var acceptedTasks: [AcceptedTask]
     
-    var id: String { originalQuest.id }
-    var title: String { originalQuest.title }
-    var reward: Reward { originalQuest.reward }
-    var tasks: [Task] { originalQuest.tasks }
+    // クエストの完了報告が完了しているかどうかのboolean
+    var isCompletionReported: Bool = false
     
-    // タスクの完了状態を取得
-    func isTaskCompleted(_ taskId: String) -> Bool {
-        return taskProgress[taskId] ?? false
+    // 全てのタスクが完了しているかどうか
+    var isAllTaskCompleted: Bool {
+        return acceptedTasks.allSatisfy { $0.isCompleted }
     }
     
-    // タスクの完了状態を設定するための新しいインスタンスを返す
-    func completingTask(_ taskId: String) -> AcceptedQuest {
-        var newProgress = taskProgress
-        newProgress[taskId] = true
-        return AcceptedQuest(
-            originalQuest: originalQuest,
-            taskProgress: newProgress,
-            rewardReceived: rewardReceived
-        )
+    // ごほうびを受け取る
+    mutating func redeemReward() {
+        if isAllTaskCompleted && !reward.isRedeemed {
+            reward = reward.markAsRedeemed()
+        }
     }
     
-    var isQuestCompleted: Bool {
-        return taskProgress.allSatisfy { $1 }
+    // ごほうびを受け取った新しいインスタンスを返す（イミュータブル版）
+    func redeemingReward() -> AcceptedQuest {
+        var updated = self
+        updated.redeemReward()
+        return updated
+    }
+    
+    func reportCompletion() -> AcceptedQuest {
+        var updated = self
+        updated.isCompletionReported = true
+        return updated
     }
 }
-
-struct QuestSlot: Codable, Identifiable {
-    var id: String { quest.id }
+// QuestSlot定義
+struct QuestSlot: Identifiable {
+    var id: UUID
     var quest: Quest
     var acceptedQuest: AcceptedQuest?
     
     // クエストを受注するメソッド
     func acceptQuest() -> QuestSlot {
         return QuestSlot(
+            id: id,
             quest: quest,
             acceptedQuest: quest.accept()
         )
     }
+    
+    static func acceptQuest() -> QuestSlot? {
+        return nil
+    }
 }
 
-struct Task: Codable{
+// 日次クエストリスト
+struct DailyQuestBoard: Identifiable {
+    var id: UUID
+    var date: Date
+    var questSlots: [QuestSlot]
+}
+
+// ごほうびメニューアイテム
+struct Reward: Identifiable {
+    var id: UUID
+    var text: String
+}
+
+// 受注済みクエストに付与されるごほうびチケット
+struct RedeemableReward: Identifiable {
+    var originalReward: Reward
+    var isRedeemed: Bool = false
+    // var grantDate: Date
+    var redeemedDate: Date?
     
+    // 元のRewardのプロパティにアクセスするための転送プロパティ
+    var id: UUID { originalReward.id }
+    var text: String { originalReward.text }
+    
+    // ごほうびを使用済みとしてマークする
+    func markAsRedeemed() -> RedeemableReward {
+        var updated = self
+        updated.isRedeemed = true
+        updated.redeemedDate = Date()
+        return updated
+    }
+    
+    // 有効期限を確認（オプション）
+//    func isValid(asOf date: Date = Date()) -> Bool {
+//        // 例: 30日間有効
+//        let validityPeriod: TimeInterval = 30 * 24 * 60 * 60 // 30日間（秒単位）
+//        return !isRedeemed && date < grantDate.addingTimeInterval(validityPeriod)
+//    }
 }
