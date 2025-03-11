@@ -5,7 +5,8 @@ protocol AppDataServiceProtocol {
     var activeQuestsPubisher: AnyPublisher<[Quest], Never> { get }
     var tasksPubisher: AnyPublisher<[Task], Never> { get }
     var objectivesPubisher: AnyPublisher<[Objective], Never> { get }
-    var dailyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
+    var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
+    var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { get }
 
     func acceptQuest(questSlotId: UUID)
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID)
@@ -21,19 +22,23 @@ class AppDataService: AppDataServiceProtocol {
     private let activeQuestsSubject = CurrentValueSubject<[Quest], Never>([])
     private let tasksSubject = CurrentValueSubject<[Task], Never>([])
     private let objectivesSubject = CurrentValueSubject<[Objective], Never>([])
-    private let dailyQuestBoardsSubject = CurrentValueSubject<[DailyQuestBoard], Never>([])
+    private let historyQuestBoardsSubject = CurrentValueSubject<[DailyQuestBoard], Never>([])
+    private let todayQuestBoardSubject = CurrentValueSubject<DailyQuestBoard?, Never>(nil) // Publisher無し、データ保持用
+    private let selectedQuestBoardSubject = CurrentValueSubject<DailyQuestBoard, Never>(DailyQuestBoard(id: UUID(), date: Date(timeIntervalSince1970: TimeInterval()), questSlots: []))
 
     // ==== Public publishers of lists ====
     var activeQuestsPubisher: AnyPublisher<[Quest], Never> { activeQuestsSubject.eraseToAnyPublisher() }
     var tasksPubisher: AnyPublisher<[Task], Never> { tasksSubject.eraseToAnyPublisher() }
     var objectivesPubisher: AnyPublisher<[Objective], Never> { objectivesSubject.eraseToAnyPublisher() }
-    var dailyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { dailyQuestBoardsSubject.eraseToAnyPublisher() }
+    var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { historyQuestBoardsSubject.eraseToAnyPublisher() }
+    var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { selectedQuestBoardSubject.eraseToAnyPublisher() }
+    
     
     init () {
         loadSampleData()
 
         // ==== 依存関係にあるデータの変更通知のWaterfallさせる ====
-        // objectives -> tasks -> activeQuests -> dailyQuestBoards
+        // objectives -> tasks -> activeQuests -> selectedQuestBoard = todaySubjectBoard
         
         // objectives -> tasks
         objectivesPubisher
@@ -53,12 +58,22 @@ class AppDataService: AppDataServiceProtocol {
             }
             .store(in: &cancellables)
         
-        // activeQuests -> dailyQuestBoards
+        // activeQuests -> selectedQuestBoard = todayQuestBoard
         activeQuestsPubisher
             .receive(on: RunLoop.main)
             .sink { [weak self] quests in
                 guard let self = self else { return }
-                self.dailyQuestBoardsSubject.send(self.dailyQuestBoardsSubject.value)
+                self.selectedQuestBoardSubject.send(self.selectedQuestBoardSubject.value)
+            }
+            .store(in: &cancellables)
+        
+        // selectedQuestBoard -> todayQuestBoard
+        selectedQuestBoardSubject
+            .receive(on: RunLoop.main)
+            .filter { $0.date == Date() } // ユーザが当日のクエスト一覧を表示している時だけ発火させたい。
+            .sink { [weak self] quests in
+                guard let self = self else { return }
+                self.todayQuestBoardSubject.send(self.selectedQuestBoardSubject.value) // ここは値をコピーしたい
             }
             .store(in: &cancellables)
     }
@@ -100,7 +115,7 @@ class AppDataService: AppDataServiceProtocol {
         objectivesSubject.send([objective1, objective2, objective3])
         tasksSubject.send([task1, task2, task3, task4, task5])
         activeQuestsSubject.send([quest1, quest2])
-        dailyQuestBoardsSubject.send([dailyQuestBoard])
+        historyQuestBoardsSubject.send([dailyQuestBoard])
     }
 
     // ==== Publishers for single items for each list ====
@@ -125,10 +140,10 @@ class AppDataService: AppDataServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
-    func dailyQuestBoardPublisher(for id: UUID) ->  AnyPublisher<DailyQuestBoard?, Never> {
-        dailyQuestBoardsSubject
-            .map { dailyQuestBoards in
-                dailyQuestBoards.first { $0.id == id }
+    func historyQuestBoardPublisher(for id: UUID) ->  AnyPublisher<DailyQuestBoard?, Never> {
+        historyQuestBoardsSubject
+            .map { historyQuestBoards in
+                historyQuestBoards.first { $0.id == id }
             }
             .eraseToAnyPublisher()
     }
@@ -176,7 +191,7 @@ class AppDataService: AppDataServiceProtocol {
 
     func redeemTicket(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot}
+            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
             acceptedQuest = acceptedQuest.redeemingReward()
             return QuestSlot(
@@ -199,15 +214,15 @@ class AppDataService: AppDataServiceProtocol {
 
     // ==== Helper methods of updating handlers ====
     private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
-        var dailyQuestBoards = dailyQuestBoardsSubject.value
-        if let index = dailyQuestBoards.firstIndex(where: { $0.date == Date() }) { // このhandlerは当日のQuestBoardの更新にのみ使われる。
+        var dailyQuestBoards = historyQuestBoardsSubject.value
+        if let index = dailyQuestBoards.firstIndex(where: { $0.date >= Date() }) { // このhandlerは当日以降のQuestBoardの更新にのみ使われる。過去は閲覧専用であることが想定されている。
             dailyQuestBoards[index].questSlots = dailyQuestBoards[index].questSlots.map { questSlot in
                 questSlot.id == questSlotId ? updateHandler(questSlot) : questSlot // 該当のquestSlotを更新する
             }
-            dailyQuestBoardsSubject.send(dailyQuestBoards)
+            historyQuestBoardsSubject.send(dailyQuestBoards)
         }
     }
-
+    
     private func updateTask(_ taskId: UUID, updateHandler: (Task) -> Task) {
         var tasks = tasksSubject.value
         if let index = tasks.firstIndex(where: { $0.id == taskId }) {
