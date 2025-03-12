@@ -46,6 +46,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink{ [weak self] objectives in
                 guard let self = self else { return }
                 self.activeQuestsSubject.send(self.activeQuestsSubject.value)
+                print("objectives->tasks")
             }
             .store(in: &cancellables)
 
@@ -55,6 +56,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] tasks in
                 guard let self = self else { return }
                 self.activeQuestsSubject.send(self.activeQuestsSubject.value)
+                print("tasks->activeQuests")
             }
             .store(in: &cancellables)
         
@@ -64,6 +66,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] quests in
                 guard let self = self else { return }
                 self.selectedQuestBoardSubject.send(self.selectedQuestBoardSubject.value)
+                print("quests->selectedQuestBoard")
             }
             .store(in: &cancellables)
         
@@ -74,8 +77,11 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] quests in
                 guard let self = self else { return }
                 self.todayQuestBoardSubject.send(self.selectedQuestBoardSubject.value) // ここは値をコピーしたい
+                
             }
             .store(in: &cancellables)
+        
+        
     }
 
     private func loadSampleData() {
@@ -115,7 +121,7 @@ class AppDataService: AppDataServiceProtocol {
         objectivesSubject.send([objective1, objective2, objective3])
         tasksSubject.send([task1, task2, task3, task4, task5])
         activeQuestsSubject.send([quest1, quest2])
-        historyQuestBoardsSubject.send([dailyQuestBoard])
+        selectedQuestBoardSubject.send(dailyQuestBoard)
     }
 
     // ==== Publishers for single items for each list ====

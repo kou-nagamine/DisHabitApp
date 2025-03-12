@@ -12,6 +12,7 @@ class QuestBoardViewModel: ObservableObject {
     
     // dailyQuestのdata
     @Published var dailyQuestBoard: DailyQuestBoard = DailyQuestBoard(id: UUID(), date: Date(timeIntervalSince1970: TimeInterval()), questSlots: [])
+    
     private let appDataService: AppDataServiceProtocol
     private var cancellables = Set<AnyCancellable>()
         
@@ -21,7 +22,7 @@ class QuestBoardViewModel: ObservableObject {
         // 変更通知を購読
         appDataService.selectedQuestBoardPublisher
             .receive(on: RunLoop.main)
-            .assign(to: \.dailyQuestBoard, on: self) ///　新しいデータをdailyQuestBoardに代入する
+            .assign(to: \.dailyQuestBoard, on: self) //　新しいデータをdailyQuestBoardに代入する
             .store(in: &cancellables)
     }
     
