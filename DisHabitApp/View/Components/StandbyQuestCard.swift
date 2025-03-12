@@ -4,12 +4,28 @@ import SwiftUI
 struct StandbyQuestCard: View {
     @ObservedObject var vm: QuestBoardViewModel
     var quest: Quest
+    var questSlotId: UUID
     
     var body: some View {
         VStack {
-            Text("Standby Quest Card")
-            Text(quest.reward.text)
-            
+            HStack() {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(quest.reward.text)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("何これ")
+                }
+                Spacer()
+                Button (action: {
+                    vm.acceptQuest(questSlotId: questSlotId)
+                }) {
+                    Image(systemName: "play.circle")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .background(.cyan.gradient.opacity(0.1), in: Circle())
+                }
+            }
         }
     }
 }

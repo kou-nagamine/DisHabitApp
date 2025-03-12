@@ -8,6 +8,7 @@ protocol AppDataServiceProtocol {
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { get }
 
+    // タスクをこなす系
     func acceptQuest(questSlotId: UUID)
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID)
     func reportQuestCompletion(questSlotId: UUID)
@@ -106,9 +107,12 @@ class AppDataService: AppDataServiceProtocol {
         let quest1 = Quest(id: UUID(), title: "健康的な朝習慣", reward: reward1, tasks: [task1, task2, task5])
         let quest2 = Quest(id: UUID(), title: "運動チャレンジ", reward: reward2, tasks: [task4, task5])
         
+        // Quest2は受注済にする
+        let acceptedQuest2 = quest2.accept()
+        
         // モックのQuestSlotを作成
         let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
-        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
+        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: acceptedQuest2)
         
         // モックのDailyQuestBoardを作成
         let dailyQuestBoard = DailyQuestBoard(
@@ -156,8 +160,9 @@ class AppDataService: AppDataServiceProtocol {
 
     // ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
-        updateTodayQuestBoard(questSlotId) { questSlot in
-            questSlot.acceptQuest()
+        print("service.acceptQuest")
+        updateSelectedQuestBoard(questSlotId) { questSlot in
+            return questSlot.acceptQuest()
         }
     }
 
@@ -227,6 +232,14 @@ class AppDataService: AppDataServiceProtocol {
             }
             historyQuestBoardsSubject.send(dailyQuestBoards)
         }
+    }
+    
+    private func updateSelectedQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
+        var selectedQuestBoard = selectedQuestBoardSubject.value
+        selectedQuestBoard.questSlots = selectedQuestBoard.questSlots.map { questSlot in
+            questSlot.id == questSlotId ? updateHandler(questSlot) : questSlot 
+        }
+        selectedQuestBoardSubject.send(selectedQuestBoard)
     }
     
     private func updateTask(_ taskId: UUID, updateHandler: (Task) -> Task) {

@@ -27,6 +27,7 @@ class QuestBoardViewModel: ObservableObject {
     }
     
     func acceptQuest(questSlotId: UUID) {
+        print("vm.acceptQuest")
         appDataService.acceptQuest(questSlotId: questSlotId)
     }
 }
