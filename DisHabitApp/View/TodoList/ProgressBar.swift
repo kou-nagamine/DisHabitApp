@@ -82,6 +82,6 @@ struct ProgressBarPart: View {
 }
 
 #Preview {
-    HomePageView()
+    HomePageViewBkp()
         .environmentObject(DateModel())
 }

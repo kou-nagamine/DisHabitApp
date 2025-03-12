@@ -47,5 +47,5 @@ extension View {
 }
 
 #Preview {
-    HomePageView()
+    HomePageViewBkp()
 }
