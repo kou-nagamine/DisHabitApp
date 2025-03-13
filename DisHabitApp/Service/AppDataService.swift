@@ -13,8 +13,22 @@ protocol AppDataServiceProtocol {
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID)
     func reportQuestCompletion(questSlotId: UUID)
     func redeemTicket(questSlotId: UUID)
+    func discardAcceptedQuest(questSlotId: UUID)
 
-    func editTask(taskId: UUID, newText: String)
+    // クエストの作成・編集関連
+    func createQuest(newQuest: Quest)
+    func editQuest(questId: UUID, newQuest: Quest)
+    func deleteQuest(questId: UUID)
+
+    // タスクの作成・編集関連
+    func createTask(newTask: Task)
+    func editTask(taskId: UUID, newTask: Task)
+    func deleteTask(taskId: UUID)
+
+    // 目標の作成・編集関連
+    func createObjective(newObjective: Objective)
+    func editObjective(objectiveId: UUID, newObjective: Objective)
+    func deleteObjective(objectiveId: UUID)
 }
 
 class AppDataService: AppDataServiceProtocol {
@@ -213,7 +227,75 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
+    func discardAcceptedQuest(questSlotId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            return QuestSlot(
+                id: questSlot.id,
+                quest: questSlot.quest,
+                acceptedQuest: nil
+            )
+        }
+    }
+
+    func createQuest(newQuest: Quest) {
+        var quests = activeQuestsSubject.value
+        quests.append(newQuest)
+        activeQuestsSubject.send(quests)
+    }
     
+    func editQuest(questId: UUID, newQuest: Quest) {
+        let quests = activeQuestsSubject.value
+        if let index = quests.firstIndex(where: { $0.id == questId }) {
+            quests[index].copyValues(from: newQuest)
+            activeQuestsSubject.send(quests)
+        }
+    }
+    
+    func deleteQuest(questId: UUID) {
+        var quests = activeQuestsSubject.value
+        quests.removeAll { $0.id == questId }
+        activeQuestsSubject.send(quests)
+    }
+    
+    func createTask(newTask: Task) {
+        var tasks = tasksSubject.value
+        tasks.append(newTask)
+        tasksSubject.send(tasks)
+    }
+    
+    func editTask(taskId: UUID, newTask: Task) {
+        let tasks = tasksSubject.value
+        if let index = tasks.firstIndex(where: { $0.id == taskId }) {
+            tasks[index].copyValues(from: newTask)
+            tasksSubject.send(tasks)
+        }
+    }
+    
+    func deleteTask(taskId: UUID) {
+        var tasks = tasksSubject.value
+        tasks.removeAll { $0.id == taskId }
+        tasksSubject.send(tasks)
+    }
+    
+    func createObjective(newObjective: Objective) {
+        var objectives = objectivesSubject.value
+        objectives.append(newObjective)
+        objectivesSubject.send(objectives)
+    }
+    
+    func editObjective(objectiveId: UUID, newObjective: Objective) {
+        let objectives = objectivesSubject.value
+        if let index = objectives.firstIndex(where: { $0.id == objectiveId }) {
+            objectives[index].copyValues(from: newObjective)
+            objectivesSubject.send(objectives)
+        }
+    }
+    
+    func deleteObjective(objectiveId: UUID) {
+        var objectives = objectivesSubject.value
+        objectives.removeAll { $0.id == objectiveId }
+        objectivesSubject.send(objectives)
+    }
 
     func editTask(taskId: UUID, newText: String) {
         updateTask(taskId) { task in
