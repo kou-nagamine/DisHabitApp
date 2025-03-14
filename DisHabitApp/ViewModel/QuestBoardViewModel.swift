@@ -17,7 +17,7 @@ class QuestBoardViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
         
     // 依存性注入を使用したイニシャライザ
-    init(appDataService: AppDataServiceProtocol = AppDataService()) {
+    init(appDataService: AppDataServiceProtocol) {
         self.appDataService = appDataService
         // 変更通知を購読
         appDataService.selectedQuestBoardPublisher
