@@ -171,6 +171,13 @@ class AppDataService: AppDataServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
+    func questSlotPublisher(for id: UUID) ->  AnyPublisher<QuestSlot?, Never> {
+        selectedQuestBoardSubject
+            .map { questBoard in
+                questBoard.questSlots.first { $0.id == id }
+            }
+            .eraseToAnyPublisher()
+    }
 
     // ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
