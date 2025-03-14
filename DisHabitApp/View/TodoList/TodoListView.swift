@@ -52,7 +52,7 @@ struct TodoListView: View {
                         .padding(.leading, 30)
                         .padding(.bottom, 5)
                     // ProgressBar
-                    DetailProgressBar()
+//                    DetailProgressBar()
                 }
                 .padding(.bottom, 20)
             }

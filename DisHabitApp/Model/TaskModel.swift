@@ -8,6 +8,15 @@ class Objective: Identifiable {
         self.id = id
         self.text = text
     }
+    
+    func copyValues(from source: Objective) {
+        self.id = source.id
+        self.text = source.text
+    }
+    
+    func deepCopy() -> Objective {
+        return Objective(id: self.id, text: self.text)
+    }
 }
 
 class Task: Identifiable {
@@ -19,6 +28,16 @@ class Task: Identifiable {
         self.id = id
         self.text = text
         self.objective = objective
+    }
+    
+    func copyValues(from source: Task) {
+        self.id = source.id
+        self.text = source.text
+        self.objective = source.objective
+    }
+    
+    func deepCopy() -> Task {
+        return Task(id: self.id, text: self.text, objective: self.objective)
     }
 }
 

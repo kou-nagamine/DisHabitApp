@@ -14,6 +14,17 @@ class Quest: Identifiable {
         self.tasks = tasks
     }
     
+    func copyValues(from source: Quest) {
+        self.id = source.id
+        self.title = source.title
+        self.reward = source.reward
+        self.tasks = source.tasks
+    }
+    
+    func deepCopy() -> Quest {
+        return Quest(id: self.id, title: self.title, reward: self.reward, tasks: self.tasks)
+    }
+    
     // AcceptedQuestを生成するメソッド
     func accept() -> AcceptedQuest {
         let acceptedTasks = tasks.map { AcceptedTask(originalTask: $0) }

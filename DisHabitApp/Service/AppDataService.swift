@@ -8,12 +8,27 @@ protocol AppDataServiceProtocol {
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { get }
 
+    // タスクをこなす系
     func acceptQuest(questSlotId: UUID)
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID)
     func reportQuestCompletion(questSlotId: UUID)
     func redeemTicket(questSlotId: UUID)
+    func discardAcceptedQuest(questSlotId: UUID)
 
-    func editTask(taskId: UUID, newText: String)
+    // クエストの作成・編集関連
+    func createQuest(newQuest: Quest)
+    func editQuest(questId: UUID, newQuest: Quest)
+    func deleteQuest(questId: UUID)
+
+    // タスクの作成・編集関連
+    func createTask(newTask: Task)
+    func editTask(taskId: UUID, newTask: Task)
+    func deleteTask(taskId: UUID)
+
+    // 目標の作成・編集関連
+    func createObjective(newObjective: Objective)
+    func editObjective(objectiveId: UUID, newObjective: Objective)
+    func deleteObjective(objectiveId: UUID)
 }
 
 class AppDataService: AppDataServiceProtocol {
@@ -46,6 +61,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink{ [weak self] objectives in
                 guard let self = self else { return }
                 self.activeQuestsSubject.send(self.activeQuestsSubject.value)
+                print("objectives->tasks")
             }
             .store(in: &cancellables)
 
@@ -55,6 +71,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] tasks in
                 guard let self = self else { return }
                 self.activeQuestsSubject.send(self.activeQuestsSubject.value)
+                print("tasks->activeQuests")
             }
             .store(in: &cancellables)
         
@@ -64,6 +81,7 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] quests in
                 guard let self = self else { return }
                 self.selectedQuestBoardSubject.send(self.selectedQuestBoardSubject.value)
+                print("quests->selectedQuestBoard")
             }
             .store(in: &cancellables)
         
@@ -74,8 +92,11 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] quests in
                 guard let self = self else { return }
                 self.todayQuestBoardSubject.send(self.selectedQuestBoardSubject.value) // ここは値をコピーしたい
+                
             }
             .store(in: &cancellables)
+        
+        
     }
 
     private func loadSampleData() {
@@ -100,9 +121,12 @@ class AppDataService: AppDataServiceProtocol {
         let quest1 = Quest(id: UUID(), title: "健康的な朝習慣", reward: reward1, tasks: [task1, task2, task5])
         let quest2 = Quest(id: UUID(), title: "運動チャレンジ", reward: reward2, tasks: [task4, task5])
         
+        // Quest2は受注済にする
+        let acceptedQuest2 = quest2.accept()
+        
         // モックのQuestSlotを作成
         let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
-        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
+        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: acceptedQuest2)
         
         // モックのDailyQuestBoardを作成
         let dailyQuestBoard = DailyQuestBoard(
@@ -115,7 +139,7 @@ class AppDataService: AppDataServiceProtocol {
         objectivesSubject.send([objective1, objective2, objective3])
         tasksSubject.send([task1, task2, task3, task4, task5])
         activeQuestsSubject.send([quest1, quest2])
-        historyQuestBoardsSubject.send([dailyQuestBoard])
+        selectedQuestBoardSubject.send(dailyQuestBoard)
     }
 
     // ==== Publishers for single items for each list ====
@@ -147,11 +171,19 @@ class AppDataService: AppDataServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
+    func questSlotPublisher(for id: UUID) ->  AnyPublisher<QuestSlot?, Never> {
+        selectedQuestBoardSubject
+            .map { questBoard in
+                questBoard.questSlots.first { $0.id == id }
+            }
+            .eraseToAnyPublisher()
+    }
 
     // ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
-        updateTodayQuestBoard(questSlotId) { questSlot in
-            questSlot.acceptQuest()
+        print("service.acceptQuest")
+        updateSelectedQuestBoard(questSlotId) { questSlot in
+            return questSlot.acceptQuest()
         }
     }
 
@@ -202,7 +234,75 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
+    func discardAcceptedQuest(questSlotId: UUID) {
+        updateTodayQuestBoard(questSlotId) { questSlot in
+            return QuestSlot(
+                id: questSlot.id,
+                quest: questSlot.quest,
+                acceptedQuest: nil
+            )
+        }
+    }
+
+    func createQuest(newQuest: Quest) {
+        var quests = activeQuestsSubject.value
+        quests.append(newQuest)
+        activeQuestsSubject.send(quests)
+    }
     
+    func editQuest(questId: UUID, newQuest: Quest) {
+        let quests = activeQuestsSubject.value
+        if let index = quests.firstIndex(where: { $0.id == questId }) {
+            quests[index].copyValues(from: newQuest)
+            activeQuestsSubject.send(quests)
+        }
+    }
+    
+    func deleteQuest(questId: UUID) {
+        var quests = activeQuestsSubject.value
+        quests.removeAll { $0.id == questId }
+        activeQuestsSubject.send(quests)
+    }
+    
+    func createTask(newTask: Task) {
+        var tasks = tasksSubject.value
+        tasks.append(newTask)
+        tasksSubject.send(tasks)
+    }
+    
+    func editTask(taskId: UUID, newTask: Task) {
+        let tasks = tasksSubject.value
+        if let index = tasks.firstIndex(where: { $0.id == taskId }) {
+            tasks[index].copyValues(from: newTask)
+            tasksSubject.send(tasks)
+        }
+    }
+    
+    func deleteTask(taskId: UUID) {
+        var tasks = tasksSubject.value
+        tasks.removeAll { $0.id == taskId }
+        tasksSubject.send(tasks)
+    }
+    
+    func createObjective(newObjective: Objective) {
+        var objectives = objectivesSubject.value
+        objectives.append(newObjective)
+        objectivesSubject.send(objectives)
+    }
+    
+    func editObjective(objectiveId: UUID, newObjective: Objective) {
+        let objectives = objectivesSubject.value
+        if let index = objectives.firstIndex(where: { $0.id == objectiveId }) {
+            objectives[index].copyValues(from: newObjective)
+            objectivesSubject.send(objectives)
+        }
+    }
+    
+    func deleteObjective(objectiveId: UUID) {
+        var objectives = objectivesSubject.value
+        objectives.removeAll { $0.id == objectiveId }
+        objectivesSubject.send(objectives)
+    }
 
     func editTask(taskId: UUID, newText: String) {
         updateTask(taskId) { task in
@@ -221,6 +321,14 @@ class AppDataService: AppDataServiceProtocol {
             }
             historyQuestBoardsSubject.send(dailyQuestBoards)
         }
+    }
+    
+    private func updateSelectedQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
+        var selectedQuestBoard = selectedQuestBoardSubject.value
+        selectedQuestBoard.questSlots = selectedQuestBoard.questSlots.map { questSlot in
+            questSlot.id == questSlotId ? updateHandler(questSlot) : questSlot 
+        }
+        selectedQuestBoardSubject.send(selectedQuestBoard)
     }
     
     private func updateTask(_ taskId: UUID, updateHandler: (Task) -> Task) {
