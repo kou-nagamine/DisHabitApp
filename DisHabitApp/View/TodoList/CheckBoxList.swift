@@ -76,13 +76,13 @@ public enum Option: CaseIterable {
     var name: String {
         switch self {
         case .pop:
-            return "Pop"
+            return "腕立て10回"
         case .classical:
-            return "Classical"
+            return "英単語５個"
         case .metal:
-            return "Metal"
+            return "科目A２問"
         case .rock:
-            return "Rock"
+            return "科目B２問"
         }
     }
 }

@@ -58,9 +58,9 @@ struct CardScrollView: View {
                         }
                         .padding(.horizontal, 25)
                         .padding(.vertical, 25)
-                        if selectedCardID == card.id {
-                            QuestCaardProgressBar()
-                        }
+//                        if selectedCardID == card.id {
+//                            QuestCaardProgressBar()
+//                        }
                     }
                     .background(card.color)
                     .matchedGeometryEffect(id: "background-\(card.id)", in: namespace)
