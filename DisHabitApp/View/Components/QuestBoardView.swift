@@ -3,9 +3,11 @@ import SwiftUI
 
 struct QuestBoardView: View {
     @ObservedObject var vm: QuestBoardViewModel
+    let namespace: Namespace.ID
    
-    init (vm: QuestBoardViewModel) {
-       self.vm = vm
+    init (vm: QuestBoardViewModel, namespace: Namespace.ID) {
+        self.vm = vm
+        self.namespace = namespace
     }
    
     var screenWidth: CGFloat {
@@ -17,31 +19,37 @@ struct QuestBoardView: View {
     }
    
     var body: some View {
-        ScrollView(.vertical) {
-            VStack(spacing: 18) {
-                ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                    VStack (spacing: 0) {
-                        if let acceptedQuest = questSlot.acceptedQuest {
-                            if acceptedQuest.isCompletionReported {
-                                // チケットを表示
-                                // 使用済みかどうかは子コンポーネント上で分岐させる
-                                TicketCard(vm: vm, acceptedQuest: acceptedQuest)
-                            } else {
-                                // 進行中クエスト
-                                AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
+        NavigationStack{
+            ScrollView(.vertical) {
+                VStack(spacing: 18) {
+                    ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
+                        NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                            
+                            VStack (spacing: 0) {
+                                if let acceptedQuest = questSlot.acceptedQuest {
+                                    if acceptedQuest.isCompletionReported {
+                                        // チケットを表示
+                                        // 使用済みかどうかは子コンポーネント上で分岐させる
+                                        TicketCard(vm: vm, acceptedQuest: acceptedQuest)
+                                    } else {
+                                        // 進行中クエスト
+                                        AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
+                                    }
+                                } else {
+                                    // 未受注クエスト
+                                    StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                                }
                             }
-                        } else {
-                            // 未受注クエスト
-                            StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                         }
-                    }
-
-                }.background(Color.gray.opacity(0.1))
+                    }.background(Color.gray.opacity(0.1))
+                        .border(Color.gray)
+                    
+                }
             }
         }
     }
 }
 
 #Preview {
-    QuestBoardView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
 }
