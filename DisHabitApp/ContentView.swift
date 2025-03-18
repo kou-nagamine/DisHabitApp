@@ -6,8 +6,7 @@ struct ContentView: View {
         VStack(spacing: 10) {
             HomePageView(vm: vm) // 仮
             
-        }
-        
+        } 
     }
 }
 
