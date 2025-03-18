@@ -1,4 +1,6 @@
 import SwiftUI
+import SwiftData
+import Foundation
 
 @main
 struct DisHabitAppApp: App {
@@ -6,5 +8,6 @@ struct DisHabitAppApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Objective.self], isUndoEnabled: true)
     }
 }

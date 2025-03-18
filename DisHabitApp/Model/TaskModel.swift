@@ -1,10 +1,12 @@
 import Foundation
+import SwiftData
 
+@Model
 class Objective: Identifiable {
     var id: UUID
     var text: String
 
-    init(id: UUID, text: String) {
+    init(id: UUID = UUID(), text: String) {
         self.id = id
         self.text = text
     }
@@ -19,12 +21,13 @@ class Objective: Identifiable {
     }
 }
 
+@Model
 class Task: Identifiable {
     var id: UUID
     var text: String
-    var objective: Objective?
+    @Relationship var objective: Objective?
 
-    init(id: UUID, text: String, objective: Objective?) {
+    init(id: UUID = UUID(), text: String, objective: Objective? = nil) {
         self.id = id
         self.text = text
         self.objective = objective
@@ -42,18 +45,24 @@ class Task: Identifiable {
 }
 
 // 受注済みタスク定義
-struct AcceptedTask: Identifiable {
-    var originalTask: Task
+@Model
+class AcceptedTask: Identifiable {
+    var id: UUID = UUID()
+    @Relationship var originalTask: Task
     var isCompleted: Bool = false
     
-    // 元のTaskのプロパティにアクセスするための転送プロパティ
-    var id: UUID { originalTask.id }
+    init(originalTask: Task, isCompleted: Bool = false) {
+        self.originalTask = originalTask
+        self.isCompleted = isCompleted
+    }
+    
+    // 元のTaskのプロパティにアクセスするためのメソッド
     var text: String { originalTask.text }
     var objective: Objective? { originalTask.objective }
     
     // 完了状態を変更した新しいインスタンスを返す
     func markAsCompleted() -> AcceptedTask {
-        var updated = self
+        let updated = AcceptedTask(originalTask: self.originalTask)
         updated.isCompleted = true
         return updated
     }
