@@ -86,8 +86,3 @@ public enum Option: CaseIterable {
         }
     }
 }
-
-#Preview {
-    HomePageViewBkp()
-        .environmentObject(DateModel())
-}
