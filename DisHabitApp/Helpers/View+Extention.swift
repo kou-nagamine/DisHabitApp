@@ -45,7 +45,3 @@ extension View {
         }
     }
 }
-
-#Preview {
-    HomePageViewBkp()
-}

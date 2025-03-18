@@ -44,7 +44,3 @@ struct TopTabBarView: View {
         
     }
 }
-
-#Preview {
-    HomePageViewBkp()
-}
