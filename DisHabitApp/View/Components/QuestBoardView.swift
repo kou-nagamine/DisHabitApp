@@ -19,37 +19,36 @@ struct QuestBoardView: View {
     }
    
     var body: some View {
-        NavigationStack{
-            ScrollView(.vertical) {
-                VStack(spacing: 18) {
-                    ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                        NavigationLink(destination: AcceptedQuestDetailsPage()) {
-                            
-                            VStack (spacing: 0) {
-                                if let acceptedQuest = questSlot.acceptedQuest {
-                                    if acceptedQuest.isCompletionReported {
-                                        // チケットを表示
-                                        // 使用済みかどうかは子コンポーネント上で分岐させる
-                                        TicketCard(vm: vm, acceptedQuest: acceptedQuest)
-                                    } else {
-                                        // 進行中クエスト
-                                        AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
-                                    }
-                                } else {
-                                    // 未受注クエスト
-                                    StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+        ScrollView(.vertical) {
+            VStack(spacing: 18) {
+                ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
+                    VStack(spacing: 0) {
+                        if let acceptedQuest = questSlot.acceptedQuest {
+                            if acceptedQuest.isCompletionReported {
+                                // チケットを表示（変更なし）
+                                TicketCard(vm: vm, acceptedQuest: acceptedQuest)
+                            } else {
+                                // パターン１: AcceptedQuestCardにNavigationLinkを移動
+                                NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                                    AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
                                 }
+                                .buttonStyle(.plain) // デフォルトの青リンク色を消す
                             }
+                        } else {
+                            // パターン２: StandbyQuestCardにNavigationLinkを移動（適切な遷移先を設定）
+                            NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                                StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                            }
+                            .buttonStyle(.plain)
                         }
-                    }.background(Color.gray.opacity(0.1))
-                        .border(Color.gray)
-                    
+                    }
                 }
             }
         }
+        .background(Color.gray.opacity(0.1))
     }
 }
 
 #Preview {
-    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
 }

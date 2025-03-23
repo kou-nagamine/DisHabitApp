@@ -14,7 +14,7 @@ struct AcceptedQuestCard: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     HStack {
-                        Text("クリア率: ")
+                        Text("クリア率")
                             .font(.callout)
                     }
                 }
@@ -35,16 +35,16 @@ struct AcceptedQuestCard: View {
             RoundedRectangle(cornerRadius: 15)
         }
         .padding(.horizontal, 25)
-        .onTapGesture {
-            
-
-            //            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            //                // 遷移アニメーション
-            //            }
-        }
+//        .onTapGesture {
+//            
+//
+//            //            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//            //                // 遷移アニメーション
+//            //            }
+//        }
     }
 }
 
 #Preview {
-    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
 }
