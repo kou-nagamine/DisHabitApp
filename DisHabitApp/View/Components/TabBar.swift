@@ -85,7 +85,7 @@ struct TabBarShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
 
-        // オリジナルのSVGサイズ
+        // オリジナルのSVG
         let originalWidth: CGFloat = 378
         let originalHeight: CGFloat = 96
 

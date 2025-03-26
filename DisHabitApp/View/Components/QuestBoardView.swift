@@ -19,23 +19,29 @@ struct QuestBoardView: View {
     }
    
     var body: some View {
-        ScrollView(.vertical) {
-            VStack(spacing: 18) {
-                ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                    VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
+            // タイトル
+            Text("楽しいこと習慣")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.leading, 30)
+                .padding(.top, 18)
+                .padding(.bottom, 18)
+            // クエストリスト
+            ScrollView(.vertical) {
+                Spacer() // 要検討
+                VStack(spacing: 18) {
+                    ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
                         if let acceptedQuest = questSlot.acceptedQuest {
                             if acceptedQuest.isCompletionReported {
-                                // チケットを表示（変更なし）
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
                             } else {
-                                // パターン１: AcceptedQuestCardにNavigationLinkを移動
                                 NavigationLink(destination: AcceptedQuestDetailsPage()) {
                                     AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
                                 }
-                                .buttonStyle(.plain) // デフォルトの青リンク色を消す
+                                .buttonStyle(.plain)
                             }
                         } else {
-                            // パターン２: StandbyQuestCardにNavigationLinkを移動（適切な遷移先を設定）
                             NavigationLink(destination: AcceptedQuestDetailsPage()) {
                                 StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                             }

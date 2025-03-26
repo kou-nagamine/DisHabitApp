@@ -9,9 +9,9 @@ struct HomePage: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
                 // Header
-                VStack {
+                VStack(spacing: 0) {
                     // 年月日
                     HStack (spacing: 0){
                         Text(currentDate.format("y/M/d"))

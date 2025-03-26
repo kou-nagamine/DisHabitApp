@@ -50,14 +50,11 @@ struct StandbyQuestCard: View {
             .padding(.horizontal, 25)
             .padding(.vertical, 25)
         }
-        .background(Color.gray.opacity(0.2))
+        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
         .overlay {
             RoundedRectangle(cornerRadius: 15)
-                .stroke(lineWidth: 4)
+                .stroke(lineWidth: 2)
                 .fill(.gray.gradient)
-        }
-        .mask {
-            RoundedRectangle(cornerRadius: 15)
         }
     }
 }
