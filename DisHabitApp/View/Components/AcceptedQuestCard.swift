@@ -14,37 +14,34 @@ struct AcceptedQuestCard: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     HStack {
-                        Text("クリア率: ")
+                        Text("クリア率")
                             .font(.callout)
                     }
                 }
                 Spacer()
-                PieChart()
+                PieChart(progress: 0.5, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2)
             }
             .padding(.horizontal, 25)
             .padding(.vertical, 25)
         }
-        .background(Color.gray.opacity(0.1))
+        .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
         .matchedGeometryEffect(id: "background-\(acceptedQuest.id)", in: namespace)
         .overlay {
             RoundedRectangle(cornerRadius: 15)
-                .stroke(lineWidth: 4)
+                .stroke(lineWidth: 2)
                 .fill(.gray.gradient)
-        }
-        .mask {
-            RoundedRectangle(cornerRadius: 15)
         }
         .padding(.horizontal, 25)
         .onTapGesture {
-            
-
-            //            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            //                // 遷移アニメーション
-            //            }
+//            
+//
+//            //            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//            //                // 遷移アニメーション
+//            //            }
         }
     }
 }
 
 #Preview {
-    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
 }

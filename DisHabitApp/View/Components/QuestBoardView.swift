@@ -19,37 +19,42 @@ struct QuestBoardView: View {
     }
    
     var body: some View {
-        NavigationStack{
+        VStack(alignment: .leading, spacing: 0) {
+            // タイトル
+            Text("楽しいこと習慣")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.leading, 30)
+                .padding(.top, 18)
+                .padding(.bottom, 18)
+            // クエストリスト
             ScrollView(.vertical) {
+                Spacer() // 要検討
                 VStack(spacing: 18) {
                     ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                        NavigationLink(destination: AcceptedQuestDetailsPage()) {
-                            
-                            VStack (spacing: 0) {
-                                if let acceptedQuest = questSlot.acceptedQuest {
-                                    if acceptedQuest.isCompletionReported {
-                                        // チケットを表示
-                                        // 使用済みかどうかは子コンポーネント上で分岐させる
-                                        TicketCard(vm: vm, acceptedQuest: acceptedQuest)
-                                    } else {
-                                        // 進行中クエスト
-                                        AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
-                                    }
-                                } else {
-                                    // 未受注クエスト
-                                    StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                        if let acceptedQuest = questSlot.acceptedQuest {
+                            if acceptedQuest.isCompletionReported {
+                                TicketCard(vm: vm, acceptedQuest: acceptedQuest)
+                            } else {
+                                NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                                    AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
                                 }
+                                .buttonStyle(.plain)
                             }
+                        } else {
+                            NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                                StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                            }
+                            .buttonStyle(.plain)
                         }
-                    }.background(Color.gray.opacity(0.1))
-                        .border(Color.gray)
-                    
+                    }
                 }
             }
         }
+        .background(Color.gray.opacity(0.1))
     }
 }
 
 #Preview {
-    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
 }
