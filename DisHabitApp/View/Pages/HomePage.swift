@@ -6,6 +6,7 @@ struct HomePage: View {
     @State private var currentDate: Date = .init()
     @State private var week: [Date.WeekDay] = []
     @Namespace private var namespace
+    @Binding var showTabBar: Bool
     
     var body: some View {
         NavigationStack {
@@ -67,7 +68,7 @@ struct HomePage: View {
                         week = Date().fetchWeek()
                     }
                 }
-                QuestBoardView(vm: vm, namespace: namespace) // 仮
+                QuestBoardView(vm: vm, namespace: namespace, showTabBar: $showTabBar) // 仮
             }
         }
 // 詳細のoverlayが表示されているかどうかの変数をViewModelなどに作成する
@@ -86,7 +87,7 @@ struct HomePage: View {
 //        }
     }
 }
-
-#Preview {
-    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
-}
+//
+//#Preview {
+//    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
+//}

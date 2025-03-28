@@ -32,16 +32,9 @@ struct AcceptedQuestCard: View {
                 .fill(.gray.gradient)
         }
         .padding(.horizontal, 25)
-        .onTapGesture {
-//            
-//
-//            //            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//            //                // 遷移アニメーション
-//            //            }
-        }
     }
 }
-
-#Preview {
-    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
-}
+//
+//#Preview {
+//    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
+//}

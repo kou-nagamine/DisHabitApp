@@ -3,11 +3,14 @@ import SwiftUI
 
 struct QuestBoardView: View {
     @ObservedObject var vm: QuestBoardViewModel
+    @Binding var showTabBar: Bool
     let namespace: Namespace.ID
+    @State private var isShowingDetail = false
    
-    init (vm: QuestBoardViewModel, namespace: Namespace.ID) {
+    init (vm: QuestBoardViewModel, namespace: Namespace.ID, showTabBar: Binding<Bool>) {
         self.vm = vm
         self.namespace = namespace
+        self._showTabBar = showTabBar
     }
    
     var screenWidth: CGFloat {
@@ -36,13 +39,27 @@ struct QuestBoardView: View {
                             if acceptedQuest.isCompletionReported {
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
                             } else {
-                                NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                                NavigationLink(destination: AcceptedQuestDetailsPage()
+                                    .onAppear {
+                                        showTabBar = false
+                                    }
+                                    .onDisappear {
+                                        showTabBar = true
+                                    }
+                                ) {
                                     AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
                                 }
                                 .buttonStyle(.plain)
                             }
                         } else {
-                            NavigationLink(destination: AcceptedQuestDetailsPage()) {
+                            NavigationLink(destination: AcceptedQuestDetailsPage()
+                                .onAppear {
+                                    showTabBar = false
+                                }
+                                .onDisappear {
+                                    showTabBar = true
+                                }
+                            ) {
                                 StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                             }
                             .buttonStyle(.plain)
@@ -55,6 +72,6 @@ struct QuestBoardView: View {
     }
 }
 
-#Preview {
-    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
-}
+//#Preview {
+//    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
+//}
