@@ -8,6 +8,6 @@ struct DisHabitAppApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Objective.self], isUndoEnabled: true)
+        .modelContainer(for: [Objective.self, Task.self, AcceptedTask.self, Quest.self, AcceptedQuest.self, QuestSlot.self, DailyQuestBoard.self, Reward.self, RedeemableReward.self], isUndoEnabled: true)
     }
 }
