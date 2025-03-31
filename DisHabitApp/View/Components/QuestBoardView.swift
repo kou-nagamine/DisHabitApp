@@ -4,13 +4,16 @@ import SwiftUI
 struct QuestBoardView: View {
     @ObservedObject var vm: QuestBoardViewModel
     @Binding var showTabBar: Bool
-    let namespace: Namespace.ID
-    @State private var isShowingDetail = false
+    @Binding var path: [QuestBoardNavigation]
    
-    init (vm: QuestBoardViewModel, namespace: Namespace.ID, showTabBar: Binding<Bool>) {
+    init (
+        vm: QuestBoardViewModel,
+        showTabBar: Binding<Bool>,
+        path: Binding<[QuestBoardNavigation]>
+    ) {
         self.vm = vm
-        self.namespace = namespace
         self._showTabBar = showTabBar
+        self._path = path
     }
    
     var screenWidth: CGFloat {
@@ -39,39 +42,29 @@ struct QuestBoardView: View {
                             if acceptedQuest.isCompletionReported {
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
                             } else {
-                                NavigationLink(destination: AcceptedQuestDetailsPage()
-                                    .onAppear {
-                                        showTabBar = false
+                                AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
+                                    .onTapGesture {
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            showTabBar = false
+                                        }
+                                        path.append(.acceptedQuestDetails)
                                     }
-                                    .onDisappear {
-                                        showTabBar = true
-                                    }
-                                ) {
-                                    AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
-                                }
-                                .buttonStyle(.plain)
                             }
                         } else {
-                            NavigationLink(destination: AcceptedQuestDetailsPage()
-                                .onAppear {
+                            StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                                .onTapGesture {
                                     showTabBar = false
+                                    path.append(.acceptedQuestDetails)
                                 }
-                                .onDisappear {
-                                    showTabBar = true
-                                }
-                            ) {
-                                StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
-                            }
-                            .buttonStyle(.plain)
                         }
                     }
                 }
             }
         }
-        .background(Color.gray.opacity(0.1))
     }
 }
 
-//#Preview {
-//    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
-//}
+#Preview {
+    ContentView()
+}
+

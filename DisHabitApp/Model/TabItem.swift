@@ -7,10 +7,12 @@
 
 import Foundation
 
+/// Represents the available tabs in the TabBar
 enum TabItem: String, CaseIterable {
-    case home = "home"
-    case task = "task"
+    case home = "home" /// Home screen tab
+    case task = "task" /// Task screeen tab
     
+    /// Returns the SF Symbol name for each tab
     var symbolImage: String {
         switch self {
         case .home: "house"

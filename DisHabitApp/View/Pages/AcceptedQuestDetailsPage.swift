@@ -28,22 +28,22 @@ struct AcceptedQuestDetailsPage: View {
                     .frame(maxWidth: .infinity) // Centerよせ
                     .padding(.bottom, 70)
             }
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text("やることリスト")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding(.leading, 30)
                     .padding(.top, 30)
+                    .padding(.bottom, 15)
                 Spacer()
                 ScrollView(.vertical) {
                     VStack(spacing: 20) {
                         CheckBoxList(isSelected: false, taskName: "英単語5個")
                         CheckBoxList(isSelected: false, taskName: "基本情報２問")
-                        // CheckBoxList(isSelected: false, taskName: "英単語5個")
+                        CheckBoxList(isSelected: false, taskName: "英単語5個")
                         //CheckBoxList(isSelected: false, taskName: "英単語5個")
                     }
                 }
-                .overlay (alignment: .bottom){
                     Button {
                         showAlert.toggle()
                     } label: {
@@ -68,7 +68,6 @@ struct AcceptedQuestDetailsPage: View {
                                     .font(.system(size: 35, weight: .bold))
                                     .padding(.bottom, 40)
                             }
-                            /// Select buttons
                             VStack(spacing: 15) {
                                 Button {
                                     showAlert.toggle()
@@ -103,7 +102,6 @@ struct AcceptedQuestDetailsPage: View {
                         Rectangle()
                             .fill(.primary.opacity(0.35))
                     }
-                }
             }
             .navigationBarBackButtonHidden(true)
             .background(.gray.gradient.opacity(0.2))

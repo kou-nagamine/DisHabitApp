@@ -19,13 +19,12 @@ struct TabBar: View {
             Spacer()
                 .frame(maxWidth: 25)
         }
-        /// Tabbar全体のレイアウト調整
+        /// Tabbar Layout
         .background{
             TabBarShape()
                 .fill(.white)
                 .frame(height: 95)
                 .shadow(color: Color.gray, radius: 4, x: 3, y: 3)
-            
         }
         .padding(.horizontal, 8)
     }
@@ -45,7 +44,6 @@ struct TabBar: View {
                 .font(.footnote)
                 .foregroundStyle(isActive ? .blue : .black)
         }
-        /// 各ボタンの横幅をinifinityにすることで等間隔で並ぶ
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.top, 10)
         .padding(.bottom, 5)
@@ -59,7 +57,7 @@ struct TabBar: View {
     @ViewBuilder
     func AddQuestButton() -> some View {
         
-        VStack(spacing: 3) {
+        VStack(spacing: 0) {
             Image(systemName: "folder")
                 .symbolVariant(.fill)
                 .font(.title)
@@ -75,21 +73,20 @@ struct TabBar: View {
         /// 各ボタンの横幅をinifinityにすることで等間隔で並ぶ
         .frame(maxWidth: .infinity, alignment: .center)
         .contentShape(.rect)
-        .offset(y: -47)
+        .offset(y: -45)
         .onTapGesture {
         }
     }
 }
 
+///
 struct TabBarShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
 
-        // オリジナルのSVG
         let originalWidth: CGFloat = 378
         let originalHeight: CGFloat = 96
 
-        // スケーリング係数（ビューのサイズに合わせて自動調整）
         let scaleX = rect.width / originalWidth
         let scaleY = rect.height / originalHeight
 
@@ -131,4 +128,8 @@ struct TabBarShape: Shape {
 
         return path
     }
+}
+
+#Preview {
+    ContentView()
 }

@@ -4,7 +4,6 @@ import SwiftUI
 struct AcceptedQuestCard: View {
     @ObservedObject var vm: QuestBoardViewModel
     var acceptedQuest: AcceptedQuest
-    let namespace: Namespace.ID
     
     var body: some View {
         VStack (spacing: 0) {
@@ -25,7 +24,6 @@ struct AcceptedQuestCard: View {
             .padding(.vertical, 25)
         }
         .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
-        .matchedGeometryEffect(id: "background-\(acceptedQuest.id)", in: namespace)
         .overlay {
             RoundedRectangle(cornerRadius: 15)
                 .stroke(lineWidth: 2)
@@ -34,7 +32,7 @@ struct AcceptedQuestCard: View {
         .padding(.horizontal, 25)
     }
 }
-//
-//#Preview {
-//    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
-//}
+
+#Preview {
+    ContentView()
+}
