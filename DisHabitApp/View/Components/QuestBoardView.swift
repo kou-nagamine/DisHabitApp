@@ -3,11 +3,17 @@ import SwiftUI
 
 struct QuestBoardView: View {
     @ObservedObject var vm: QuestBoardViewModel
-    let namespace: Namespace.ID
+    @Binding var showTabBar: Bool
+    @Binding var path: [QuestBoardNavigation]
    
-    init (vm: QuestBoardViewModel, namespace: Namespace.ID) {
+    init (
+        vm: QuestBoardViewModel,
+        showTabBar: Binding<Bool>,
+        path: Binding<[QuestBoardNavigation]>
+    ) {
         self.vm = vm
-        self.namespace = namespace
+        self._showTabBar = showTabBar
+        self._path = path
     }
    
     var screenWidth: CGFloat {
@@ -19,31 +25,39 @@ struct QuestBoardView: View {
     }
    
     var body: some View {
-        NavigationStack{
+        VStack(alignment: .leading, spacing: 0) {
+            // タイトル
+            Text("楽しいこと習慣")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.leading, 30)
+                .padding(.top, 18)
+                .padding(.bottom, 18)
+            // クエストリスト
             ScrollView(.vertical) {
+                Spacer() // 要検討
                 VStack(spacing: 18) {
                     ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                        NavigationLink(destination: AcceptedQuestDetailsPage()) {
-                            
-                            VStack (spacing: 0) {
-                                if let acceptedQuest = questSlot.acceptedQuest {
-                                    if acceptedQuest.isCompletionReported {
-                                        // チケットを表示
-                                        // 使用済みかどうかは子コンポーネント上で分岐させる
-                                        TicketCard(vm: vm, acceptedQuest: acceptedQuest)
-                                    } else {
-                                        // 進行中クエスト
-                                        AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
+                        if let acceptedQuest = questSlot.acceptedQuest {
+                            if acceptedQuest.isCompletionReported {
+                                TicketCard(vm: vm, acceptedQuest: acceptedQuest)
+                            } else {
+                                AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
+                                    .onTapGesture {
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            showTabBar = false
+                                        }
+                                        path.append(.acceptedQuestDetails)
                                     }
-                                } else {
-                                    // 未受注クエスト
-                                    StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
-                                }
                             }
+                        } else {
+                            StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                                .onTapGesture {
+                                    showTabBar = false
+                                    path.append(.acceptedQuestDetails)
+                                }
                         }
-                    }.background(Color.gray.opacity(0.1))
-                        .border(Color.gray)
-                    
+                    }
                 }
             }
         }
@@ -51,5 +65,6 @@ struct QuestBoardView: View {
 }
 
 #Preview {
-    HomePageView(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    ContentView()
 }
+
