@@ -99,16 +99,6 @@ class AppDataService: AppDataServiceProtocol {
                 print("quests->selectedQuestBoard")
             }
             .store(in: &cancellables)
-        
-        // selectedQuestBoard -> todayQuestBoard
-        selectedQuestBoardSubject
-            .receive(on: RunLoop.main)
-            .filter { $0.date == Date() } // ユーザが当日のクエスト一覧を表示している時だけ発火させたい。
-            .sink { [weak self] quests in
-                guard let self = self else { return }
-                self.todayQuestBoardSubject.send(self.selectedQuestBoardSubject.value) // ここは値をコピーしたい
-            }
-            .store(in: &cancellables)
 
         // todayQuestBoard -> selectedQuestBoard
         todayQuestBoardSubject
