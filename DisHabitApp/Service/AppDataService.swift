@@ -38,10 +38,8 @@ protocol AppDataServiceProtocol {
     // 履歴関係
     func queryHistoryQuestBoards()
     func createHistoryQuestBoard(newHistoryQuestBoard: DailyQuestBoard)
-    func updateHistoryQuestBoard()
     
     func queryTodayQuestBoard()
-    func updateTodayQuestBoard()
 }
 
 class AppDataService: AppDataServiceProtocol {
@@ -240,14 +238,14 @@ class AppDataService: AppDataServiceProtocol {
     // ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
         print("service.acceptQuest")
-        updateSelectedQuestBoard(questSlotId) { questSlot in
+        updateTodayQuestBoard(questSlotId) { questSlot in
             // TODO: SwiftDataで永続化する必要がある
             return questSlot.acceptQuest()
         }
     }
 
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID) {
-        updateSelectedQuestBoard(questSlotId) { questSlot in
+        updateTodayQuestBoard(questSlotId) { questSlot in
             // TODO: SwiftDataで永続化する必要がある
             guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
@@ -268,7 +266,7 @@ class AppDataService: AppDataServiceProtocol {
     }
 
     func reportQuestCompletion(questSlotId: UUID) {
-        updateSelectedQuestBoard(questSlotId) { questSlot in
+        updateTodayQuestBoard(questSlotId) { questSlot in
             // TODO: SwiftDataで永続化する必要がある
             guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot}
 
@@ -283,7 +281,7 @@ class AppDataService: AppDataServiceProtocol {
     }
 
     func redeemTicket(questSlotId: UUID) {
-        updateSelectedQuestBoard(questSlotId) { questSlot in
+        updateTodayQuestBoard(questSlotId) { questSlot in
             // TODO: SwiftDataで永続化する必要がある
             guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
@@ -297,7 +295,7 @@ class AppDataService: AppDataServiceProtocol {
     }
 
     func discardAcceptedQuest(questSlotId: UUID) {
-        updateSelectedQuestBoard(questSlotId) { questSlot in
+        updateTodayQuestBoard(questSlotId) { questSlot in
             // TODO: SwiftDataで永続化する必要がある
             return QuestSlot(
                 id: questSlot.id,
@@ -535,6 +533,12 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
+    func createHistoryQuestBoard(newHistoryQuestBoard: DailyQuestBoard) {
+        modelContext?.insert(newHistoryQuestBoard)
+        save()
+        queryHistoryQuestBoards()
+    }
+
     // 新しいDailyQuestBoardを作成するヘルパー関数
     private func createNewDailyQuestBoard(for date: Date) -> DailyQuestBoard {
         let calendar = Calendar.current
@@ -553,7 +557,6 @@ class AppDataService: AppDataServiceProtocol {
         return DailyQuestBoard(date: date, questSlots: questSlots)
     }
 
-
     // ==== Private Helper methods ====
     private func save() {
         guard let modelContext = modelContext else {
@@ -570,7 +573,7 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
-    private func updateSelectedQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
+    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
         var questBoard = todayQuestBoardSubject.value
         if let todayQuestBoard = questBoard {
             if let index = todayQuestBoard.questSlots.firstIndex(where: { $0.id == questSlotId }) {
