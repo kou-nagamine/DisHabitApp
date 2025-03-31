@@ -118,8 +118,8 @@ class AppDataService: AppDataServiceProtocol {
         let reward2 = Reward(id: UUID(), text: "映画を見る")
         
         // モックのクエストを作成
-        let quest1 = Quest(id: UUID(), title: "健康的な朝習慣", reward: reward1, tasks: [task1, task2, task5])
-        let quest2 = Quest(id: UUID(), title: "運動チャレンジ", reward: reward2, tasks: [task4, task5])
+        let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+        let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
         
         // Quest2は受注済にする
         let acceptedQuest2 = quest2.accept()

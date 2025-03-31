@@ -5,26 +5,25 @@ import SwiftData
 @Model
 class Quest: Identifiable {
     var id: UUID
-    var title: String
+    var activatedDayOfWeeks: [Int: Bool]
     @Relationship var reward: Reward
     @Relationship var tasks: [Task]
 
-    init(id: UUID = UUID(), title: String, reward: Reward, tasks: [Task]) {
+    init(id: UUID = UUID(), activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [Task]) {
         self.id = id
-        self.title = title
+        self.activatedDayOfWeeks = activatedDayOfWeeks
         self.reward = reward
         self.tasks = tasks
     }
     
     func copyValues(from source: Quest) {
         self.id = source.id
-        self.title = source.title
         self.reward = source.reward
         self.tasks = source.tasks
     }
     
     func deepCopy() -> Quest {
-        return Quest(id: self.id, title: self.title, reward: self.reward, tasks: self.tasks)
+        return Quest(id: self.id, activatedDayOfWeeks: self.activatedDayOfWeeks, reward: self.reward, tasks: self.tasks)
     }
     
     // AcceptedQuestを生成するメソッド
@@ -34,7 +33,6 @@ class Quest: Identifiable {
         
         return AcceptedQuest(
             id: id,
-            title: title,
             reward: accetedReward,
             acceptedTasks: acceptedTasks
         )
@@ -45,16 +43,14 @@ class Quest: Identifiable {
 @Model
 class AcceptedQuest: Identifiable {
     var id: UUID
-    var title: String
     @Relationship var reward: RedeemableReward // 変更: RewardからRedeemableRewardに
     @Relationship var acceptedTasks: [AcceptedTask]
     
     // クエストの完了報告が完了しているかどうかのboolean
     var isCompletionReported: Bool = false
     
-    init(id: UUID = UUID(), title: String, reward: RedeemableReward, acceptedTasks: [AcceptedTask], isCompletionReported: Bool = false) {
+    init(id: UUID = UUID(), reward: RedeemableReward, acceptedTasks: [AcceptedTask], isCompletionReported: Bool = false) {
         self.id = id
-        self.title = title
         self.reward = reward
         self.acceptedTasks = acceptedTasks
         self.isCompletionReported = isCompletionReported
@@ -76,7 +72,6 @@ class AcceptedQuest: Identifiable {
     func redeemingReward() -> AcceptedQuest {
         let updated = AcceptedQuest(
             id: self.id,
-            title: self.title,
             reward: self.reward, 
             acceptedTasks: self.acceptedTasks,
             isCompletionReported: self.isCompletionReported
@@ -88,7 +83,6 @@ class AcceptedQuest: Identifiable {
     func reportCompletion() -> AcceptedQuest {
         let updated = AcceptedQuest(
             id: self.id,
-            title: self.title,
             reward: self.reward, 
             acceptedTasks: self.acceptedTasks,
             isCompletionReported: true
