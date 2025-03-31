@@ -3,11 +3,17 @@ import SwiftUI
 
 struct QuestBoardView: View {
     @ObservedObject var vm: QuestBoardViewModel
-    let namespace: Namespace.ID
+    @Binding var showTabBar: Bool
+    @Binding var path: [QuestBoardNavigation]
    
-    init (vm: QuestBoardViewModel, namespace: Namespace.ID) {
+    init (
+        vm: QuestBoardViewModel,
+        showTabBar: Binding<Bool>,
+        path: Binding<[QuestBoardNavigation]>
+    ) {
         self.vm = vm
-        self.namespace = namespace
+        self._showTabBar = showTabBar
+        self._path = path
     }
    
     var screenWidth: CGFloat {
@@ -36,25 +42,29 @@ struct QuestBoardView: View {
                             if acceptedQuest.isCompletionReported {
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
                             } else {
-                                NavigationLink(destination: AcceptedQuestDetailsPage()) {
-                                    AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest, namespace: namespace)
-                                }
-                                .buttonStyle(.plain)
+                                AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
+                                    .onTapGesture {
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            showTabBar = false
+                                        }
+                                        path.append(.acceptedQuestDetails)
+                                    }
                             }
                         } else {
-                            NavigationLink(destination: AcceptedQuestDetailsPage()) {
-                                StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
-                            }
-                            .buttonStyle(.plain)
+                            StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                                .onTapGesture {
+                                    showTabBar = false
+                                    path.append(.acceptedQuestDetails)
+                                }
                         }
                     }
                 }
             }
         }
-        .background(Color.gray.opacity(0.1))
     }
 }
 
 #Preview {
-    HomePage(vm: QuestBoardViewModel(appDataService: AppDataService()))
+    ContentView()
 }
+

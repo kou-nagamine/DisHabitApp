@@ -2,41 +2,51 @@
 //  TaskPage.swift
 //  DisHabitApp
 //
-//  Created by nagamine kousuke on 2025/03/23.
+//  Created by nagamine kousuke on 2025/03/27.
 //
 
 import SwiftUI
 
 struct TaskPage: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 30) {
-            Text("目標一覧")
-                .padding(.top, 30)
-                .font(.largeTitle)
+        VStack(alignment: .leading, spacing: 0) {
+            Text("基本情報技術者試験")
+                .font(.system(size: 30, weight: .bold))
+                .padding(.top, 20)
+                .padding(.bottom, 35)
+                .padding(.leading, 30)
             ScrollView {
-                VStack(spacing: 20) {
-                    Text("基本情報試験合格")
-                        .font(.title2)
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("科目A２問")
+                        .font(.system(size: 18, weight: .bold))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 70)
-                        .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
-                    Text("TOEIC700点")
-                        .font(.title2)
+                        .frame(height: 55)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 15))
+                        .padding(.trailing, 200)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(lineWidth: 2)
+                                .fill(.gray.gradient)
+                                .padding(.horizontal, 30)
+                        }
+                    Text("科目B２問")
+                        .font(.system(size: 18, weight: .bold))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 70)
-                        .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
-                    Text("＋")
-                        .font(.title)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 70)
-                        .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
+                        .frame(height: 55)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 15))
+                        .padding(.trailing, 200)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(lineWidth: 2)
+                                .fill(.gray.gradient)
+                                .padding(.horizontal, 30)
+                        }
                 }
             }
         }
-        .padding(.horizontal, 30)
+        .frame(maxWidth: .infinity)
     }
 }
-
 
 #Preview {
     TaskPage()
