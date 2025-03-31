@@ -3,13 +3,15 @@ import SwiftUI
 
 struct StandbyQuestCard: View {
     @ObservedObject var vm: QuestBoardViewModel
+    @State private var path: [QuestBoardNavigation] = []
+    
     var quest: Quest
     var questSlotId: UUID
 
     var body: some View {
         ZStack {
             // NavigationLinkをカード全体に配置
-            NavigationLink(destination: AcceptedQuestDetailsPage()) {
+            NavigationLink(destination: AcceptedQuestDetailsPage(path: $path)) {
                 EmptyView() // 何も返さないView
             }
             .opacity(0) //
