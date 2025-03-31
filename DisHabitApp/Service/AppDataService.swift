@@ -37,7 +37,11 @@ protocol AppDataServiceProtocol {
 
     // 履歴関係
     func queryHistoryQuestBoards()
+    func createHistoryQuestBoard(newHistoryQuestBoard: DailyQuestBoard)
+    func updateHistoryQuestBoard()
+    
     func queryTodayQuestBoard()
+    func updateTodayQuestBoard()
 }
 
 class AppDataService: AppDataServiceProtocol {
@@ -63,8 +67,6 @@ class AppDataService: AppDataServiceProtocol {
 
     @MainActor
     init () {
-//        loadSampleData()
-
         // ==== 依存関係にあるデータの変更通知のWaterfallさせる ====
         // objectives -> tasks -> activeQuests -> selectedQuestBoard = todaySubjectBoard
         
@@ -105,44 +107,69 @@ class AppDataService: AppDataServiceProtocol {
             .sink { [weak self] quests in
                 guard let self = self else { return }
                 self.todayQuestBoardSubject.send(self.selectedQuestBoardSubject.value) // ここは値をコピーしたい
-                
+            }
+            .store(in: &cancellables)
+
+        // todayQuestBoard -> selectedQuestBoard
+        todayQuestBoardSubject
+            .receive(on: RunLoop.main)
+            .sink { [weak self] questBoard in
+                guard let self = self else { return }
+                if let todayQuestBoard = questBoard {
+                    if self.selectedQuestBoardSubject.value.date == todayQuestBoard.date {
+                        self.selectedQuestBoardSubject.send(todayQuestBoard)
+                    }
+                }
             }
             .store(in: &cancellables)
         
         // SwiftDataの初期化
         initializeModelContainer()
         
-        
-        loadSampleData()
+        // サンプルデータのロード
+        loadSavedSampleData()
     }
 
-    private func loadSampleData() {
-//        // Create mock data for activeQuests.
-//        // モックの目標を作成
-//        let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
-//        let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
-//        let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
-//        
-//        // モックのタスクを作成
-//        let task1 = Task(id: UUID(), text: "朝7時に起床する", objective: objective1)
-//        let task2 = Task(id: UUID(), text: "朝食を食べる", objective: objective1)
-//        let task3 = Task(id: UUID(), text: "1時間勉強する", objective: objective2)
-//        let task4 = Task(id: UUID(), text: "30分ジョギングする", objective: objective3)
-//        let task5 = Task(id: UUID(), text: "ストレッチをする", objective: objective3)
-//        
-//        // モックの報酬を作成
-//        let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
-//        let reward2 = Reward(id: UUID(), text: "映画を見る")
-//        
-//        // モックのクエストを作成
-//        let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
-//        let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
-        
+    private func loadSavedSampleData() {
         let quest1 = activeQuestsSubject.value[0]
         let quest2 = activeQuestsSubject.value[1]
         
-        // Quest2は受注済にする
-//        let acceptedQuest2 = quest2.accept()
+        let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
+        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
+        
+        // モックのDailyQuestBoardを作成
+        let dailyQuestBoard = DailyQuestBoard(
+            id: UUID(),
+            date: Date(),
+            questSlots: [questSlot1, questSlot2]
+        )
+
+        todayQuestBoardSubject.send(dailyQuestBoard)
+    }
+
+    private func loadSampleData() {
+       // モックの目標を作成
+       let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
+       let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
+       let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
+       
+       // モックのタスクを作成
+       let task1 = Task(id: UUID(), text: "朝7時に起床する", objective: objective1)
+       let task2 = Task(id: UUID(), text: "朝食を食べる", objective: objective1)
+       let task3 = Task(id: UUID(), text: "1時間勉強する", objective: objective2)
+       let task4 = Task(id: UUID(), text: "30分ジョギングする", objective: objective3)
+       let task5 = Task(id: UUID(), text: "ストレッチをする", objective: objective3)
+       
+       // モックの報酬を作成
+       let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
+       let reward2 = Reward(id: UUID(), text: "映画を見る")
+       
+       // モックのクエストを作成
+       let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+       let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
+        
+       // Quest2は受注済にする
+       let acceptedQuest2 = quest2.accept()
         
         // モックのQuestSlotを作成
         let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
@@ -155,30 +182,24 @@ class AppDataService: AppDataServiceProtocol {
             questSlots: [questSlot1, questSlot2]
         )
         
-        // Subjectsを更新
-//        objectivesSubject.send([objective1, objective2, objective3])
-//        tasksSubject.send([task1, task2, task3, task4, task5])
-//        activeQuestsSubject.send([quest1, quest2])
-        selectedQuestBoardSubject.send(dailyQuestBoard)
-        
-//        createObjective(newObjective: objective1)
-//        createObjective(newObjective: objective2)
-//        createObjective(newObjective: objective3)
-//        createTask(newTask: task1)
-//        createTask(newTask: task2)
-//        createTask(newTask: task3)
-//        createTask(newTask: task4)
-//        createTask(newTask: task5)
-//        createQuest(newQuest: quest1)
-//        createQuest(newQuest: quest2)
-//        selectedQuestBoardSubject.send(dailyQuestBoard)
+        // サンプルデータを作成
+        createObjective(newObjective: objective1)
+        createObjective(newObjective: objective2)
+        createObjective(newObjective: objective3)
+        createTask(newTask: task1)
+        createTask(newTask: task2)
+        createTask(newTask: task3)
+        createTask(newTask: task4)
+        createTask(newTask: task5)
+        createQuest(newQuest: quest1)
+        createQuest(newQuest: quest2)
+        todayQuestBoardSubject.send(dailyQuestBoard)
     }
 
     @MainActor
     private func initializeModelContainer() {
         do {
-            let configuration = ModelConfiguration(isStoredInMemoryOnly: false)
-            let container = try ModelContainer(for: Quest.self, Task.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self)
+            let container = try ModelContainer(for: Quest.self, Task.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self, RedeemableReward.self)
             modelContainer = container
             modelContext = container.mainContext
             modelContext?.autosaveEnabled = true
@@ -325,10 +346,7 @@ class AppDataService: AppDataServiceProtocol {
         do {
             if let questToEdit = try modelContext.fetch(fetchDescriptor).first {
                 // 値をコピーする (プロパティごとに更新)
-                questToEdit.activatedDayOfWeeks = newQuest.activatedDayOfWeeks
-                questToEdit.reward = newQuest.reward // これで関連も更新されるか確認
-                questToEdit.tasks = newQuest.tasks // これで関連も更新されるか確認
-                // 他に必要なプロパティがあればここに追加
+                questToEdit.copyValues(from: newQuest)
                 save()
                 queryActiveQuests() // 更新後のリストを再フェッチして通知
             } else {
@@ -386,9 +404,7 @@ class AppDataService: AppDataServiceProtocol {
 
         do {
             if let taskToEdit = try modelContext.fetch(fetchDescriptor).first {
-                taskToEdit.text = newTask.text
-                taskToEdit.objective = newTask.objective // これで関連も更新されるか確認
-                // 他に必要なプロパティがあればここに追加
+                taskToEdit.copyValues(from: newTask)
                 save()
                 queryTasks() // 更新後のリストを再フェッチして通知
             } else {
@@ -446,8 +462,7 @@ class AppDataService: AppDataServiceProtocol {
 
         do {
             if let objectiveToEdit = try modelContext.fetch(fetchDescriptor).first {
-                objectiveToEdit.text = newObjective.text
-                // 他に必要なプロパティがあればここに追加
+                objectiveToEdit.copyValues(from: newObjective)
                 save()
                 queryObjectives() // 更新後のリストを再フェッチして通知
             } else {
@@ -565,66 +580,16 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
-    // ==== Helper methods of updating handlers ====
-    // updateTodayQuestBoard と updateSelectedQuestBoard はSwiftDataの永続化を考慮して再実装が必要
-    // 現状はSubjectを直接更新しているが、これはSwiftDataの管理外の操作になる可能性がある
-    // 代わりに、該当のQuestSlotのIDを元にFetchし、そのオブジェクトを更新してsave()を呼ぶ形にするのが適切
-    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
-        // TODO: SwiftDataに対応させる。modelContextからQuestSlotをフェッチして更新し、save()を呼ぶ。
-        // 注意：DailyQuestBoardが持つQuestSlotはコピーではなく参照であるべき。
-        // SwiftDataではリレーションシップを通じて更新が伝播することが期待される。
-        print("WARNING: updateTodayQuestBoard needs implementation for SwiftData persistence.")
-        // --- 以下は一時的な実装（Subjectの直接更新） ---
-        var dailyQuestBoards = historyQuestBoardsSubject.value
-        if let boardIndex = dailyQuestBoards.firstIndex(where: { calendar.isDateInToday($0.date) }) { // 当日のボードを探す
-            var board = dailyQuestBoards[boardIndex]
-            if let slotIndex = board.questSlots.firstIndex(where: { $0.id == questSlotId }) {
-                board.questSlots[slotIndex] = updateHandler(board.questSlots[slotIndex]) // スロットを更新
-                dailyQuestBoards[boardIndex] = board // 更新したボードで置き換え
-                historyQuestBoardsSubject.send(dailyQuestBoards) // Subjectを更新
-
-                // selectedQuestBoardも当日のものであれば更新
-                if selectedQuestBoardSubject.value.id == board.id {
-                     selectedQuestBoardSubject.send(board)
-                }
-                // ここで save() を呼ぶべきか？ QuestSlotやAcceptedQuestの変更が自動で保存されるか確認
-                save() // 変更を永続化しようと試みる
-            }
-        } else {
-            print("Error: Today's quest board not found in history.")
-        }
-    }
-
     private func updateSelectedQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
-         // TODO: SwiftDataに対応させる。modelContextからQuestSlotをフェッチして更新し、save()を呼ぶ。
-        print("WARNING: updateSelectedQuestBoard needs implementation for SwiftData persistence.")
-       // --- 以下は一時的な実装（Subjectの直接更新） ---
-        var selectedQuestBoard = selectedQuestBoardSubject.value
-        if let index = selectedQuestBoard.questSlots.firstIndex(where: { $0.id == questSlotId }) {
-            selectedQuestBoard.questSlots[index] = updateHandler(selectedQuestBoard.questSlots[index])
-            selectedQuestBoardSubject.send(selectedQuestBoard)
-
-            // historyQuestBoardsも更新する必要があるか？ selectedが当日の場合など
-            if calendar.isDateInToday(selectedQuestBoard.date) {
-                var historyBoards = historyQuestBoardsSubject.value
-                if let historyIndex = historyBoards.firstIndex(where: { $0.id == selectedQuestBoard.id }) {
-                    historyBoards[historyIndex] = selectedQuestBoard
-                    historyQuestBoardsSubject.send(historyBoards)
-                }
+        var questBoard = todayQuestBoardSubject.value
+        if let todayQuestBoard = questBoard {
+            if let index = todayQuestBoard.questSlots.firstIndex(where: { $0.id == questSlotId }) {
+                todayQuestBoard.questSlots[index] = updateHandler(todayQuestBoard.questSlots[index])
+                todayQuestBoardSubject.send(todayQuestBoard)
+                save()
             }
-            save() // 変更を永続化しようと試みる
         }
     }
-    
-    // updateTaskは editTask(taskId:newTask:) に統合されたため不要
-//    private func updateTask(_ taskId: UUID, updateHandler: (Task) -> Task) {
-//        var tasks = tasksSubject.value
-//        if let index = tasks.firstIndex(where: { $0.id == taskId }) {
-//            tasks[index] = updateHandler(tasks[index])
-//            tasksSubject.send(tasks)
-//            save() //変更を永続化
-//        }
-//    }
     
     // Calendarインスタンスをクラスレベルで保持（パフォーマンスのため）
     private let calendar = Calendar.current
