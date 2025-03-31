@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TabBar: View {
+    
+    @State var isPresented: Bool = false
     @Binding var activeTab: TabItem
     var body: some View {
         HStack(spacing: 0) {

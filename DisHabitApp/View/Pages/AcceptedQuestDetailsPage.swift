@@ -3,6 +3,7 @@ import SwiftUI
 
 struct AcceptedQuestDetailsPage: View {
     @State private var showAlert = false
+    @Binding var path: [QuestBoardNavigation]
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -11,7 +12,7 @@ struct AcceptedQuestDetailsPage: View {
                 // Back Navigation Arrow
                 Button(
                     action: {
-                        dismiss()
+                        path.removeLast()
                     }, label: {
                         Image(systemName: "arrow.left")
                     }
@@ -72,7 +73,7 @@ struct AcceptedQuestDetailsPage: View {
                                 Button {
                                     showAlert.toggle()
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        dismiss()
+                                        path.removeLast()
                                     }
                                 } label: {
                                     Text("今すぐ遊ぶ")
@@ -84,6 +85,10 @@ struct AcceptedQuestDetailsPage: View {
                                         .foregroundColor(.black)
                                 }
                                 Button {
+                                    showAlert.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        path.removeLast()
+                                    }
                                 } label: {
                                     Text("後で遊ぶ")
                                         .frame(maxWidth: .infinity)
@@ -110,5 +115,5 @@ struct AcceptedQuestDetailsPage: View {
 }
 
 #Preview {
-    AcceptedQuestDetailsPage()
+    ContentView()
 }

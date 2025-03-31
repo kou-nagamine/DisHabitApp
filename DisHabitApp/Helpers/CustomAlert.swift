@@ -46,7 +46,7 @@ fileprivate struct AlertViewModifier<AlertContent: View, AlertBackground: View> 
                     alertBackgroung
                 }
                 .task {
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         animationValue = true
                     }
                 }
@@ -60,7 +60,7 @@ fileprivate struct AlertViewModifier<AlertContent: View, AlertBackground: View> 
                         showFullScreenCover = true
                     }
                 } else {
-                    withAnimation(.easeInOut(duration: 0.3), completionCriteria: .removed) {
+                    withAnimation(.easeInOut(duration: 0.1), completionCriteria: .removed) {
                         animationValue = false
                     } completion: {
                         withTransaction(transaction) {
