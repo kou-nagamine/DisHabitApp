@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 struct HomePage: View {
-    @ObservedObject var vm: QuestBoardViewModel
+    var appDataService: AppDataServiceProtocol
     
     /// Manages the selected date (currentDate) and the weekdays of the current week (week)
     @State private var currentDate: Date = .init()
@@ -31,7 +31,7 @@ struct HomePage: View {
                     /// Week Day Selector
                     WeekDaySelector()
                 }
-                QuestBoardView(vm: vm, showTabBar: $showTabBar, path: $path) // 仮
+                QuestBoardView(appDataService: appDataService, showTabBar: $showTabBar, path: $path) // 仮
             }
             ///
             .navigationDestination(for: QuestBoardNavigation.self) { value in
@@ -53,5 +53,5 @@ struct HomePage: View {
 
 
 #Preview {
-    ContentView()
+    ContentView(appDataService: AppDataService())
 }

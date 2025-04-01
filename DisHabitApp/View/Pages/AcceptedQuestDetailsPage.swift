@@ -115,5 +115,5 @@ struct AcceptedQuestDetailsPage: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(appDataService: AppDataService())
 }

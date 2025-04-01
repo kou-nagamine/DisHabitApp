@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    var appDataService: AppDataServiceProtocol
+    
     ///Controls which tab is currently active in the TabBar
     @State private var activeTab: TabItem = .home
     
     ///Manages the visibility of the TabBar during navigation
     @State private var showTabBar: Bool = true
-    
-    @ObservedObject var vm = QuestBoardViewModel(appDataService: AppDataService()) // 仮
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,7 +16,7 @@ struct ContentView: View {
                 TabView(selection: $activeTab) {
                     Tab(value: TabItem.home) {
                         VStack {
-                            HomePage(vm: vm, showTabBar: $showTabBar)
+                            HomePage(appDataService:appDataService, showTabBar: $showTabBar)
                         }
                         .toolbarVisibility(.hidden, for: .tabBar)
                     }
@@ -29,7 +29,7 @@ struct ContentView: View {
             } else {
                 TabView(selection: $activeTab) {
                     VStack {
-                        HomePage(vm: vm, showTabBar: $showTabBar)
+                        HomePage(appDataService:appDataService, showTabBar: $showTabBar)
                         TabBar(activeTab: $activeTab)
                     }
                     .tag(TabItem.home)
@@ -49,5 +49,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(appDataService: AppDataService())
 }

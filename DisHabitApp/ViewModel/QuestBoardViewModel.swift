@@ -20,7 +20,7 @@ class QuestBoardViewModel: ObservableObject {
     init(appDataService: AppDataServiceProtocol) {
         self.appDataService = appDataService
         // 変更通知を購読
-        appDataService.selectedQuestBoardPublisher
+        self.appDataService.selectedQuestBoardPublisher
             .receive(on: RunLoop.main)
             .assign(to: \.dailyQuestBoard, on: self) //　新しいデータをdailyQuestBoardに代入する
             .store(in: &cancellables)

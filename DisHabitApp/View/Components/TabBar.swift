@@ -133,5 +133,5 @@ struct TabBarShape: Shape {
 }
 
 #Preview {
-    ContentView()
+    ContentView(appDataService: AppDataService())
 }

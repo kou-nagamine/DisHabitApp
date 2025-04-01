@@ -7,11 +7,11 @@ struct QuestBoardView: View {
     @Binding var path: [QuestBoardNavigation]
    
     init (
-        vm: QuestBoardViewModel,
+        appDataService: AppDataServiceProtocol,
         showTabBar: Binding<Bool>,
         path: Binding<[QuestBoardNavigation]>
     ) {
-        self.vm = vm
+        self.vm = QuestBoardViewModel(appDataService: appDataService)
         self._showTabBar = showTabBar
         self._path = path
     }
@@ -65,6 +65,6 @@ struct QuestBoardView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(appDataService: AppDataService())
 }
 
