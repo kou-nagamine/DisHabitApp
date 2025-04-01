@@ -242,7 +242,7 @@ class AppDataService: AppDataServiceProtocol {
             // TODO: SwiftDataで永続化する必要がある
             guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
-            if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.originalTask.id == taskId }) {
+            if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
                 let task = acceptedQuest.acceptedTasks[index]
                 acceptedQuest.acceptedTasks[index] = task.isCompleted ?
                     AcceptedTask(originalTask: task.originalTask) : // 未完了に戻す

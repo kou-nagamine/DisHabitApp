@@ -34,8 +34,8 @@ struct HomePage: View {
             ///
             .navigationDestination(for: QuestBoardNavigation.self) { value in
                 switch value {
-                case .acceptedQuestDetails(let acceptedQuest):
-                    AcceptedQuestDetailsPage(acceptedQuest: acceptedQuest, path: $path)
+                case .questDetails(let questSlot):
+                    QuestDetailsPage(questSlot: questSlot, path: $path)
                 }
             }
             .onChange(of: path) {

@@ -45,7 +45,7 @@ struct QuestBoardView: View {
                                         withAnimation(.easeOut(duration: 0.3)) {
                                             showTabBar = false
                                         }
-                                        path.append(.acceptedQuestDetails(acceptedQuest: acceptedQuest))
+                                        path.append(.questDetails(questSlot: questSlot))
                                     }
                             }
                         } else {
