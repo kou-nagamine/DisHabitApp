@@ -8,5 +8,5 @@
 import Foundation
 
 enum QuestBoardNavigation: Hashable {
-    case acceptedQuestDetails
+    case questDetails(questSlot: QuestSlot)
 }

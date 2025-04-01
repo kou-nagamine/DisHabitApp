@@ -63,7 +63,6 @@ class AppDataService: AppDataServiceProtocol {
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { historyQuestBoardsSubject.eraseToAnyPublisher() }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { selectedQuestBoardSubject.eraseToAnyPublisher() }
 
-    @MainActor
     init () {
         // ==== 依存関係にあるデータの変更通知のWaterfallさせる ====
         // objectives -> tasks -> activeQuests -> selectedQuestBoard = todaySubjectBoard
@@ -115,7 +114,7 @@ class AppDataService: AppDataServiceProtocol {
         initializeModelContainer()
     }
 
-    private func loadSampleData() {
+    private func createSampleData() {
        // モックの目標を作成
        let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
        let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
@@ -141,7 +140,7 @@ class AppDataService: AppDataServiceProtocol {
         
         // モックのQuestSlotを作成
         let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
-        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
+        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: acceptedQuest2)
         
         // モックのDailyQuestBoardを作成
         let dailyQuestBoard = DailyQuestBoard(
@@ -164,13 +163,13 @@ class AppDataService: AppDataServiceProtocol {
         todayQuestBoardSubject.send(dailyQuestBoard)
     }
 
-    @MainActor
     private func initializeModelContainer() {
         do {
             let container = try ModelContainer(for: Quest.self, Task.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self, RedeemableReward.self)
             modelContainer = container
-            modelContext = container.mainContext
-            modelContext?.autosaveEnabled = true
+            let context = ModelContext(container)
+            context.autosaveEnabled = true
+            modelContext = context
 
             loadLocalData()
             
@@ -185,6 +184,11 @@ class AppDataService: AppDataServiceProtocol {
         queryActiveQuests()
         queryHistoryQuestBoards()
         queryTodayQuestBoard()
+        if let todayQuestBoardSubjectValue = todayQuestBoardSubject.value {
+            self.selectedQuestBoardSubject.send(todayQuestBoardSubjectValue)
+        } else {
+            // First time to load app
+        }
     }
 
     // ==== Publishers for single items for each list ====
@@ -238,7 +242,7 @@ class AppDataService: AppDataServiceProtocol {
             // TODO: SwiftDataで永続化する必要がある
             guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
-            if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.originalTask.id == taskId }) {
+            if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
                 let task = acceptedQuest.acceptedTasks[index]
                 acceptedQuest.acceptedTasks[index] = task.isCompleted ?
                     AcceptedTask(originalTask: task.originalTask) : // 未完了に戻す
@@ -504,7 +508,7 @@ class AppDataService: AppDataServiceProtocol {
 
         do {
             if let todayBoard = try modelContext.fetch(fetchDescriptor).first {
-                selectedQuestBoardSubject.send(todayBoard)
+                todayQuestBoardSubject.send(todayBoard)
                 print("Found today's Quest Board.")
             } else {
                 // 当日のボードが存在しない場合、新しく作成する
@@ -512,7 +516,7 @@ class AppDataService: AppDataServiceProtocol {
                 let newBoard = createNewDailyQuestBoard(for: todayStart)
                 modelContext.insert(newBoard)
                 save()
-                selectedQuestBoardSubject.send(newBoard) // 新しいボードを送信
+                todayQuestBoardSubject.send(newBoard) // 新しいボードを送信
                 queryHistoryQuestBoards() // 履歴リストも更新
             }
         } catch {

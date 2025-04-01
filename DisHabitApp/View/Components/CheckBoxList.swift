@@ -5,6 +5,9 @@ struct CheckBoxList: View {
     
     var isSelected: Bool
     var taskName: String
+    var isReadonly: Bool
+    var isLabelOnly: Bool
+    var toggleAction: () -> Void
     
     var body: some View {
         VStack (spacing: 20){
@@ -43,11 +46,12 @@ struct CheckBoxList: View {
             }
             .padding(.horizontal, 30)
             .onTapGesture {
+                toggleAction()
             }
         }
     }
 }
 
 #Preview {
-    CheckBoxList(isSelected: false, taskName: "英単語5個")
+    CheckBoxList(isSelected: false, taskName: "英単語5個", isReadonly: false, isLabelOnly: false, toggleAction: {})
 }

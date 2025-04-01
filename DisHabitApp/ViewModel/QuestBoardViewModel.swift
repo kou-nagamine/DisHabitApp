@@ -7,20 +7,19 @@
 
 import Foundation
 import Combine
+import Dependencies
 
 class QuestBoardViewModel: ObservableObject {
-    
     // dailyQuestのdata
     @Published var dailyQuestBoard: DailyQuestBoard = DailyQuestBoard(id: UUID(), date: Date(timeIntervalSince1970: TimeInterval()), questSlots: [])
     
-    private let appDataService: AppDataServiceProtocol
+    @Dependency(\.appDataService) var appDataService
     private var cancellables = Set<AnyCancellable>()
-        
+    
     // 依存性注入を使用したイニシャライザ
-    init(appDataService: AppDataServiceProtocol) {
-        self.appDataService = appDataService
+    init() {
         // 変更通知を購読
-        appDataService.selectedQuestBoardPublisher
+        self.appDataService.selectedQuestBoardPublisher
             .receive(on: RunLoop.main)
             .assign(to: \.dailyQuestBoard, on: self) //　新しいデータをdailyQuestBoardに代入する
             .store(in: &cancellables)
