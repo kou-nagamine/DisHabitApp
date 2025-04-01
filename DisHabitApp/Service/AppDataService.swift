@@ -113,26 +113,6 @@ class AppDataService: AppDataServiceProtocol {
         
         // SwiftDataの初期化
         initializeModelContainer()
-        
-        // サンプルデータのロード
-        loadSavedSampleData()
-    }
-
-    private func loadSavedSampleData() {
-        let quest1 = activeQuestsSubject.value[0]
-        let quest2 = activeQuestsSubject.value[1]
-        
-        let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
-        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
-        
-        // モックのDailyQuestBoardを作成
-        let dailyQuestBoard = DailyQuestBoard(
-            id: UUID(),
-            date: Date(),
-            questSlots: [questSlot1, questSlot2]
-        )
-
-        todayQuestBoardSubject.send(dailyQuestBoard)
     }
 
     private func loadSampleData() {
@@ -192,10 +172,19 @@ class AppDataService: AppDataServiceProtocol {
             modelContext = container.mainContext
             modelContext?.autosaveEnabled = true
 
-            queryActiveQuests()
+            loadLocalData()
+            
         } catch {
             fatalError("Failed to create model container: \(error)")
         }
+    }
+    
+    private func loadLocalData() {
+        queryObjectives()
+        queryTasks()
+        queryActiveQuests()
+        queryHistoryQuestBoards()
+        queryTodayQuestBoard()
     }
 
     // ==== Publishers for single items for each list ====
