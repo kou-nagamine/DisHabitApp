@@ -1,5 +1,7 @@
-*.xcuserstate
 .DS_Store
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
 
 # Xcode
 #
