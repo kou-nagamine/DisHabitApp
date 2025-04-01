@@ -2,9 +2,18 @@ import Foundation
 import SwiftUI
 
 struct AcceptedQuestDetailsPage: View {
+    @ObservedObject var vm: AcceptedQuestDetailsViewModel
+    
     @State private var showAlert = false
     @Binding var path: [QuestBoardNavigation]
     @Environment(\.dismiss) var dismiss
+    
+    init(acceptedQuest: AcceptedQuest, path:  Binding<[QuestBoardNavigation]>) {
+        vm = .init(acceptedQuest: acceptedQuest)
+        self._path = .init(
+            projectedValue: path
+        )
+    }
     
     var body: some View {
         VStack(spacing: 0){
@@ -20,7 +29,7 @@ struct AcceptedQuestDetailsPage: View {
                 .font(.title)
                 .padding(.leading, 30)
                 .tint(.black)
-                Text("御上先生")
+                Text(vm.acceptedQuest.reward.text)
                     .font(.system(size: 40, weight: .bold))
                     .fontWeight(.bold)
                     .padding(.leading, 30)
@@ -115,5 +124,5 @@ struct AcceptedQuestDetailsPage: View {
 }
 
 #Preview {
-    ContentView(appDataService: AppDataService())
+    ContentView()
 }

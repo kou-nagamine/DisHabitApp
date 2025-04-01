@@ -34,5 +34,5 @@ struct AcceptedQuestCard: View {
 }
 
 #Preview {
-    ContentView(appDataService: AppDataService())
+    ContentView()
 }

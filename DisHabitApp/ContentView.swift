@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    var appDataService: AppDataServiceProtocol
-    
     ///Controls which tab is currently active in the TabBar
     @State private var activeTab: TabItem = .home
     
@@ -16,7 +14,7 @@ struct ContentView: View {
                 TabView(selection: $activeTab) {
                     Tab(value: TabItem.home) {
                         VStack {
-                            HomePage(appDataService:appDataService, showTabBar: $showTabBar)
+                            HomePage(showTabBar: $showTabBar)
                         }
                         .toolbarVisibility(.hidden, for: .tabBar)
                     }
@@ -29,7 +27,7 @@ struct ContentView: View {
             } else {
                 TabView(selection: $activeTab) {
                     VStack {
-                        HomePage(appDataService:appDataService, showTabBar: $showTabBar)
+                        HomePage(showTabBar: $showTabBar)
                         TabBar(activeTab: $activeTab)
                     }
                     .tag(TabItem.home)
@@ -49,5 +47,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(appDataService: AppDataService())
+    ContentView()
 }

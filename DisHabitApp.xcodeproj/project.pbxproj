@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A63EF0A52D9BF67F00926019 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = A63EF0A42D9BF67F00926019 /* Dependencies */; };
+		A63EF0A72D9BF67F00926019 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = A63EF0A62D9BF67F00926019 /* DependenciesMacros */; };
+		A63EF0AC2D9BF7E000926019 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = A63EF0AB2D9BF7E000926019 /* DependenciesTestSupport */; };
+		A63EF0AE2D9BF7E500926019 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = A63EF0AD2D9BF7E500926019 /* DependenciesTestSupport */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A6C2CCC12D4BDDE3007429E0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A63EF0A72D9BF67F00926019 /* DependenciesMacros in Frameworks */,
+				A63EF0A52D9BF67F00926019 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A63EF0AC2D9BF7E000926019 /* DependenciesTestSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,18 +76,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A63EF0AE2D9BF7E500926019 /* DependenciesTestSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A63EF0AA2D9BF7DF00926019 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A6C2CCA72D4BDDE2007429E0 = {
 			isa = PBXGroup;
 			children = (
 				A6C2CCB22D4BDDE2007429E0 /* DisHabitApp */,
 				A6C2CCC32D4BDDE3007429E0 /* DisHabitAppTests */,
 				A6C2CCCD2D4BDDE3007429E0 /* DisHabitAppUITests */,
+				A63EF0AA2D9BF7DF00926019 /* Frameworks */,
 				A6C2CCB12D4BDDE2007429E0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +131,8 @@
 			);
 			name = DisHabitApp;
 			packageProductDependencies = (
+				A63EF0A42D9BF67F00926019 /* Dependencies */,
+				A63EF0A62D9BF67F00926019 /* DependenciesMacros */,
 			);
 			productName = DisHabitApp;
 			productReference = A6C2CCB02D4BDDE2007429E0 /* DisHabitApp.app */;
@@ -135,6 +156,7 @@
 			);
 			name = DisHabitAppTests;
 			packageProductDependencies = (
+				A63EF0AB2D9BF7E000926019 /* DependenciesTestSupport */,
 			);
 			productName = DisHabitAppTests;
 			productReference = A6C2CCC02D4BDDE3007429E0 /* DisHabitAppTests.xctest */;
@@ -158,6 +180,7 @@
 			);
 			name = DisHabitAppUITests;
 			packageProductDependencies = (
+				A63EF0AD2D9BF7E500926019 /* DependenciesTestSupport */,
 			);
 			productName = DisHabitAppUITests;
 			productReference = A6C2CCCA2D4BDDE3007429E0 /* DisHabitAppUITests.xctest */;
@@ -195,6 +218,9 @@
 			);
 			mainGroup = A6C2CCA72D4BDDE2007429E0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A6C2CCB12D4BDDE2007429E0 /* Products */;
 			projectDirPath = "";
@@ -552,6 +578,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A63EF0A42D9BF67F00926019 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		A63EF0A62D9BF67F00926019 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
+		};
+		A63EF0AB2D9BF7E000926019 /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
+		};
+		A63EF0AD2D9BF7E500926019 /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A63EF0A32D9BF67F00926019 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A6C2CCA82D4BDDE2007429E0 /* Project object */;
 }

@@ -9,7 +9,7 @@ struct DisHabitAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(appDataService: appDataService)
+            ContentView()
         }
     }
 }

@@ -2,16 +2,14 @@ import Foundation
 import SwiftUI
 
 struct QuestBoardView: View {
-    @ObservedObject var vm: QuestBoardViewModel
+    @StateObject var vm: QuestBoardViewModel = QuestBoardViewModel()
     @Binding var showTabBar: Bool
     @Binding var path: [QuestBoardNavigation]
    
     init (
-        appDataService: AppDataServiceProtocol,
         showTabBar: Binding<Bool>,
         path: Binding<[QuestBoardNavigation]>
     ) {
-        self.vm = QuestBoardViewModel(appDataService: appDataService)
         self._showTabBar = showTabBar
         self._path = path
     }
@@ -47,14 +45,13 @@ struct QuestBoardView: View {
                                         withAnimation(.easeOut(duration: 0.3)) {
                                             showTabBar = false
                                         }
-                                        path.append(.acceptedQuestDetails)
+                                        path.append(.acceptedQuestDetails(acceptedQuest: acceptedQuest))
                                     }
                             }
                         } else {
                             StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                                 .onTapGesture {
                                     showTabBar = false
-                                    path.append(.acceptedQuestDetails)
                                 }
                         }
                     }
@@ -65,6 +62,6 @@ struct QuestBoardView: View {
 }
 
 #Preview {
-    ContentView(appDataService: AppDataService())
+    ContentView()
 }
 

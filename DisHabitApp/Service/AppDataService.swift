@@ -63,7 +63,6 @@ class AppDataService: AppDataServiceProtocol {
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { historyQuestBoardsSubject.eraseToAnyPublisher() }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { selectedQuestBoardSubject.eraseToAnyPublisher() }
 
-    @MainActor
     init () {
         // ==== 依存関係にあるデータの変更通知のWaterfallさせる ====
         // objectives -> tasks -> activeQuests -> selectedQuestBoard = todaySubjectBoard
@@ -164,13 +163,13 @@ class AppDataService: AppDataServiceProtocol {
         todayQuestBoardSubject.send(dailyQuestBoard)
     }
 
-    @MainActor
     private func initializeModelContainer() {
         do {
             let container = try ModelContainer(for: Quest.self, Task.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self, RedeemableReward.self)
             modelContainer = container
-            modelContext = container.mainContext
-            modelContext?.autosaveEnabled = true
+            let context = ModelContext(container)
+            context.autosaveEnabled = true
+            modelContext = context
 
             loadLocalData()
             
