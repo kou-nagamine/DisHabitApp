@@ -115,7 +115,7 @@ class AppDataService: AppDataServiceProtocol {
         initializeModelContainer()
     }
 
-    private func loadSampleData() {
+    private func createSampleData() {
        // モックの目標を作成
        let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
        let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
@@ -141,7 +141,7 @@ class AppDataService: AppDataServiceProtocol {
         
         // モックのQuestSlotを作成
         let questSlot1 = QuestSlot(id: UUID(), quest: quest1, acceptedQuest: nil)
-        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: nil)
+        let questSlot2 = QuestSlot(id: UUID(), quest: quest2, acceptedQuest: acceptedQuest2)
         
         // モックのDailyQuestBoardを作成
         let dailyQuestBoard = DailyQuestBoard(
@@ -185,6 +185,11 @@ class AppDataService: AppDataServiceProtocol {
         queryActiveQuests()
         queryHistoryQuestBoards()
         queryTodayQuestBoard()
+        if let todayQuestBoardSubjectValue = todayQuestBoardSubject.value {
+            self.selectedQuestBoardSubject.send(todayQuestBoardSubjectValue)
+        } else {
+            // First time to load app
+        }
     }
 
     // ==== Publishers for single items for each list ====
@@ -504,7 +509,7 @@ class AppDataService: AppDataServiceProtocol {
 
         do {
             if let todayBoard = try modelContext.fetch(fetchDescriptor).first {
-                selectedQuestBoardSubject.send(todayBoard)
+                todayQuestBoardSubject.send(todayBoard)
                 print("Found today's Quest Board.")
             } else {
                 // 当日のボードが存在しない場合、新しく作成する
@@ -512,7 +517,7 @@ class AppDataService: AppDataServiceProtocol {
                 let newBoard = createNewDailyQuestBoard(for: todayStart)
                 modelContext.insert(newBoard)
                 save()
-                selectedQuestBoardSubject.send(newBoard) // 新しいボードを送信
+                todayQuestBoardSubject.send(newBoard) // 新しいボードを送信
                 queryHistoryQuestBoards() // 履歴リストも更新
             }
         } catch {
