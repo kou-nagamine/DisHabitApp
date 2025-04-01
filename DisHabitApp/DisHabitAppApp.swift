@@ -1,4 +1,6 @@
 import SwiftUI
+import SwiftData
+import Foundation
 
 @main
 struct DisHabitAppApp: App {

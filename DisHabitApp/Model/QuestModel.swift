@@ -1,28 +1,29 @@
 import Foundation
+import SwiftData
 
 // 未受注のクエスト
+@Model
 class Quest: Identifiable {
     var id: UUID
-    var title: String
-    var reward: Reward
-    var tasks: [Task]
+    var activatedDayOfWeeks: [Int: Bool]
+    @Relationship var reward: Reward
+    @Relationship var tasks: [Task]
 
-    init(id: UUID, title: String, reward: Reward, tasks: [Task]) {
+    init(id: UUID = UUID(), activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [Task]) {
         self.id = id
-        self.title = title
+        self.activatedDayOfWeeks = activatedDayOfWeeks
         self.reward = reward
         self.tasks = tasks
     }
     
     func copyValues(from source: Quest) {
         self.id = source.id
-        self.title = source.title
         self.reward = source.reward
         self.tasks = source.tasks
     }
     
     func deepCopy() -> Quest {
-        return Quest(id: self.id, title: self.title, reward: self.reward, tasks: self.tasks)
+        return Quest(id: self.id, activatedDayOfWeeks: self.activatedDayOfWeeks, reward: self.reward, tasks: self.tasks)
     }
     
     // AcceptedQuestを生成するメソッド
@@ -32,7 +33,6 @@ class Quest: Identifiable {
         
         return AcceptedQuest(
             id: id,
-            title: title,
             reward: accetedReward,
             acceptedTasks: acceptedTasks
         )
@@ -40,14 +40,21 @@ class Quest: Identifiable {
 }
 
 // 受注済みクエスト
-struct AcceptedQuest: Identifiable {
+@Model
+class AcceptedQuest: Identifiable {
     var id: UUID
-    var title: String
-    var reward: RedeemableReward // 変更: RewardからRedeemableRewardに
-    var acceptedTasks: [AcceptedTask]
+    @Relationship var reward: RedeemableReward // 変更: RewardからRedeemableRewardに
+    @Relationship var acceptedTasks: [AcceptedTask]
     
     // クエストの完了報告が完了しているかどうかのboolean
     var isCompletionReported: Bool = false
+    
+    init(id: UUID = UUID(), reward: RedeemableReward, acceptedTasks: [AcceptedTask], isCompletionReported: Bool = false) {
+        self.id = id
+        self.reward = reward
+        self.acceptedTasks = acceptedTasks
+        self.isCompletionReported = isCompletionReported
+    }
     
     // 全てのタスクが完了しているかどうか
     var isAllTaskCompleted: Bool {
@@ -55,30 +62,47 @@ struct AcceptedQuest: Identifiable {
     }
     
     // ごほうびを受け取る
-    mutating func redeemReward() {
+    func redeemReward() {
         if isAllTaskCompleted && !reward.isRedeemed {
-            reward = reward.markAsRedeemed()
+            reward.markAsRedeemed()
         }
     }
     
     // ごほうびを受け取った新しいインスタンスを返す（イミュータブル版）
     func redeemingReward() -> AcceptedQuest {
-        var updated = self
+        let updated = AcceptedQuest(
+            id: self.id,
+            reward: self.reward, 
+            acceptedTasks: self.acceptedTasks,
+            isCompletionReported: self.isCompletionReported
+        )
         updated.redeemReward()
         return updated
     }
     
     func reportCompletion() -> AcceptedQuest {
-        var updated = self
-        updated.isCompletionReported = true
+        let updated = AcceptedQuest(
+            id: self.id,
+            reward: self.reward, 
+            acceptedTasks: self.acceptedTasks,
+            isCompletionReported: true
+        )
         return updated
     }
 }
+
 // QuestSlot定義
-struct QuestSlot: Identifiable {
+@Model
+class QuestSlot: Identifiable {
     var id: UUID
-    var quest: Quest
-    var acceptedQuest: AcceptedQuest?
+    @Relationship var quest: Quest
+    @Relationship var acceptedQuest: AcceptedQuest?
+    
+    init(id: UUID = UUID(), quest: Quest, acceptedQuest: AcceptedQuest? = nil) {
+        self.id = id
+        self.quest = quest
+        self.acceptedQuest = acceptedQuest
+    }
     
     // クエストを受注するメソッド
     func acceptQuest() -> QuestSlot {
@@ -89,41 +113,59 @@ struct QuestSlot: Identifiable {
         )
     }
     
-    static func acceptQuest() -> QuestSlot? {
+    static func createEmpty() -> QuestSlot? {
         return nil
     }
 }
 
 // 日次クエストリスト
-struct DailyQuestBoard: Identifiable {
+@Model
+class DailyQuestBoard: Identifiable {
     var id: UUID
     var date: Date
-    var questSlots: [QuestSlot]
+    @Relationship var questSlots: [QuestSlot]
+    
+    init(id: UUID = UUID(), date: Date, questSlots: [QuestSlot]) {
+        self.id = id
+        self.date = date
+        self.questSlots = questSlots
+    }
 }
 
 // ごほうびメニューアイテム
-struct Reward: Identifiable {
+@Model
+class Reward: Identifiable {
     var id: UUID
     var text: String
+    
+    init(id: UUID = UUID(), text: String) {
+        self.id = id
+        self.text = text
+    }
 }
 
 // 受注済みクエストに付与されるごほうびチケット
-struct RedeemableReward: Identifiable {
-    var originalReward: Reward
+@Model
+class RedeemableReward: Identifiable {
+    var id: UUID = UUID()
+    @Relationship var originalReward: Reward
     var isRedeemed: Bool = false
     // var grantDate: Date
     var redeemedDate: Date?
     
-    // 元のRewardのプロパティにアクセスするための転送プロパティ
-    var id: UUID { originalReward.id }
+    init(originalReward: Reward, isRedeemed: Bool = false, redeemedDate: Date? = nil) {
+        self.originalReward = originalReward
+        self.isRedeemed = isRedeemed
+        self.redeemedDate = redeemedDate
+    }
+    
+    // 元のRewardのプロパティにアクセスするためのメソッド
     var text: String { originalReward.text }
     
     // ごほうびを使用済みとしてマークする
-    func markAsRedeemed() -> RedeemableReward {
-        var updated = self
-        updated.isRedeemed = true
-        updated.redeemedDate = Date()
-        return updated
+    func markAsRedeemed() {
+        self.isRedeemed = true
+        self.redeemedDate = Date()
     }
     
     // 有効期限を確認（オプション）
