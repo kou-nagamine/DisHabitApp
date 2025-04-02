@@ -228,31 +228,19 @@ class AppDataService: AppDataServiceProtocol {
             .eraseToAnyPublisher()
     }
 
-    // ==== Public methods ====
+    // MARK: ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
         print("service.acceptQuest")
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
             return questSlot.acceptQuest()
         }
     }
 
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
-
+            guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot }
             if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
-                let task = acceptedQuest.acceptedTasks[index]
-                acceptedQuest.acceptedTasks[index] = task.isCompleted ?
-                    AcceptedTask(originalTask: task.originalTask) : // 未完了に戻す
-                    task.markAsCompleted() // 完了にする
-
-                return QuestSlot(
-                    id: questSlot.id,
-                    quest: questSlot.quest,
-                    acceptedQuest: acceptedQuest
-                )
+                acceptedQuest.acceptedTasks[index].toggleValue()
             }
             return questSlot
         }
@@ -260,41 +248,29 @@ class AppDataService: AppDataServiceProtocol {
 
     func reportQuestCompletion(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
             guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot}
 
-            if !acceptedQuest.isAllTaskCompleted {return questSlot}
+            if !acceptedQuest.isAllTaskCompleted {
+                return questSlot
+            }
 
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: acceptedQuest.reportCompletion()
-            )
+            return questSlot
         }
     }
 
     func redeemTicket(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
             guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
 
             acceptedQuest = acceptedQuest.redeemingReward()
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: acceptedQuest
-            )
+            return questSlot
         }
     }
 
     func discardAcceptedQuest(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: nil
-            )
+            questSlot.acceptedQuest = nil
+            return questSlot
         }
     }
 
