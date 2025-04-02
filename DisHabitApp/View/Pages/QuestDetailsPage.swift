@@ -66,7 +66,21 @@ struct QuestDetailsPage: View {
                 }
                 if isAccepted {
                     if !acceptedQuest!.isAllTaskCompleted {
-                        // TODO: 諦めるボタン
+                        Button {
+                            vm.discardAcceptedQuest()
+                        } label: {
+                            Text("諦める")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .foregroundStyle(.white)
+                                .background(.red)
+                                .padding(.horizontal, 30)
+                                .padding(.bottom, 25)
+                                .shadow(radius: 5, x: 2, y: 2)
+                        }
                     } else {
                         
                         Button {
