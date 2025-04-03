@@ -4,7 +4,8 @@ import SwiftUI
 struct QuestDetailsPage: View {
     @ObservedObject var vm: QuestDetailsViewModel
     
-    @State private var showAlert = false
+    @State private var showCompletionAlert = false
+    @State private var showDiscardAlert = false
     @Binding var path: [QuestBoardNavigation]
     @Environment(\.dismiss) var dismiss
     
@@ -88,7 +89,7 @@ struct QuestDetailsPage: View {
                 if isAccepted {
                     if !acceptedQuest!.isAllTaskCompleted {
                         Button {
-                            vm.discardAcceptedQuest()
+                            showDiscardAlert.toggle()
                         } label: {
                             Text("諦める")
                                 .font(.title3)
@@ -102,11 +103,49 @@ struct QuestDetailsPage: View {
                                 .padding(.bottom, 25)
                                 .shadow(radius: 5, x: 2, y: 2)
                         }
+                        .alert(isPresented: $showDiscardAlert) {
+                            /// alertのdialogの見た目
+                            VStack(spacing: 0) {
+                                Text("本当に諦めますか？")
+                                    
+                                VStack(spacing: 15) {
+                                    Button {
+                                        vm.discardAcceptedQuest()
+                                        showDiscardAlert.toggle()
+                                    } label: {
+                                        Text("諦める")
+                                            .font(.system(size: 23, weight: .bold))
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 50)
+                                            .background(.red.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                            .padding(.horizontal, 35)
+                                            .foregroundColor(.black)
+                                    }
+                                    Button {
+                                        showDiscardAlert.toggle()
+                                    } label: {
+                                        Text("もう少し頑張る")
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 50)
+                                            .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                            .padding(.horizontal, 35)
+                                            .foregroundColor(.black)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(.white, in: RoundedRectangle(cornerRadius: 45))
+                            .padding(.horizontal, 35)
+                            .padding(.vertical, 170)
+                        } background: {
+                            Rectangle()
+                                .fill(.primary.opacity(0.35))
+                        }
                     } else {
                         
                         Button {
                             vm.reportQuestCompletion()
-                            showAlert.toggle()
+                            showCompletionAlert.toggle()
                         } label: {
                             Text("完了")
                                 .font(.title3)
@@ -119,20 +158,20 @@ struct QuestDetailsPage: View {
                                 .padding(.bottom, 25)
                                 .shadow(radius: 5, x: 2, y: 2)
                         }
-                        .alert(isPresented: $showAlert) {
+                        .alert(isPresented: $showCompletionAlert) {
                             /// alertのdialogの見た目
                             VStack(spacing: 0) {
                                 VStack(spacing: 8) {
                                     Circle()
                                         .frame(width: 150, height: 150)
-                                    Text("御上先生")
+                                    Text(acceptedQuest!.reward.text)
                                         .font(.system(size: 35, weight: .bold))
                                         .padding(.bottom, 40)
                                 }
                                 VStack(spacing: 15) {
                                     Button {
                                         vm.redeemTicket()
-                                        showAlert.toggle()
+                                        showCompletionAlert.toggle()
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             path.removeLast()
                                         }
@@ -146,7 +185,7 @@ struct QuestDetailsPage: View {
                                             .foregroundColor(.black)
                                     }
                                     Button {
-                                        showAlert.toggle()
+                                        showCompletionAlert.toggle()
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             path.removeLast()
                                         }
