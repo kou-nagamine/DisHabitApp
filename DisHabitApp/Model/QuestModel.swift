@@ -105,9 +105,8 @@ class QuestSlot: Identifiable {
     }
     
     // クエストを受注するメソッド
-    func acceptQuest() -> QuestSlot {
+    func acceptQuest() {
         self.acceptedQuest = quest.accept()
-        return self
     }
     
     static func createEmpty() -> QuestSlot? {

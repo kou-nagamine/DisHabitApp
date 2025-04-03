@@ -232,45 +232,42 @@ class AppDataService: AppDataServiceProtocol {
     func acceptQuest(questSlotId: UUID) {
         print("service.acceptQuest")
         updateTodayQuestBoard(questSlotId) { questSlot in
-            return questSlot.acceptQuest()
+            questSlot.acceptQuest()
         }
     }
 
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot }
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
             if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
                 acceptedQuest.acceptedTasks[index].toggleValue()
             }
-            return questSlot
         }
     }
 
     func reportQuestCompletion(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot}
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
 
             if !acceptedQuest.isAllTaskCompleted {
-                return questSlot
+                return
             }
 
-            return questSlot
+            acceptedQuest.isCompletionReported = true
         }
     }
 
     func redeemTicket(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
+            guard var acceptedQuest = questSlot.acceptedQuest else { return }
 
-            acceptedQuest = acceptedQuest.redeemingReward()
-            return questSlot
+            acceptedQuest.redeemReward()
         }
     }
 
     func discardAcceptedQuest(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
             questSlot.acceptedQuest = nil
-            return questSlot
         }
     }
 
@@ -542,14 +539,21 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
-    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
-        var questBoard = todayQuestBoardSubject.value
+    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> ()) {
+        let questBoard = todayQuestBoardSubject.value
         if let todayQuestBoard = questBoard {
             if let index = todayQuestBoard.questSlots.firstIndex(where: { $0.id == questSlotId }) {
-                todayQuestBoard.questSlots[index] = updateHandler(todayQuestBoard.questSlots[index])
+                updateHandler(todayQuestBoard.questSlots[index])
+//                sortQuestBoard(questBoard: todayQuestBoard)
                 todayQuestBoardSubject.send(todayQuestBoard)
                 save()
             }
+        }
+    }
+    
+    private func sortQuestBoard(questBoard: DailyQuestBoard) {
+        questBoard.questSlots.sort { (lhs, rhs) -> Bool in
+            lhs.quest.id < rhs.quest.id
         }
     }
     
