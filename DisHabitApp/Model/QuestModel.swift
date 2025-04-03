@@ -60,6 +60,11 @@ class AcceptedQuest: Identifiable {
     var isAllTaskCompleted: Bool {
         return acceptedTasks.allSatisfy { $0.isCompleted }
     }
+
+    // タスク完了割合
+    var taskCompletionRate: Double {
+        return Double(acceptedTasks.filter { $0.isCompleted }.count) / Double(acceptedTasks.count)
+    }
     
     // ごほうびを受け取る
     func redeemReward() {

@@ -39,7 +39,7 @@ struct QuestDetailsPage: View {
                     .padding(.leading, 30)
                     .padding(.bottom, 45)
                 if isAccepted {
-                    PieChart(progress: isAccepted ? 0.5 : 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2) // TODO: modelに計算式を実装
+                    PieChart(progress: acceptedQuest!.taskCompletionRate, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2)
                         .frame(maxWidth: .infinity) // Centerよせ
                         .padding(.bottom, 70)
                 } else {
