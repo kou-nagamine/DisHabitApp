@@ -16,6 +16,8 @@ protocol AppDataServiceProtocol {
     func reportQuestCompletion(questSlotId: UUID)
     func redeemTicket(questSlotId: UUID)
     func discardAcceptedQuest(questSlotId: UUID)
+    
+    func debug_ResetAcceptedQuests()
 
     // クエストの作成・編集関連
     func queryActiveQuests()
@@ -259,7 +261,7 @@ class AppDataService: AppDataServiceProtocol {
 
     func redeemTicket(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            guard var acceptedQuest = questSlot.acceptedQuest else { return }
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
 
             acceptedQuest.redeemReward()
         }
@@ -268,6 +270,15 @@ class AppDataService: AppDataServiceProtocol {
     func discardAcceptedQuest(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
             questSlot.acceptedQuest = nil
+        }
+    }
+    
+    func debug_ResetAcceptedQuests() {
+        guard let questSlots = todayQuestBoardSubject.value?.questSlots else { return }
+        for questSlot in questSlots {
+            updateTodayQuestBoard(questSlot.id) { questSlot in
+                questSlot.acceptedQuest = nil
+            }
         }
     }
 

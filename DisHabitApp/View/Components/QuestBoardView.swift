@@ -64,6 +64,13 @@ struct QuestBoardView: View {
                                 }
                         }
                     }
+                    #if DEBUG
+                    Button {
+                        vm.debug_ResetAcceptedQuests()
+                    } label: {
+                        Text("DEBUG:受注リセット")
+                    }
+                    #endif
                 }
             }
         }
