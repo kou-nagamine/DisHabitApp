@@ -105,6 +105,7 @@ struct QuestDetailsPage: View {
                     } else {
                         
                         Button {
+                            vm.reportQuestCompletion()
                             showAlert.toggle()
                         } label: {
                             Text("完了")
@@ -130,6 +131,7 @@ struct QuestDetailsPage: View {
                                 }
                                 VStack(spacing: 15) {
                                     Button {
+                                        vm.redeemTicket()
                                         showAlert.toggle()
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             path.removeLast()
