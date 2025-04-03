@@ -55,7 +55,7 @@ struct QuestDetailsPage: View {
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
-                                
+                                .shadow(color: .white ,radius: 10, x: 0, y: 0)
                         }
                     }
                     .frame(maxWidth: .infinity) // Centerよせ

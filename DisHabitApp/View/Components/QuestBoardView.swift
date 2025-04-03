@@ -51,7 +51,10 @@ struct QuestBoardView: View {
                         } else {
                             StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                                 .onTapGesture {
-                                    showTabBar = false
+                                    withAnimation(.easeOut(duration: 0.3)) {
+                                        showTabBar = false
+                                    }
+                                    path.append(.questDetails(questSlot: questSlot))
                                 }
                         }
                     }
