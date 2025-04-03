@@ -29,4 +29,8 @@ class QuestBoardViewModel: ObservableObject {
         print("vm.acceptQuest")
         appDataService.acceptQuest(questSlotId: questSlotId)
     }
+    
+    func debug_ResetAcceptedQuests() {
+        appDataService.debug_ResetAcceptedQuests()
+    }
 }

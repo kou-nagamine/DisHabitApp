@@ -39,6 +39,12 @@ struct QuestBoardView: View {
                         if let acceptedQuest = questSlot.acceptedQuest {
                             if acceptedQuest.isCompletionReported {
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
+                                    .onTapGesture {
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            showTabBar = false
+                                        }
+                                        path.append(.questDetails(questSlot: questSlot))
+                                    }
                             } else {
                                 AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
                                     .onTapGesture {
@@ -51,10 +57,20 @@ struct QuestBoardView: View {
                         } else {
                             StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
                                 .onTapGesture {
-                                    showTabBar = false
+                                    withAnimation(.easeOut(duration: 0.3)) {
+                                        showTabBar = false
+                                    }
+                                    path.append(.questDetails(questSlot: questSlot))
                                 }
                         }
                     }
+                    #if DEBUG
+                    Button {
+                        vm.debug_ResetAcceptedQuests()
+                    } label: {
+                        Text("DEBUG:受注リセット")
+                    }
+                    #endif
                 }
             }
         }

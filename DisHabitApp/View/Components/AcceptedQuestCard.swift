@@ -18,7 +18,7 @@ struct AcceptedQuestCard: View {
                     }
                 }
                 Spacer()
-                PieChart(progress: 0.5, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2)
+                PieChart(progress: acceptedQuest.taskCompletionRate, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2)
             }
             .padding(.horizontal, 25)
             .padding(.vertical, 25)

@@ -66,4 +66,8 @@ class AcceptedTask: Identifiable {
         updated.isCompleted = true
         return updated
     }
+    
+    func toggleValue() {
+        isCompleted = !isCompleted
+    }
 }

@@ -16,6 +16,8 @@ protocol AppDataServiceProtocol {
     func reportQuestCompletion(questSlotId: UUID)
     func redeemTicket(questSlotId: UUID)
     func discardAcceptedQuest(questSlotId: UUID)
+    
+    func debug_ResetAcceptedQuests()
 
     // クエストの作成・編集関連
     func queryActiveQuests()
@@ -228,73 +230,55 @@ class AppDataService: AppDataServiceProtocol {
             .eraseToAnyPublisher()
     }
 
-    // ==== Public methods ====
+    // MARK: ==== Public methods ====
     func acceptQuest(questSlotId: UUID) {
         print("service.acceptQuest")
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            return questSlot.acceptQuest()
+            questSlot.acceptQuest()
         }
     }
 
     func toggleTaskCompletion(questSlotId: UUID, taskId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
-
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
             if let index = acceptedQuest.acceptedTasks.firstIndex(where: { $0.id == taskId }) {
-                let task = acceptedQuest.acceptedTasks[index]
-                acceptedQuest.acceptedTasks[index] = task.isCompleted ?
-                    AcceptedTask(originalTask: task.originalTask) : // 未完了に戻す
-                    task.markAsCompleted() // 完了にする
-
-                return QuestSlot(
-                    id: questSlot.id,
-                    quest: questSlot.quest,
-                    acceptedQuest: acceptedQuest
-                )
+                acceptedQuest.acceptedTasks[index].toggleValue()
             }
-            return questSlot
         }
     }
 
     func reportQuestCompletion(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            guard let acceptedQuest = questSlot.acceptedQuest else { return questSlot}
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
 
-            if !acceptedQuest.isAllTaskCompleted {return questSlot}
+            if !acceptedQuest.isAllTaskCompleted {
+                return
+            }
 
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: acceptedQuest.reportCompletion()
-            )
+            acceptedQuest.isCompletionReported = true
         }
     }
 
     func redeemTicket(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            guard var acceptedQuest = questSlot.acceptedQuest else { return questSlot }
+            guard let acceptedQuest = questSlot.acceptedQuest else { return }
 
-            acceptedQuest = acceptedQuest.redeemingReward()
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: acceptedQuest
-            )
+            acceptedQuest.redeemReward()
         }
     }
 
     func discardAcceptedQuest(questSlotId: UUID) {
         updateTodayQuestBoard(questSlotId) { questSlot in
-            // TODO: SwiftDataで永続化する必要がある
-            return QuestSlot(
-                id: questSlot.id,
-                quest: questSlot.quest,
-                acceptedQuest: nil
-            )
+            questSlot.acceptedQuest = nil
+        }
+    }
+    
+    func debug_ResetAcceptedQuests() {
+        guard let questSlots = todayQuestBoardSubject.value?.questSlots else { return }
+        for questSlot in questSlots {
+            updateTodayQuestBoard(questSlot.id) { questSlot in
+                questSlot.acceptedQuest = nil
+            }
         }
     }
 
@@ -566,14 +550,21 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
 
-    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> QuestSlot) {
-        var questBoard = todayQuestBoardSubject.value
+    private func updateTodayQuestBoard(_ questSlotId: UUID, updateHandler: (QuestSlot) -> ()) {
+        let questBoard = todayQuestBoardSubject.value
         if let todayQuestBoard = questBoard {
             if let index = todayQuestBoard.questSlots.firstIndex(where: { $0.id == questSlotId }) {
-                todayQuestBoard.questSlots[index] = updateHandler(todayQuestBoard.questSlots[index])
+                updateHandler(todayQuestBoard.questSlots[index])
+//                sortQuestBoard(questBoard: todayQuestBoard)
                 todayQuestBoardSubject.send(todayQuestBoard)
                 save()
             }
+        }
+    }
+    
+    private func sortQuestBoard(questBoard: DailyQuestBoard) {
+        questBoard.questSlots.sort { (lhs, rhs) -> Bool in
+            lhs.quest.id < rhs.quest.id
         }
     }
     

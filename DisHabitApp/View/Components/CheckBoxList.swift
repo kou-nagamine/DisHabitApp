@@ -12,22 +12,29 @@ struct CheckBoxList: View {
     var body: some View {
         VStack (spacing: 20){
             HStack(alignment: .center, spacing: 8) {
-                // checkbox
-                RoundedRectangle(cornerRadius: 4)
-                    .foregroundStyle(isSelected ? .green : .white)
-                    .frame(width: 20, height: 20)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(isSelected ? .clear : .gray, lineWidth: 1)
-                    }
-                    .overlay {
-                        if isSelected {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(.white)
-                                .font(.system(size: 12, weight: .bold))
+                /// checkbox
+                if isLabelOnly {
+                    Spacer()
+                        .frame(width: 20, height: 20)
+//                        .padding(.leading, 20) // あえてCheckBoxと異なるpaddingにする方が動きがあってUIがいい感じ？
+                } else {
+                    RoundedRectangle(cornerRadius: 4)
+                        .foregroundStyle(isSelected ? .green : .white)
+                        .frame(width: 20, height: 20)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(isSelected ? .clear : .gray, lineWidth: 1)
                         }
-                    }
-                    .padding(.leading, 20)
+                        .overlay {
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 12, weight: .bold))
+                            }
+                        }
+                        .padding(.leading, 20)
+                }
+
                 // text
                 Text(taskName)
                     .font(.system(size: 20, weight: .medium))
