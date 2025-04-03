@@ -13,7 +13,7 @@ class QuestDetailsViewModel: ObservableObject {
         self.appDataService.selectedQuestBoardPublisher
             .receive(on: RunLoop.main)
             .map ({
-                $0.questSlots.first(where: { $0.id == questSlot.id })!
+                $0.questSlots.first(where: { $0.id == questSlot.id }) ?? questSlot
             })
             .assign(to: \.questSlot, on: self)
             .store(in: &cancellables)

@@ -38,9 +38,30 @@ struct QuestDetailsPage: View {
                     .fontWeight(.bold)
                     .padding(.leading, 30)
                     .padding(.bottom, 45)
-                PieChart(progress: isAccepted ? 0.5 : 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2) // TODO: modelに計算式を実装
+                if isAccepted {
+                    PieChart(progress: isAccepted ? 0.5 : 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2) // TODO: modelに計算式を実装
+                        .frame(maxWidth: .infinity) // Centerよせ
+                        .padding(.bottom, 70)
+                } else {
+                    Button(action: {
+                        vm.acceptQuest()
+                    }) {
+                        ZStack {
+                            Circle()
+                                .stroke(Color.accentColor, lineWidth: 8)
+                                .background(Color.blue.opacity(0.8), in: Circle())
+                                .frame(width: 180, height: 180)
+                            Text("開始")
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                                
+                        }
+                    }
                     .frame(maxWidth: .infinity) // Centerよせ
                     .padding(.bottom, 70)
+                }
+
             }
             VStack(alignment: .leading, spacing: 0) {
                 Text("やることリスト")
@@ -157,5 +178,6 @@ struct QuestDetailsPage: View {
 }
 
 #Preview {
-    ContentView()
+    @State var binding: [QuestBoardNavigation] = []
+    QuestDetailsPage(questSlot: QuestSlot(id: UUID(), quest: Quest(activatedDayOfWeeks: [:], reward: Reward(id: UUID(), text: "ご褒美内容"), tasks: [Task(id: UUID(), text: "タスク1")]), acceptedQuest: nil), path: $binding)
 }
