@@ -28,8 +28,8 @@ struct QuestBoardView: View {
             Text("楽しいこと習慣")
                 .font(.title)
                 .fontWeight(.bold)
-                .padding(.leading, 30)
                 .padding(.top, 18)
+                .padding(.leading, 20)
                 .padding(.bottom, 18)
             // クエストリスト
             ScrollView(.vertical) {
@@ -73,6 +73,7 @@ struct QuestBoardView: View {
                     #endif
                 }
             }
+            .frame(maxWidth: .infinity)
         }
     }
 }

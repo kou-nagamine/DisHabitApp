@@ -114,6 +114,7 @@ class AppDataService: AppDataServiceProtocol {
         
         // SwiftDataの初期化
         initializeModelContainer()
+        //createSampleData()
     }
 
     private func createSampleData() {

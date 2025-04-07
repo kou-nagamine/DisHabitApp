@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 import Foundation
-import DI
 
 @main
 struct DisHabitAppApp: App {
