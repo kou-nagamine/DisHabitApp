@@ -19,7 +19,7 @@ struct TargetPage: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         ForEach(vm.objectives) { objective in
-                            NavigationLink(destination: TaskPage()) {
+                            NavigationLink(destination: TaskPage(objective: objective)) {
                                 Text(objective.text)
                                     .font(.title2)
                                     .frame(maxWidth: .infinity)
