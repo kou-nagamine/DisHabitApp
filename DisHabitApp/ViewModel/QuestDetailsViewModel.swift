@@ -20,24 +20,24 @@ class QuestDetailsViewModel: ObservableObject {
     }
     
     // MARK: standbyQuest
-    func acceptQuest() {
-        appDataService.acceptQuest(questSlotId: questSlot.id)
+    func acceptQuest() async {
+        await appDataService.acceptQuest(questSlotId: questSlot.id)
     }
     
     // MARK: acceptedQuest
-    func toggleTaskCompleted(acceptedTask: AcceptedTask) {
-        appDataService.toggleTaskCompletion(questSlotId: questSlot.id, taskId: acceptedTask.id)
+    func toggleTaskCompleted(acceptedTask: AcceptedTask) async {
+        await appDataService.toggleTaskCompletion(questSlotId: questSlot.id, taskId: acceptedTask.id)
     }
     
-    func discardAcceptedQuest() {
-        appDataService.discardAcceptedQuest(questSlotId: questSlot.id)
+    func discardAcceptedQuest() async {
+        await appDataService.discardAcceptedQuest(questSlotId: questSlot.id)
     }
     
-    func reportQuestCompletion() {
-        appDataService.reportQuestCompletion(questSlotId: questSlot.id)
+    func reportQuestCompletion() async {
+        await appDataService.reportQuestCompletion(questSlotId: questSlot.id)
     }
     
-    func redeemTicket() {
-        appDataService.redeemTicket(questSlotId: questSlot.id)
+    func redeemTicket() async {
+        await appDataService.redeemTicket(questSlotId: questSlot.id)
     }
 }

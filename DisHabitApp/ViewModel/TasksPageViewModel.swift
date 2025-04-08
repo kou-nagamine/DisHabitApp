@@ -29,6 +29,8 @@ class TasksPageViewModel: ObservableObject {
             .assign(to: \.tasks, on: self)
             .store(in: &cancellables)
 
-        appDataService.queryTasks()
+        _Concurrency.Task {
+            await appDataService.queryTasks()
+        }
     }
 }

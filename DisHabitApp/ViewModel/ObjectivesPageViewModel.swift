@@ -14,6 +14,8 @@ class ObjectivesPageViewModel: ObservableObject {
             .assign(to: \.objectives, on: self)
             .store(in: &cancellables)
 
-        appDataService.queryObjectives()
+        _Concurrency.Task {
+            await appDataService.queryObjectives()
+        }
     }
 }

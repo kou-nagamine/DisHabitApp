@@ -66,10 +66,20 @@ struct QuestBoardView: View {
                     }
                     #if DEBUG
                     Button {
-                        vm.debug_ResetAcceptedQuests()
+                        _Concurrency.Task {
+                            await vm.debug_ResetAcceptedQuests()
+                        }
                     } label: {
                         Text("DEBUG:受注リセット")
                     }
+                    Button {
+                        _Concurrency.Task {
+                            await vm.debug_ReloadTodayQuestBoard()
+                        }
+                    } label: {
+                        Text("DEBUG:todayQuestBoard再作成")
+                    }
+
                     #endif
                 }
             }

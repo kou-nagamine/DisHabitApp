@@ -45,7 +45,9 @@ struct QuestDetailsPage: View {
                         .padding(.bottom, 70)
                 } else {
                     Button(action: {
-                        vm.acceptQuest()
+                        _Concurrency.Task {
+                            await vm.acceptQuest()
+                        }
                     }) {
                         ZStack {
                             Circle()
@@ -76,7 +78,11 @@ struct QuestDetailsPage: View {
                     VStack(spacing: 20) {
                         if isAccepted {
                             ForEach(acceptedQuest!.acceptedTasks) { acceptedTask in
-                                CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: false, isLabelOnly: false, toggleAction: { vm.toggleTaskCompleted(acceptedTask: acceptedTask) })
+                                CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: false, isLabelOnly: false, toggleAction: {
+                                    _Concurrency.Task {
+                                        await vm.toggleTaskCompleted(acceptedTask: acceptedTask)
+                                    }
+                                })
                                 // TODO: isReadonlyの実装/過去日の場合のflagを上の階層から持ってくる
                             }
                         } else {
@@ -110,8 +116,10 @@ struct QuestDetailsPage: View {
                                     
                                 VStack(spacing: 15) {
                                     Button {
-                                        vm.discardAcceptedQuest()
-                                        showDiscardAlert.toggle()
+                                        _Concurrency.Task {
+                                            await vm.discardAcceptedQuest()
+                                            showDiscardAlert.toggle()
+                                        }
                                     } label: {
                                         Text("諦める")
                                             .font(.system(size: 23, weight: .bold))
@@ -144,8 +152,10 @@ struct QuestDetailsPage: View {
                     } else {
                         
                         Button {
-                            vm.reportQuestCompletion()
-                            showCompletionAlert.toggle()
+                            _Concurrency.Task {
+                                await vm.reportQuestCompletion()
+                                showCompletionAlert.toggle()
+                            }
                         } label: {
                             Text("完了")
                                 .font(.title3)
@@ -170,11 +180,14 @@ struct QuestDetailsPage: View {
                                 }
                                 VStack(spacing: 15) {
                                     Button {
-                                        vm.redeemTicket()
-                                        showCompletionAlert.toggle()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            path.removeLast()
+                                        _Concurrency.Task {
+                                            await vm.redeemTicket()
+                                            showCompletionAlert.toggle()
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                path.removeLast()
+                                            }
                                         }
+
                                     } label: {
                                         Text("今すぐ遊ぶ")
                                             .font(.system(size: 23, weight: .bold))

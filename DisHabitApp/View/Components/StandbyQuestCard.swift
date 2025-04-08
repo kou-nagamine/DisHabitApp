@@ -36,7 +36,9 @@ struct StandbyQuestCard: View {
                 Spacer()
                 Button(action: {
                     // ボタン固有の処理
-                    vm.acceptQuest(questSlotId: questSlotId)
+                    _Concurrency.Task {
+                        await vm.acceptQuest(questSlotId: questSlotId)
+                    }
                 }) {
                     Image(systemName: "play.circle")
                         .resizable()

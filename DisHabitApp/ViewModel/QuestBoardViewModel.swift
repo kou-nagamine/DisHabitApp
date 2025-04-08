@@ -25,12 +25,16 @@ class QuestBoardViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func acceptQuest(questSlotId: UUID) {
+    func acceptQuest(questSlotId: UUID) async {
         print("vm.acceptQuest")
-        appDataService.acceptQuest(questSlotId: questSlotId)
+        await appDataService.acceptQuest(questSlotId: questSlotId)
     }
     
-    func debug_ResetAcceptedQuests() {
-        appDataService.debug_ResetAcceptedQuests()
+    func debug_ResetAcceptedQuests() async {
+        await appDataService.debug_ResetAcceptedQuests()
+    }
+    
+    func debug_ReloadTodayQuestBoard() async {
+        await appDataService.debug_ReloadTodayQuestBoard()
     }
 }
