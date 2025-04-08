@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TargetPage: View {
+    @StateObject var vm: ObjectivesPageViewModel = .init()
+    
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 30) {
@@ -16,19 +18,14 @@ struct TargetPage: View {
                     .font(.largeTitle)
                 ScrollView {
                     VStack(spacing: 20) {
-                        NavigationLink(destination: TaskPage()) {
-                            Text("基本情報試験合格")
-                                .font(.title2)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 70)
-                                .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
-                        }
-                        NavigationLink(destination: TaskPage()) {
-                            Text("TOEIC700点")
-                                .font(.title2)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 70)
-                                .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
+                        ForEach(vm.objectives) { objective in
+                            NavigationLink(destination: TaskPage(objective: objective)) {
+                                Text(objective.text)
+                                    .font(.title2)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 70)
+                                    .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
+                            }
                         }
                         Text("＋")
                             .font(.title)
