@@ -14,18 +14,18 @@ struct TicketCard: View {
     
     var body: some View {
         if acceptedQuest.reward.isRedeemed {
-            Text("使用済みチケット")
+            AcceptedTicketCard()
         } else {
             Button(action: {
                 //redeem
             }, label: {
-                Text("チケットを使う")
+                StandByTicketCard()
             })
         }
     }
 }
 
-struct AcceptedTicket: View {
+struct AcceptedTicketCard: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -34,7 +34,15 @@ struct AcceptedTicket: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 110)
-            .border(.red)
+            .background(.white)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 15,
+                    bottomLeadingRadius: 15,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 0
+                )
+            )
             HStack(spacing: 0) {
                 VStack(spacing: 5) {
                     Text("期日")
@@ -44,15 +52,85 @@ struct AcceptedTicket: View {
                 }
             }
             .frame(width: 100, height: 110)
-            .border(.red)
+            .background(.gray.gradient)
+            /// border
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .strokeBorder(
+                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
+                    )
+                    .foregroundColor(.black)
+                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
+            }
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 15,
+                    topTrailingRadius: 15
+                )
+            )
         }
         .frame(maxWidth: .infinity)
         .frame(height: 110)
-        .background(Color.gray, in: RoundedRectangle(cornerRadius: 15))
         .padding(.horizontal, 25)
     }
 }
 
+struct StandByTicketCard: View {
+    var body: some View {
+        HStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Text("御上先生")
+                    .font(.title)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
+            .background(.white)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 15,
+                    bottomLeadingRadius: 15,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 0
+                )
+            )
+            HStack(spacing: 0) {
+                VStack(spacing: 5) {
+                    Text("期日")
+                        .font(.callout)
+                    Text("12/31")
+                        .font(.title3)
+                }
+            }
+            .frame(width: 100, height: 110)
+            .background(.white)
+            /// border
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .strokeBorder(
+                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
+                    )
+                    .foregroundColor(.black)
+                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
+            }
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 15,
+                    topTrailingRadius: 15
+                )
+            )
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 110)
+        .padding(.horizontal, 25)
+    }
+}
+
+
 #Preview {
-    AcceptedTicket()
+    AcceptedTicketCard()
+        .background(.gray.gradient.opacity(0.2))
 }
