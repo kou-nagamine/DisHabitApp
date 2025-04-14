@@ -34,7 +34,7 @@ struct QuestBoardView: View {
             // クエストリスト
             ScrollView(.vertical) {
                 Spacer() // 要検討
-                VStack(spacing: 18) {
+                VStack(spacing: 25) {
                     ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
                         if let acceptedQuest = questSlot.acceptedQuest {
                             if acceptedQuest.isCompletionReported {
@@ -81,9 +81,16 @@ struct QuestBoardView: View {
                     }
 
                     #endif
+                    /// Spacer
+                    VStack {
+                        Text("")
+                    }
+                    .frame(height: 100)
                 }
             }
+            //.padding(.bottom, 100)
             .frame(maxWidth: .infinity)
+            
         }
     }
 }
