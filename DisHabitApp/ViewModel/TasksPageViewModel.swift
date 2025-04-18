@@ -4,7 +4,7 @@ import Dependencies
 
 class TasksPageViewModel: ObservableObject {
     @Published var selectedObjective: Objective
-    @Published var tasks: [Task] = []
+    @Published var tasks: [StandbyTask] = []
 
     @Dependency(\.appDataService) var appDataService
     private var cancellables = Set<AnyCancellable>()

@@ -5,7 +5,7 @@ import Dependencies
 
 protocol AppDataServiceProtocol {
     var activeQuestsPubisher: AnyPublisher<[Quest], Never> { get }
-    var tasksPubisher: AnyPublisher<[Task], Never> { get }
+    var tasksPubisher: AnyPublisher<[StandbyTask], Never> { get }
     var objectivesPubisher: AnyPublisher<[Objective], Never> { get }
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { get }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { get }
@@ -26,8 +26,8 @@ protocol AppDataServiceProtocol {
 
     // タスクの作成・編集関連
     func queryTasks() async
-    func createTask(newTask: Task) async
-    func editTask(taskId: UUID, newTask: Task) async
+    func createTask(newTask: StandbyTask) async
+    func editTask(taskId: UUID, newTask: StandbyTask) async
     func deleteTask(taskId: UUID) async
 
     // 目標の作成・編集関連
@@ -50,7 +50,7 @@ class AppDataService: AppDataServiceProtocol {
     private var cancellables = Set<AnyCancellable>()
     
     private let activeQuestsSubject = CurrentValueSubject<[Quest], Never>([])
-    private let tasksSubject = CurrentValueSubject<[Task], Never>([])
+    private let tasksSubject = CurrentValueSubject<[StandbyTask], Never>([])
     private let objectivesSubject = CurrentValueSubject<[Objective], Never>([])
     private let historyQuestBoardsSubject = CurrentValueSubject<[DailyQuestBoard], Never>([])
     private let todayQuestBoardSubject = CurrentValueSubject<DailyQuestBoard?, Never>(nil)
@@ -58,7 +58,7 @@ class AppDataService: AppDataServiceProtocol {
 
     // ==== Public publishers of lists ====
     var activeQuestsPubisher: AnyPublisher<[Quest], Never> { activeQuestsSubject.eraseToAnyPublisher() }
-    var tasksPubisher: AnyPublisher<[Task], Never> { tasksSubject.eraseToAnyPublisher() }
+    var tasksPubisher: AnyPublisher<[StandbyTask], Never> { tasksSubject.eraseToAnyPublisher() }
     var objectivesPubisher: AnyPublisher<[Objective], Never> { objectivesSubject.eraseToAnyPublisher() }
     var historyQuestBoardsPubisher: AnyPublisher<[DailyQuestBoard], Never> { historyQuestBoardsSubject.eraseToAnyPublisher() }
     var selectedQuestBoardPublisher: AnyPublisher<DailyQuestBoard, Never> { selectedQuestBoardSubject.eraseToAnyPublisher() }
@@ -143,11 +143,11 @@ class AppDataService: AppDataServiceProtocol {
         let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
         let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
         
-        let task1 = Task(id: UUID(), text: "朝7時に起床する", objective: objective1)
-        let task2 = Task(id: UUID(), text: "朝食を食べる", objective: objective1)
-        let task3 = Task(id: UUID(), text: "1時間勉強する", objective: objective2)
-        let task4 = Task(id: UUID(), text: "30分ジョギングする", objective: objective3)
-        let task5 = Task(id: UUID(), text: "ストレッチをする", objective: objective3)
+        let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
+        let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
+        let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
+        let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
+        let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
         
         let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
         let reward2 = Reward(id: UUID(), text: "映画を見る")
@@ -177,7 +177,7 @@ class AppDataService: AppDataServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
-    func taskPublisher(for id: UUID) ->  AnyPublisher<Task?, Never> {
+    func taskPublisher(for id: UUID) ->  AnyPublisher<StandbyTask?, Never> {
         tasksSubject
             .map { tasks in
                 tasks.first { $0.id == id }
@@ -295,7 +295,7 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
     
-    func createTask(newTask: Task) async {
+    func createTask(newTask: StandbyTask) async {
         do {
             try await swiftDataService.createTask(newTask: newTask)
             await queryTasks()
@@ -304,7 +304,7 @@ class AppDataService: AppDataServiceProtocol {
         }
     }
     
-    func editTask(taskId: UUID, newTask: Task) async {
+    func editTask(taskId: UUID, newTask: StandbyTask) async {
         do {
             try await swiftDataService.editTask(taskId: taskId, newTask: newTask)
             await queryTasks()

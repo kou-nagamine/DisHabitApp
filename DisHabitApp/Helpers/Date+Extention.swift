@@ -67,6 +67,18 @@ extension Date {
         var id: UUID = .init()
         var date: Date
     }
+
+    func isSameDayAs(_ date: Date) -> Bool {
+        return Calendar.current.isDateInToday(date)
+    }
+
+    func startOfDay() -> Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+    
+    func weekday() -> Int {
+        return Calendar.current.component(.weekday, from: self)
+    }
 }
 
 extension View {

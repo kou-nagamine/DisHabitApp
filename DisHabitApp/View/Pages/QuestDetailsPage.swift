@@ -233,5 +233,5 @@ struct QuestDetailsPage: View {
 
 #Preview {
     @State var binding: [QuestBoardNavigation] = []
-    QuestDetailsPage(questSlot: QuestSlot(id: UUID(), quest: Quest(activatedDayOfWeeks: [:], reward: Reward(id: UUID(), text: "ご褒美内容"), tasks: [Task(id: UUID(), text: "タスク1")]), acceptedQuest: nil), path: $binding)
+    QuestDetailsPage(questSlot: QuestSlot(id: UUID(), quest: Quest(activatedDayOfWeeks: [:], reward: Reward(id: UUID(), text: "ご褒美内容"), tasks: [StandbyTask(id: UUID(), text: "タスク1")]), acceptedQuest: nil), path: $binding)
 }

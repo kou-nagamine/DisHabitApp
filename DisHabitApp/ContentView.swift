@@ -7,6 +7,9 @@ struct ContentView: View {
     ///Manages the visibility of the TabBar during navigation
     @State private var showTabBar: Bool = true
     
+    
+    @Environment(\.modelContext) private var modelContext
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             // iOS18~
@@ -14,7 +17,8 @@ struct ContentView: View {
                 TabView(selection: $activeTab) {
                     Tab(value: TabItem.home) {
                         VStack {
-                            HomePage(showTabBar: $showTabBar)
+                            HomePage(
+                                showTabBar: $showTabBar)
                         }
                         .toolbarVisibility(.hidden, for: .tabBar)
                     }

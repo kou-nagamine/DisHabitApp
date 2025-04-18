@@ -45,12 +45,12 @@ actor SwiftDataService {
     }
 
     // ==== タスクの作成・編集関連 ====
-    func createTask(newTask: Task) throws {
+    func createTask(newTask: StandbyTask) throws {
         modelContext.insert(newTask)
         try modelContext.save()
     }
 
-    func editTask(taskId: UUID, newTask: Task) throws {
+    func editTask(taskId: UUID, newTask: StandbyTask) throws {
         guard let task = try fetchTask(by: taskId) else { return } // TODO: Error handling
         task.text = newTask.text
         task.objective = newTask.objective // Assuming Objective relationship is handled
@@ -63,14 +63,14 @@ actor SwiftDataService {
         try modelContext.save()
     }
 
-    func fetchTasks() throws -> [Task] {
-        let descriptor = FetchDescriptor<Task>(sortBy: [SortDescriptor(\.id)]) // TODO: Sorting
+    func fetchTasks() throws -> [StandbyTask] {
+        let descriptor = FetchDescriptor<StandbyTask>(sortBy: [SortDescriptor(\.id)]) // TODO: Sorting
         return try modelContext.fetch(descriptor)
     }
 
-    private func fetchTask(by id: UUID) throws -> Task? {
-        let predicate = #Predicate<Task> { $0.id == id }
-        let descriptor = FetchDescriptor<Task>(predicate: predicate)
+    private func fetchTask(by id: UUID) throws -> StandbyTask? {
+        let predicate = #Predicate<StandbyTask> { $0.id == id }
+        let descriptor = FetchDescriptor<StandbyTask>(predicate: predicate)
         let results = try modelContext.fetch(descriptor)
         return results.first
     }

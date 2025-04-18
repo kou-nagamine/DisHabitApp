@@ -7,9 +7,9 @@ class Quest: Identifiable {
     var id: UUID
     var activatedDayOfWeeks: [Int: Bool]
     @Relationship var reward: Reward
-    @Relationship var tasks: [Task]
+    @Relationship var tasks: [StandbyTask]
 
-    init(id: UUID = UUID(), activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [Task]) {
+    init(id: UUID = UUID(), activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
         self.id = id
         self.activatedDayOfWeeks = activatedDayOfWeeks
         self.reward = reward
@@ -128,7 +128,7 @@ class DailyQuestBoard: Identifiable {
     
     init(id: UUID = UUID(), date: Date, questSlots: [QuestSlot]) {
         self.id = id
-        self.date = date
+        self.date = date.startOfDay()
         self.questSlots = questSlots
     }
 }

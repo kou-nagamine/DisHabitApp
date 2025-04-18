@@ -22,7 +22,7 @@ class Objective: Identifiable {
 }
 
 @Model
-class Task: Identifiable {
+class StandbyTask: Identifiable {
     var id: UUID
     var text: String
     @Relationship var objective: Objective?
@@ -33,14 +33,14 @@ class Task: Identifiable {
         self.objective = objective
     }
     
-    func copyValues(from source: Task) {
+    func copyValues(from source: StandbyTask) {
         self.id = source.id
         self.text = source.text
         self.objective = source.objective
     }
     
-    func deepCopy() -> Task {
-        return Task(id: self.id, text: self.text, objective: self.objective)
+    func deepCopy() -> StandbyTask {
+        return StandbyTask(id: self.id, text: self.text, objective: self.objective)
     }
 }
 
@@ -48,10 +48,10 @@ class Task: Identifiable {
 @Model
 class AcceptedTask: Identifiable {
     var id: UUID = UUID()
-    @Relationship var originalTask: Task
+    @Relationship var originalTask: StandbyTask
     var isCompleted: Bool = false
     
-    init(originalTask: Task, isCompleted: Bool = false) {
+    init(originalTask: StandbyTask, isCompleted: Bool = false) {
         self.originalTask = originalTask
         self.isCompleted = isCompleted
     }
