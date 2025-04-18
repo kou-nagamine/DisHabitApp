@@ -1,13 +1,20 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct HomePage: View {
+    @Environment(\.modelContext) private var modelContext
+
+    
     /// Manages the selected date (currentDate) and the weekdays of the current week (week)
     @State private var currentDate: Date = .init()
     
     ///
     @State private var path: [QuestBoardNavigation] = []
     @Binding var showTabBar: Bool
+    
+    @State var selectedDate: Date = Date() // TODO: タブ切り替えした時に保持される？上位から与えることを考慮する
+    
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -29,7 +36,7 @@ struct HomePage: View {
                     /// Week Day Selector
                     WeekDaySelector()
                 }
-                QuestBoardView(showTabBar: $showTabBar, path: $path) // 仮
+                QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar, path: $path) // 仮
             }
             ///
             .navigationDestination(for: QuestBoardNavigation.self) { value in

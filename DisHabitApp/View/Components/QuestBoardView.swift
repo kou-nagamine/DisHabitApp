@@ -1,17 +1,73 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct QuestBoardView: View {
-    @StateObject var vm: QuestBoardViewModel = QuestBoardViewModel()
+    @Binding var selectedDate: Date
     @Binding var showTabBar: Bool
     @Binding var path: [QuestBoardNavigation]
-   
-    init (
-        showTabBar: Binding<Bool>,
-        path: Binding<[QuestBoardNavigation]>
-    ) {
-        self._showTabBar = showTabBar
-        self._path = path
+    
+    @Environment(\.modelContext) private var modelContext
+    @StateObject var vm: QuestBoardViewModel = QuestBoardViewModel()
+    
+    @Query var standbyQuests: [Quest]
+    
+    var tense: QuestBoardTense {
+        let today = Date()
+        if self.selectedDate.isSameDayAs(today) {
+            return .today
+        } else if self.selectedDate < today {
+            return .past
+        } else {
+            return .future
+        }
+    }
+    
+    func fetchQuestBoard() -> DailyQuestBoard? {
+        do {
+            let fetchDescriptor = FetchDescriptor<DailyQuestBoard>()
+            let boards = try modelContext.fetch(fetchDescriptor)
+            let date = self.selectedDate
+            return boards.first(where: { $0.date.isSameDayAs(date) })
+        }
+        catch {
+            return nil
+        }
+    }
+    
+    var displayedQuestSlotManagers: [QuestSlotManager] {
+        if let board = fetchQuestBoard() {
+            return board.questSlots.map { QuestSlotManager(questSlot: $0, questBoardDate: selectedDate, tense: tense) }
+        } else {
+            switch tense {
+            case .today, .future:
+                let questSlotManagers = createQuestBoard()
+                return questSlotManagers
+            case .past:
+                return []
+            }
+        }
+    }
+    
+    private func createQuestBoard() -> [QuestSlotManager] {
+        if tense == .past {
+            fatalError("You do not create past quest board with createQuestBoard()")
+        }
+
+        // activeQuestsの中から、selectedDateの曜日を持つQuestからQuestSlotを作成
+        let date = self.selectedDate
+        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { QuestSlot(quest: $0) }
+        let questSlotManagers = questSlots.map { QuestSlotManager(questSlot: $0, questBoardDate: selectedDate, tense: tense) }
+
+        let newBoard = DailyQuestBoard(date: date, questSlots: questSlots)
+
+        // 未来の場合はSwiftDataに保存しない
+        if tense == .today {
+            modelContext.insert(newBoard)
+        }
+        
+        return questSlotManagers
+        
     }
    
     var screenWidth: CGFloat {
@@ -35,15 +91,15 @@ struct QuestBoardView: View {
             ScrollView(.vertical) {
                 Spacer() // 要検討
                 VStack(spacing: 18) {
-                    ForEach(vm.dailyQuestBoard.questSlots) { questSlot in
-                        if let acceptedQuest = questSlot.acceptedQuest {
+                    ForEach(displayedQuestSlotManagers) { questSlotManager in
+                        if let acceptedQuest = questSlotManager.questSlot.acceptedQuest {
                             if acceptedQuest.isCompletionReported {
                                 TicketCard(vm: vm, acceptedQuest: acceptedQuest)
                                     .onTapGesture {
                                         withAnimation(.easeOut(duration: 0.3)) {
                                             showTabBar = false
                                         }
-                                        path.append(.questDetails(questSlot: questSlot))
+                                        path.append(.questDetails(questSlot: questSlotManager.questSlot))
                                     }
                             } else {
                                 AcceptedQuestCard(vm: vm, acceptedQuest: acceptedQuest)
@@ -51,16 +107,16 @@ struct QuestBoardView: View {
                                         withAnimation(.easeOut(duration: 0.3)) {
                                             showTabBar = false
                                         }
-                                        path.append(.questDetails(questSlot: questSlot))
+                                        path.append(.questDetails(questSlot: questSlotManager.questSlot))
                                     }
                             }
                         } else {
-                            StandbyQuestCard(vm: vm, quest: questSlot.quest, questSlotId: questSlot.id)
+                            StandbyQuestCard(vm: vm, quest: questSlotManager.questSlot.quest, questSlotId: questSlotManager.questSlot.id)
                                 .onTapGesture {
                                     withAnimation(.easeOut(duration: 0.3)) {
                                         showTabBar = false
                                     }
-                                    path.append(.questDetails(questSlot: questSlot))
+                                    path.append(.questDetails(questSlot: questSlotManager.questSlot))
                                 }
                         }
                     }
