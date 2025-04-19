@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct TicketCard: View {
-    @ObservedObject var vm: QuestBoardViewModel
+//    @ObservedObject var vm: QuestBoardViewModel
     var acceptedQuest: AcceptedQuest
     
     var body: some View {

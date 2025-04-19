@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum QuestBoardNavigation: Hashable {
-    case questDetails(questSlot: QuestSlot)
+//    case questDetails(questSlotManager: Binding<QuestSlotManager>)
 }

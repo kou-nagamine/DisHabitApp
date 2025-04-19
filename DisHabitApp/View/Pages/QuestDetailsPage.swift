@@ -2,23 +2,25 @@ import Foundation
 import SwiftUI
 
 struct QuestDetailsPage: View {
-    @ObservedObject var vm: QuestDetailsViewModel
+//    @ObservedObject var vm: QuestDetailsViewModel
     
+    var manager: QuestSlotManager
+    
+    @Binding var path: NavigationPath
     @State private var showCompletionAlert = false
     @State private var showDiscardAlert = false
-    @Binding var path: [QuestBoardNavigation]
     @Environment(\.dismiss) var dismiss
     
-    init(questSlot: QuestSlot, path:  Binding<[QuestBoardNavigation]>) {
-        vm = .init(questSlot: questSlot)
+    init(manager: QuestSlotManager, path: Binding<NavigationPath>) {
+        self.manager = manager
         self._path = .init(
             projectedValue: path
         )
     }
     
     var body: some View {
-        let quest = vm.questSlot.quest
-        let acceptedQuest = vm.questSlot.acceptedQuest
+        let quest = manager.questSlot.quest
+        let acceptedQuest = manager.questSlot.acceptedQuest
         let isAccepted = acceptedQuest != nil
         
         VStack(spacing: 0){
@@ -46,7 +48,7 @@ struct QuestDetailsPage: View {
                 } else {
                     Button(action: {
                         _Concurrency.Task {
-                            await vm.acceptQuest()
+                            await manager.acceptQuest()
                         }
                     }) {
                         ZStack {
@@ -80,7 +82,7 @@ struct QuestDetailsPage: View {
                             ForEach(acceptedQuest!.acceptedTasks) { acceptedTask in
                                 CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: false, isLabelOnly: false, toggleAction: {
                                     _Concurrency.Task {
-                                        await vm.toggleTaskCompleted(acceptedTask: acceptedTask)
+                                        await manager.toggleTaskCompleted(acceptedTask: acceptedTask)
                                     }
                                 })
                                 // TODO: isReadonlyの実装/過去日の場合のflagを上の階層から持ってくる
@@ -117,7 +119,7 @@ struct QuestDetailsPage: View {
                                 VStack(spacing: 15) {
                                     Button {
                                         _Concurrency.Task {
-                                            await vm.discardAcceptedQuest()
+                                            await manager.discardAcceptedQuest()
                                             showDiscardAlert.toggle()
                                         }
                                     } label: {
@@ -153,7 +155,7 @@ struct QuestDetailsPage: View {
                         
                         Button {
                             _Concurrency.Task {
-                                await vm.reportQuestCompletion()
+                                await manager.reportQuestCompletion()
                                 showCompletionAlert.toggle()
                             }
                         } label: {
@@ -181,7 +183,7 @@ struct QuestDetailsPage: View {
                                 VStack(spacing: 15) {
                                     Button {
                                         _Concurrency.Task {
-                                            await vm.redeemTicket()
+                                            await manager.redeemTicket()
                                             showCompletionAlert.toggle()
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                                 path.removeLast()
@@ -232,6 +234,6 @@ struct QuestDetailsPage: View {
 }
 
 #Preview {
-    @State var binding: [QuestBoardNavigation] = []
-    QuestDetailsPage(questSlot: QuestSlot(id: UUID(), quest: Quest(activatedDayOfWeeks: [:], reward: Reward(id: UUID(), text: "ご褒美内容"), tasks: [StandbyTask(id: UUID(), text: "タスク1")]), acceptedQuest: nil), path: $binding)
+//    @State var binding: [QuestBoardNavigation] = []
+//    QuestDetailsPage(questSlot: QuestSlot(id: UUID(), quest: Quest(activatedDayOfWeeks: [:], reward: Reward(id: UUID(), text: "ご褒美内容"), tasks: [StandbyTask(id: UUID(), text: "タスク1")]), acceptedQuest: nil), path: $binding)
 }

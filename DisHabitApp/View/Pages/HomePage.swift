@@ -17,7 +17,7 @@ struct HomePage: View {
     
     
     var body: some View {
-        NavigationStack(path: $path) {
+//        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 /// Header
                 VStack(spacing: 0) {
@@ -37,14 +37,14 @@ struct HomePage: View {
                     WeekDaySelector()
                 }
                 QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar, path: $path) // 仮
-            }
+//            }
             ///
-            .navigationDestination(for: QuestBoardNavigation.self) { value in
-                switch value {
-                case .questDetails(let questSlot):
-                    QuestDetailsPage(questSlot: questSlot, path: $path)
-                }
-            }
+//            .navigationDestination(for: QuestBoardNavigation.self) { value in
+//                switch value {
+//                case .questDetails(let questSlotManager):
+//                    QuestDetailsPage(questSlotmanager: questSlotManager, path: $path)
+//                }
+//            }
             .onChange(of: path) {
                 if path.isEmpty {
                     withAnimation(.easeOut(duration: 0.3)) {

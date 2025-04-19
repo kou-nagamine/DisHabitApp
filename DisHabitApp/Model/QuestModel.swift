@@ -31,6 +31,8 @@ class Quest: Identifiable {
         let acceptedTasks = tasks.map { AcceptedTask(originalTask: $0) }
         let accetedReward = RedeemableReward(originalReward: reward)
         
+        let c = tasks.count
+        
         return AcceptedQuest(
             id: id,
             reward: accetedReward,
@@ -63,7 +65,11 @@ class AcceptedQuest: Identifiable {
 
     // タスク完了割合
     var taskCompletionRate: Double {
-        return Double(acceptedTasks.filter { $0.isCompleted }.count) / Double(acceptedTasks.count)
+        let progress = Double(acceptedTasks.filter { $0.isCompleted }.count) / Double(acceptedTasks.count)
+        if progress.isNaN {
+            return 0
+        }
+        return progress
     }
     
     // ごほうびを受け取る

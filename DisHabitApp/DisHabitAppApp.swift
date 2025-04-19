@@ -4,7 +4,7 @@ import Foundation
 
 @main
 struct DisHabitAppApp: App {
-    private let appDataService = AppDataService()
+//    private let appDataService = AppDataService()
     
     var body: some Scene {
         WindowGroup {
