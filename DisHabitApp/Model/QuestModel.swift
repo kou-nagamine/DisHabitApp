@@ -31,8 +31,6 @@ class Quest: Identifiable {
         let acceptedTasks = tasks.map { AcceptedTask(originalTask: $0) }
         let accetedReward = RedeemableReward(originalReward: reward)
         
-        let c = tasks.count
-        
         return AcceptedQuest(
             id: id,
             reward: accetedReward,
@@ -106,11 +104,13 @@ class AcceptedQuest: Identifiable {
 @Model
 class QuestSlot: Identifiable {
     var id: UUID
+    var board: DailyQuestBoard //reason:https://www.hackingwithswift.com/quick-start/swiftdata/inferred-vs-explicit-relationships
     @Relationship var quest: Quest
     @Relationship var acceptedQuest: AcceptedQuest?
     
-    init(id: UUID = UUID(), quest: Quest, acceptedQuest: AcceptedQuest? = nil) {
+    init(id: UUID = UUID(), board:DailyQuestBoard, quest: Quest, acceptedQuest: AcceptedQuest? = nil) {
         self.id = id
+        self.board = board
         self.quest = quest
         self.acceptedQuest = acceptedQuest
     }
@@ -129,8 +129,8 @@ class QuestSlot: Identifiable {
 @Model
 class DailyQuestBoard: Identifiable {
     var id: UUID
-    var date: Date
-    @Relationship var questSlots: [QuestSlot]
+    @Attribute(.unique) var date: Date
+    @Relationship(deleteRule: .cascade, inverse: \QuestSlot.board) var questSlots: [QuestSlot] //reason:https://www.hackingwithswift.com/quick-start/swiftdata/inferred-vs-explicit-relationships
     
     init(id: UUID = UUID(), date: Date, questSlots: [QuestSlot]) {
         self.id = id

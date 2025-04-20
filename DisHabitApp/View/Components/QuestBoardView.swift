@@ -17,7 +17,7 @@ struct QuestBoardView: View {
         let today = Date()
         if self.selectedDate.isSameDayAs(today) {
             return .today
-        } else if self.selectedDate < today {
+        } else if self.selectedDate < today { // isSameDayAsに引っかからなかったモノのみここに到達するので、小なり現在時刻でOK
             return .past
         } else {
             return .future
@@ -29,14 +29,8 @@ struct QuestBoardView: View {
     @Query var objectives: [Objective] //temp
     
     
+    
     var displayedQuestSlots: [QuestSlotManager] {
-        //temp
-//        standbyQuests[0].tasks.append(StandbyTask(text: "腹筋10回", objective: objectives[0]))
-//        standbyQuests[0].tasks.append(StandbyTask(text: "腕立て2億回", objective: objectives[0]))
-//        standbyQuests[1].tasks.append(StandbyTask(text: "英単語5個暗記", objective: objectives[1]))
-//        standbyQuests[1].tasks.append(StandbyTask(text: "基本情報2ページ", objective: objectives[1]))
-        //temp
-        
         if let board = dailyQuestBoards.first(where: { $0.date.isSameDayAs(self.selectedDate)}) {
             print("if let")
             let managers = board.questSlots.map {
@@ -59,43 +53,6 @@ struct QuestBoardView: View {
         }
     }
     
-//    func fetchQuestBoard() -> DailyQuestBoard? {
-//        do {
-//            let fetchDescriptor = FetchDescriptor<DailyQuestBoard>()
-//            let boards = try modelContext.fetch(fetchDescriptor)
-//            let date = self.selectedDate
-//            return boards.first(where: { $0.date.isSameDayAs(date) })
-//        }
-//        catch {
-//            return nil
-//        }
-//    }
-    
-//    @State var questSlotManagers: [QuestSlotManager] = []
-    
-//    func displayedQuestSlotManagers() -> [QuestSlotManager] {
-//        if let board = fetchQuestBoard() {
-//            print("AAA if let")
-//            let managers = board.questSlots.map {
-//                QuestSlotManager(
-//                    modelContext: modelContext,
-//                    board: board,
-//                    questSlot: $0,
-//                    tense: tense
-//                )}
-//            return managers
-//        } else {
-//            print("if let else")
-//            switch tense {
-//            case .today, .future:
-//                let questSlotManagers = createQuestBoard()
-//                return questSlotManagers
-//            case .past:
-//                return []
-//            }
-//        }
-//    }
-    
     private func createQuestBoard() -> [QuestSlotManager] {
         if tense == .past {
             fatalError("You do not create past quest board with createQuestBoard()")
@@ -105,10 +62,11 @@ struct QuestBoardView: View {
 
         // activeQuestsの中から、selectedDateの曜日を持つQuestからQuestSlotを作成
         let date = self.selectedDate
-        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { QuestSlot(quest: $0) }
+        
+        let newBoard = DailyQuestBoard(date: date, questSlots: [])
+        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { QuestSlot(board: newBoard, quest: $0) }
+        newBoard.questSlots = questSlots
 
-
-        let newBoard = DailyQuestBoard(date: date, questSlots: questSlots)
         
         let questSlotManagers = questSlots.map { QuestSlotManager(
             modelContext: modelContext, board: newBoard, questSlot: $0, tense: tense) }
@@ -143,61 +101,23 @@ struct QuestBoardView: View {
             ScrollView(.vertical) {
                 Spacer() // 要検討
                 VStack(spacing: 18) {
-//                    ForEach(displayedQuestSlotManagers) { q in
-//                        
-//                    }
-                    ForEach(displayedQuestSlots.indices, id: \.self) { index in
-                        QuestSlotContainer(manager: displayedQuestSlots[index])
-//                        NavigationStack {
+#if DEBUG
+                    Button {
+                        let boards = dailyQuestBoards.filter { $0.date.isSameDayAs(self.selectedDate)}
+                        print("Found \(boards.count) boards")
+                        for board in boards {
+                            print("Removing board")
+                            modelContext.delete(board)
+                        }
                         
-//                            if let acceptedQuest = manager.questSlot.acceptedQuest {
-//                                if acceptedQuest.isCompletionReported {
-//                                    TicketCard(manager: manager, acceptedQuest: acceptedQuest)
-//                                        .onTapGesture {
-//                                            withAnimation(.easeOut(duration: 0.3)) {
-//                                                showTabBar = false
-//                                            }
-//                                            detailsNavigationPath.append(manager)
-//    //                                        path.append(.questDetails(questSlot: questSlotManager.questSlot))
-//                                        }
-//                                }
-//                                else {
-//                                    AcceptedQuestCard(manager: manager, acceptedQuest: acceptedQuest)
-//                                        .onTapGesture {
-//                                            withAnimation(.easeOut(duration: 0.3)) {
-//                                                showTabBar = false
-//                                            }
-//                                            detailsNavigationPath.append(manager)
-//    //                                        path.append(.questDetails(questSlot: questSlotManager.questSlot))
-//                                        }
-//                                }
-//                                
-//                            } else {
-//                                StandbyQuestCard(manager: manager, quest: manager.questSlot.quest)
-//                                    .onTapGesture {
-//                                        withAnimation(.easeOut(duration: 0.3)) {
-//                                            showTabBar = false
-//                                        }
-//                                        detailsNavigationPath.append(manager)
-//    //                                    path.append(.questDetails(questSlot: questSlotManager.questSlot))
-//                                    }
-//                            }
-//                        }
-//                        .navigationDestination(for: QuestSlotManager.self) { manager in
-//                            QuestDetailsPage(manager: manager, path: $detailsNavigationPath)
-//                        }
-
-                    }
-                    #if DEBUG
-                    Button {
-                        standbyQuests[0].tasks.append(StandbyTask(text: "腹筋10回", objective: objectives[0]))
-                        standbyQuests[0].tasks.append(StandbyTask(text: "腕立て2億回", objective: objectives[0]))
-                        standbyQuests[1].tasks.append(StandbyTask(text: "英単語5個暗記", objective: objectives[1]))
-                        standbyQuests[1].tasks.append(StandbyTask(text: "基本情報2ページ", objective: objectives[1]))
                     } label: {
-                        Text("充填")
+                        Text("Board削除")
                     }
                     Button {
+                        print(dailyQuestBoards.count)
+                        for board in dailyQuestBoards {
+                            print(board.date)
+                        }
                         _Concurrency.Task {
 //                            await vm.debug_ResetAcceptedQuests()
                         }
@@ -205,14 +125,21 @@ struct QuestBoardView: View {
                         Text("DEBUG:受注リセット")
                     }
                     Button {
-                        _Concurrency.Task {
-//                            await vm.debug_ReloadTodayQuestBoard()
+                        do {
+                            try modelContext.delete(model: DailyQuestBoard.self)
+                            try modelContext.delete(model: QuestSlot.self)
+                        } catch {
+                            print("Failed to clear all Country and City data.")
                         }
                     } label: {
                         Text("DEBUG:todayQuestBoard再作成")
                     }
+#endif
+                    ForEach(displayedQuestSlots.indices, id: \.self) { index in
+                        QuestSlotContainer(manager: displayedQuestSlots[index])
 
-                    #endif
+                    }
+
                 }
             }
             .frame(maxWidth: .infinity)
