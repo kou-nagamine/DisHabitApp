@@ -27,12 +27,13 @@ struct QuestBoardView: View {
     @Query var standbyQuests: [Quest]
     @Query var dailyQuestBoards: [DailyQuestBoard]
     @Query var objectives: [Objective] //temp
+    @Query var tasks: [StandbyTask] //temp!!
+    @Query var qs: [QuestSlot] //temp!!
     
     
     
     var displayedQuestSlots: [QuestSlotManager] {
         if let board = dailyQuestBoards.first(where: { $0.date.isSameDayAs(self.selectedDate)}) {
-            print("if let")
             let managers = board.questSlots.map {
                 QuestSlotManager(
                     modelContext: modelContext,
@@ -42,7 +43,6 @@ struct QuestBoardView: View {
                 )}
             return managers
         } else {
-            print("if let else")
             switch tense {
             case .today, .future:
                 let questSlotManagers = createQuestBoard()
@@ -103,13 +103,17 @@ struct QuestBoardView: View {
                 VStack(spacing: 18) {
 #if DEBUG
                     Button {
-                        let boards = dailyQuestBoards.filter { $0.date.isSameDayAs(self.selectedDate)}
+                        let boards = dailyQuestBoards /*.filter { $0.date.isSameDayAs(self.selectedDate)}*/
                         print("Found \(boards.count) boards")
+                        print("QS: \(qs.count)")
                         for board in boards {
                             print("Removing board")
                             modelContext.delete(board)
                         }
-                        
+                        for q in qs {
+                            print("Removing QuestSlot")
+                            modelContext.delete(q)
+                        }
                     } label: {
                         Text("Board削除")
                     }
@@ -127,18 +131,55 @@ struct QuestBoardView: View {
                     Button {
                         do {
                             try modelContext.delete(model: DailyQuestBoard.self)
-                            try modelContext.delete(model: QuestSlot.self)
+                            try modelContext.delete(model: DailyQuestBoard.self)
+//                            let a = tasks
+//                            let b = objectives
+//                            let c = standbyQuests
+                            
+//                            let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
+//                            let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
+//                            let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
+//                    
+//                            let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
+//                            let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
+//                            let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
+//                            let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
+//                            let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
+//                    
+//                            let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
+//                            let reward2 = Reward(id: UUID(), text: "映画を見る")
+//                    
+//                            let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+//                            let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
+//                            
+//                        
+//                            modelContext.insert(objective1)
+//                            modelContext.insert(objective2)
+//                            modelContext.insert(objective3)
+//                            modelContext.insert(task1)
+//                            modelContext.insert(task2)
+//                            modelContext.insert(task3)
+//                            modelContext.insert(task4)
+//                            modelContext.insert(task5)
+//                            modelContext.insert(reward1)
+//                            modelContext.insert(reward2)
+//                            modelContext.insert(quest1)
+//                            modelContext.insert(quest2)
+//                            
+//                            try modelContext.save()
+                            
+                            print("Deleted board & qs table")
                         } catch {
-                            print("Failed to clear all Country and City data.")
+                            print("Failed to clear board & qs table: \(error)")
                         }
                     } label: {
-                        Text("DEBUG:todayQuestBoard再作成")
+                        Text("Board/QSテーブルをリセット")
                     }
 #endif
-                    ForEach(displayedQuestSlots.indices, id: \.self) { index in
-                        QuestSlotContainer(manager: displayedQuestSlots[index])
-
-                    }
+//                    ForEach(displayedQuestSlots.indices, id: \.self) { index in
+//                        QuestSlotContainer(manager: displayedQuestSlots[index])
+//
+//                    }
 
                 }
             }

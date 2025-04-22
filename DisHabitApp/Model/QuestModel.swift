@@ -103,13 +103,13 @@ class AcceptedQuest: Identifiable {
 // QuestSlot定義
 @Model
 class QuestSlot: Identifiable {
-    var id: UUID
-    var board: DailyQuestBoard //reason:https://www.hackingwithswift.com/quick-start/swiftdata/inferred-vs-explicit-relationships
+    @Attribute(.unique) var id: String
+    var board: DailyQuestBoard? //reason:https://www.hackingwithswift.com/quick-start/swiftdata/inferred-vs-explicit-relationships
     @Relationship var quest: Quest
     @Relationship var acceptedQuest: AcceptedQuest?
     
-    init(id: UUID = UUID(), board:DailyQuestBoard, quest: Quest, acceptedQuest: AcceptedQuest? = nil) {
-        self.id = id
+    init(board:DailyQuestBoard, quest: Quest, acceptedQuest: AcceptedQuest? = nil) {
+        self.id = board.id.description + quest.id.description
         self.board = board
         self.quest = quest
         self.acceptedQuest = acceptedQuest
