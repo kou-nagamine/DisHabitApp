@@ -34,7 +34,7 @@ struct HomePage: View {
                     .padding(.vertical, 10)
                     
                     /// Week Day Selector
-                    WeekDaySelector()
+                    WeekDaySelector(selectedDate: $selectedDate)
                 }
                 QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar, path: $path) // 仮
 //            }

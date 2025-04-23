@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 struct WeekDaySelector: View {
-    @State private var currentDate: Date = .init()
+    @Binding var selectedDate: Date
     @State private var weekSlider: [[Date.WeekDay]] = []
     @State private var currentWeekIndex: Int = 1
     /// add code
@@ -74,9 +74,9 @@ struct WeekDaySelector: View {
                         .textScale(.secondary)
                         .frame(width: 40, height: 35)
                 }
-                .foregroundStyle(isSameDate(day.date, currentDate) ? .white : .gray)
+                .foregroundStyle(isSameDate(day.date, selectedDate) ? .white : .gray)
                 .background(content: {
-                    if isSameDate(day.date, currentDate) {
+                    if isSameDate(day.date, selectedDate) {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(.blue.gradient)
                     }
@@ -89,7 +89,7 @@ struct WeekDaySelector: View {
                 .frame(maxWidth: .infinity)
                 .contentShape(.rect)
                 .onTapGesture {
-                    currentDate = day.date
+                    selectedDate = day.date
                 }
                 
             }
