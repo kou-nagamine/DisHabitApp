@@ -18,10 +18,10 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     let id: UUID = UUID()
     let tense: QuestBoardTense
     
-    var questSlot: QuestSlot
-    var board: DailyQuestBoard
+    var questSlot: SchemaV1.QuestSlot
+    var board: SchemaV1.DailyQuestBoard
     
-    init(modelContext: ModelContext, board: DailyQuestBoard, questSlot: QuestSlot, tense: QuestBoardTense) {
+    init(modelContext: ModelContext, board: SchemaV1.DailyQuestBoard, questSlot: SchemaV1.QuestSlot, tense: QuestBoardTense) {
         self.modelContext = modelContext
         self.board = board
         self.questSlot = questSlot
@@ -38,7 +38,7 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
         }
     }
     
-    func toggleTaskCompleted(acceptedTask: AcceptedTask) async {
+    func toggleTaskCompleted(acceptedTask: SchemaV1.AcceptedTask) async {
         
     }
     

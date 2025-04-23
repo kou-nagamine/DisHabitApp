@@ -5,7 +5,7 @@ struct StandbyQuestCard: View {
 //    @ObservedObject var vm: QuestBoardViewModel
     var manager: QuestSlotManager
     
-    var quest: Quest
+    var quest: SchemaV1.Quest
 //    var questSlotId: UUID
 
     var body: some View {

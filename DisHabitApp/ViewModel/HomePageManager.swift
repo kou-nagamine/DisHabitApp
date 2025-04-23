@@ -26,9 +26,9 @@ class HomePageManager {
     }
 
     // ユーザが作成した全曜日のクエスト
-    func fetchQuests() -> [Quest] {
+    func fetchQuests() -> [SchemaV1.Quest] {
         do {
-            let fetchDescriptor = FetchDescriptor<Quest>()
+            let fetchDescriptor = FetchDescriptor<SchemaV1.Quest>()
             let quests = try modelContext.fetch(fetchDescriptor)
             return quests
         }

@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct TaskPage: View {
-    var objective: Objective
+    var objective: SchemaV1.Objective
 //    @ObservedObject var vm: TasksPageViewModel
     
-    init(objective: Objective) {
+    init(objective: SchemaV1.Objective) {
         self.objective = objective
 //        self.vm = .init(selectedObjective: objective)
     }
