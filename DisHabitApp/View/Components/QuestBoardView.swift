@@ -30,54 +30,86 @@ struct QuestBoardView: View {
     @Query var tasks: [SchemaV1.StandbyTask] //temp!!
     @Query var qs: [SchemaV1.QuestSlot] //temp!!
     
+    @State private var currentQuestSlotManagers: [QuestSlotManager] = []
     
-    
-    var displayedQuestSlots: [QuestSlotManager] {
-        if let board = dailyQuestBoards.first(where: { $0.date.isSameDayAs(self.selectedDate)}) {
-            let managers = board.questSlots.map {
+    @MainActor
+    private func updateBoardManagers(for date: Date) {
+        print("Updating board managers for date: \(date), tense: \(tense)")
+        // 既存のボードを探す
+        if let board = dailyQuestBoards.first(where: { $0.date.isSameDayAs(date)}) {
+            print("Found existing board for \(date)")
+            currentQuestSlotManagers = board.questSlots.map {
                 QuestSlotManager(
                     modelContext: modelContext,
                     board: board,
                     questSlot: $0,
-                    tense: tense
-                )}
-            return managers
+                    tense: tense // tenseを渡す
+                )
+            }
         } else {
+            // 存在しない場合のみボードを作成
+            print("No board found for \(date). Determining action based on tense.")
             switch tense {
             case .today, .future:
-                let questSlotManagers = createQuestBoard()
-                return questSlotManagers
+                // 未来または今日のボードは作成する
+                print("Creating board for today/future date.")
+                currentQuestSlotManagers = createQuestBoard(for: date) // 日付を渡して作成
             case .past:
-                return []
+                // 過去のボードは作成しない
+                print("Not creating board for past date.")
+                currentQuestSlotManagers = [] // 空にする
             }
         }
+        print("Finished updating board managers. Count: \(currentQuestSlotManagers.count)")
     }
     
-    private func createQuestBoard() -> [QuestSlotManager] {
-        if tense == .past {
-            fatalError("You do not create past quest board with createQuestBoard()")
-        }
+    @MainActor
+    private func createQuestBoard(for date: Date) -> [QuestSlotManager] {
         
-        print("Creating new DailyQuestBoard")
+        print("Creating new DailyQuestBoard for \(date)")
 
-        // activeQuestsの中から、selectedDateの曜日を持つQuestからQuestSlotを作成
-        let date = self.selectedDate
         
         let newBoard = SchemaV1.DailyQuestBoard(date: date, questSlots: [])
-        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { SchemaV1.QuestSlot(board: newBoard, quest: $0) }
-        newBoard.questSlots = questSlots
+        
+        // activeQuestsの中から、指定された日付の曜日を持つQuestからQuestSlotを作成
+        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { SchemaV1.QuestSlot(board:newBoard, quest: $0) }
+        
+        for questSlot in questSlots {
+            modelContext.insert(questSlot)
+        }
+        
+        print("Found \(questSlots.count) quests for \(date.formatted(date: .long, time: .omitted)) (Weekday: \(date.weekday()))")
 
         
         let questSlotManagers = questSlots.map { QuestSlotManager(
-            modelContext: modelContext, board: newBoard, questSlot: $0, tense: tense) }
+            modelContext: modelContext, board: newBoard, questSlot: $0, tense: tense) } // tenseを渡す
 
-        // 未来の場合はSwiftDataに保存しない
+        // .today の場合のみSwiftDataに保存
         if tense == .today {
-            modelContext.insert(newBoard)
+            // 既に同じ日付のボードがないか最終確認 (より安全にするため)
+            // Note: ModelContextの操作はメインスレッドで行うのが基本
+            let existingBoard = dailyQuestBoards.first { $0.date.isSameDayAs(date) }
+            if existingBoard == nil {
+                 modelContext.insert(newBoard)
+                 print("Inserted new board for \(date)")
+                 // 保存後、変更を反映させるために必要であれば try? modelContext.save() を呼ぶ
+                 // try? modelContext.save()
+            } else {
+                 print("Board for \(date) already exists, skipping insertion.")
+                 // ここで既存ボードのManagerを返す方が一貫性があるかもしれない
+                 // return existingBoard!.questSlots.map { QuestSlotManager(modelContext: modelContext, board: existingBoard!, questSlot: $0, tense: tense) }
+            }
+        } else {
+            print("Skipping insertion for future date \(date)")
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save: \(error)")
         }
         
         return questSlotManagers
-        
     }
    
     var screenWidth: CGFloat {
@@ -114,21 +146,33 @@ struct QuestBoardView: View {
                             print("Removing QuestSlot")
                             modelContext.delete(q)
                         }
+                        do {
+                            try modelContext.save()
+                            print("removed stuff")
+                        } catch {
+                            print("Failed to save: \(error)")
+                        }
                     } label: {
                         Text("Board削除")
                     }
+                    
                     Button {
-                        print(dailyQuestBoards.count)
+                        print("boards:", dailyQuestBoards.count)
                         for board in dailyQuestBoards {
                             print(board.date)
                         }
-                        print(qs.count)
+                        print("questSlots:", qs.count)
+                        for q in qs {
+                            print(q.quest.reward.text)
+                        }
                         _Concurrency.Task {
 //                            await vm.debug_ResetAcceptedQuests()
                         }
+                        print("qs managers", currentQuestSlotManagers.count)
                     } label: {
                         Text("DEBUG:受注リセット")
                     }
+                    
                     Button {
                         do {
                             try modelContext.delete(model: SchemaV1.DailyQuestBoard.self)
@@ -177,9 +221,21 @@ struct QuestBoardView: View {
                         Text("Board/QSテーブルをリセット")
                     }
 #endif
-                    ForEach(displayedQuestSlots.indices, id: \.self) { index in
-                        QuestSlotContainer(manager: displayedQuestSlots[index])
-
+                    
+                    if currentQuestSlotManagers.count > 0 {
+                        ForEach(currentQuestSlotManagers) { manager in
+                            QuestSlotContainer(manager: manager)
+                        }
+                    } else {
+                        Text("クエストがありません。[クエストを追加する]") // TODO: ボタンを追加
+                    }
+                    
+                    List { } // ↑の内容をリストに書いても動作しない。RPのトリガーとして以下のハンドラを記述している
+                    .onChange(of: selectedDate) { _, newDate in // selectedDate の変更を監視
+                        updateBoardManagers(for: newDate)
+                    }
+                    .onAppear { // 最初に表示されたときにも更新
+                        updateBoardManagers(for: selectedDate)
                     }
 
                 }

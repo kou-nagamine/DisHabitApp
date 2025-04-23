@@ -15,13 +15,14 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     @ObservationIgnored
     private var modelContext: ModelContext
     
-    let id: UUID = UUID()
+    let id: String
     let tense: QuestBoardTense
     
     var questSlot: SchemaV1.QuestSlot
     var board: SchemaV1.DailyQuestBoard
     
     init(modelContext: ModelContext, board: SchemaV1.DailyQuestBoard, questSlot: SchemaV1.QuestSlot, tense: QuestBoardTense) {
+        self.id = questSlot.id
         self.modelContext = modelContext
         self.board = board
         self.questSlot = questSlot
