@@ -3,9 +3,7 @@ import SwiftData
 import Foundation
 
 @main
-struct DisHabitAppApp: App {
-//    private let appDataService = AppDataService()
-    
+struct DisHabitAppApp: App {    
     var container: ModelContainer
 
     init() {

@@ -9,15 +9,12 @@ struct HomePage: View {
     /// Manages the selected date (currentDate) and the weekdays of the current week (week)
     @State private var currentDate: Date = .init()
     
-    ///
-    @State private var path: [QuestBoardNavigation] = []
     @Binding var showTabBar: Bool
     
     @State var selectedDate: Date = Date() // TODO: タブ切り替えした時に保持される？上位から与えることを考慮する
     
     
     var body: some View {
-//        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 /// Header
                 VStack(spacing: 0) {
@@ -36,22 +33,14 @@ struct HomePage: View {
                     /// Week Day Selector
                     WeekDaySelector(selectedDate: $selectedDate)
                 }
-                QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar, path: $path) // 仮
-//            }
-            ///
-//            .navigationDestination(for: QuestBoardNavigation.self) { value in
-//                switch value {
-//                case .questDetails(let questSlotManager):
-//                    QuestDetailsPage(questSlotmanager: questSlotManager, path: $path)
+                QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar) // 仮
+//            .onChange(of: path) {
+//                if path.isEmpty {
+//                    withAnimation(.easeOut(duration: 0.3)) {
+//                        showTabBar = true
+//                    }
 //                }
 //            }
-            .onChange(of: path) {
-                if path.isEmpty {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        showTabBar = true
-                    }
-                }
-            }
         }
     }
 }

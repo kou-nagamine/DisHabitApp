@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 
 struct StandbyQuestCard: View {
-//    @ObservedObject var vm: QuestBoardViewModel
     var manager: QuestSlotManager
     
     var quest: SchemaV1.Quest

@@ -2,20 +2,14 @@ import Foundation
 import SwiftUI
 
 struct QuestDetailsPage: View {
-//    @ObservedObject var vm: QuestDetailsViewModel
-    
     var manager: QuestSlotManager
     
-    @Binding var path: NavigationPath
     @State private var showCompletionAlert = false
     @State private var showDiscardAlert = false
     @Environment(\.dismiss) var dismiss
     
-    init(manager: QuestSlotManager, path: Binding<NavigationPath>) {
+    init(manager: QuestSlotManager) {
         self.manager = manager
-        self._path = .init(
-            projectedValue: path
-        )
     }
     
     var body: some View {
@@ -28,7 +22,7 @@ struct QuestDetailsPage: View {
                 // Back Navigation Arrow
                 Button(
                     action: {
-                        path.removeLast()
+                        Router.shared.detailsNavigationPath.removeLast()
                     }, label: {
                         Image(systemName: "arrow.left")
                     }
@@ -186,7 +180,7 @@ struct QuestDetailsPage: View {
                                             await manager.redeemTicket()
                                             showCompletionAlert.toggle()
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                path.removeLast()
+                                                Router.shared.detailsNavigationPath.removeLast()
                                             }
                                         }
 
@@ -202,7 +196,7 @@ struct QuestDetailsPage: View {
                                     Button {
                                         showCompletionAlert.toggle()
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            path.removeLast()
+                                            Router.shared.detailsNavigationPath.removeLast()
                                         }
                                     } label: {
                                         Text("後で遊ぶ")
