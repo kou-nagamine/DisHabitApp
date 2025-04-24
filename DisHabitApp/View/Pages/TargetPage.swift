@@ -14,8 +14,10 @@ struct TargetPage: View {
     
     @Query var objectives: [SchemaV1.Objective]
     
+    @StateObject private var router = Router.shared
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             VStack(alignment: .leading, spacing: 30) {
                 Text("目標一覧")
                     .padding(.top, 30)
@@ -43,6 +45,9 @@ struct TargetPage: View {
                 }
             }
             .padding(.horizontal, 30)
+            .navigationDestination(for: SchemaV1.Objective.self) { objective in
+                TaskPage(objective: objective)
+            }
         }
     }
 }

@@ -13,8 +13,10 @@ struct HomePage: View {
     
     @State var selectedDate: Date = Date() // TODO: タブ切り替えした時に保持される？上位から与えることを考慮する
     
+    @StateObject private var router = Router.shared
     
     var body: some View {
+        NavigationStack(path: $router.path) {
             VStack(spacing: 0) {
                 /// Header
                 VStack(spacing: 0) {
@@ -34,13 +36,17 @@ struct HomePage: View {
                     WeekDaySelector(selectedDate: $selectedDate)
                 }
                 QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar) // 仮
-
-        }
-        .onChange(of: Router.shared.path) {
-            if Router.shared.path.isEmpty {
-                withAnimation(.easeOut(duration: 0.3)) {
-                    showTabBar = true
+                
+            }
+            .onChange(of: Router.shared.path) {
+                if Router.shared.path.isEmpty {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        showTabBar = true
+                    }
                 }
+            }
+            .navigationDestination(for: QuestSlotManager.self) { manager in
+                QuestDetailsPage(manager: manager)
             }
         }
     }

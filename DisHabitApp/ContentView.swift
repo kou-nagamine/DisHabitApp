@@ -12,49 +12,41 @@ struct ContentView: View {
     @StateObject private var router = Router.shared
     
     var body: some View {
-        NavigationStack(path: $router.path) {
-            ZStack(alignment: .bottom) {
-                // iOS18~
-                if #available(iOS 18, *) {
-                    TabView(selection: $activeTab) {
-                        Tab(value: TabItem.home) {
-                            VStack {
-                                HomePage(
-                                    showTabBar: $showTabBar)
-                            }
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                        }
-                        Tab(value: TabItem.task) {
-                            TargetPage()
-                                .toolbarVisibility(.hidden, for: .tabBar)
-                        }
-                    }
-                    // ~iOS17
-                } else {
-                    TabView(selection: $activeTab) {
+        ZStack(alignment: .bottom) {
+            // iOS18~
+            if #available(iOS 18, *) {
+                TabView(selection: $activeTab) {
+                    Tab(value: TabItem.home) {
                         VStack {
-                            HomePage(showTabBar: $showTabBar)
-                            TabBar(activeTab: $activeTab)
+                            HomePage(
+                                showTabBar: $showTabBar)
                         }
-                        .tag(TabItem.home)
-                        .toolbar(.hidden, for: .tabBar)
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                    }
+                    Tab(value: TabItem.task) {
                         TargetPage()
-                            .tag(TabItem.task)
-                            .toolbar(.hidden, for: .tabBar)
+                            .toolbarVisibility(.hidden, for: .tabBar)
                     }
                 }
-                /// Custom TabBar
-                TabBar(activeTab: $activeTab)
-                    .opacity(showTabBar ? 1 : 0)
-                    .offset(y: showTabBar ? 0 : 100) /// 100pt = TabBar(height:95pt) + margin(5pt)
-                    .animation(.easeInOut(duration: 0.3), value: showTabBar)
+                // ~iOS17
+            } else {
+                TabView(selection: $activeTab) {
+                    VStack {
+                        HomePage(showTabBar: $showTabBar)
+                        TabBar(activeTab: $activeTab)
+                    }
+                    .tag(TabItem.home)
+                    .toolbar(.hidden, for: .tabBar)
+                    TargetPage()
+                        .tag(TabItem.task)
+                        .toolbar(.hidden, for: .tabBar)
+                }
             }
-            .navigationDestination(for: QuestSlotManager.self) { manager in
-                QuestDetailsPage(manager: manager)
-            }
-            .navigationDestination(for: SchemaV1.Objective.self) { objective in
-                TaskPage(objective: objective)
-            }
+            /// Custom TabBar
+            TabBar(activeTab: $activeTab)
+                .opacity(showTabBar ? 1 : 0)
+                .offset(y: showTabBar ? 0 : 100) /// 100pt = TabBar(height:95pt) + margin(5pt)
+                .animation(.easeInOut(duration: 0.3), value: showTabBar)
         }
     }
 }
