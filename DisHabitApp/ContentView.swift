@@ -12,7 +12,7 @@ struct ContentView: View {
     @StateObject private var router = Router.shared
     
     var body: some View {
-        NavigationStack(path: $router.detailsNavigationPath) {
+        NavigationStack(path: $router.path) {
             ZStack(alignment: .bottom) {
                 // iOS18~
                 if #available(iOS 18, *) {

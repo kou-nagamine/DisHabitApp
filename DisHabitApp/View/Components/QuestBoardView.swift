@@ -225,7 +225,7 @@ struct QuestBoardView: View {
                         ForEach(currentQuestSlotManagers) { manager in
                             VStack{
                                 
-                                QuestSlotContainer(manager: manager)
+                                QuestSlotContainer(manager: manager, showTabBar: $showTabBar)
                             }
                         }
                     } else {

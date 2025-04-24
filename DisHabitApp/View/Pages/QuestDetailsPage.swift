@@ -22,7 +22,7 @@ struct QuestDetailsPage: View {
                 // Back Navigation Arrow
                 Button(
                     action: {
-                        Router.shared.detailsNavigationPath.removeLast()
+                        Router.shared.path.removeLast()
                     }, label: {
                         Image(systemName: "arrow.left")
                     }
@@ -180,7 +180,7 @@ struct QuestDetailsPage: View {
                                             await manager.redeemTicket()
                                             showCompletionAlert.toggle()
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                Router.shared.detailsNavigationPath.removeLast()
+                                                Router.shared.path.removeLast()
                                             }
                                         }
 
@@ -196,7 +196,7 @@ struct QuestDetailsPage: View {
                                     Button {
                                         showCompletionAlert.toggle()
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            Router.shared.detailsNavigationPath.removeLast()
+                                            Router.shared.path.removeLast()
                                         }
                                     } label: {
                                         Text("後で遊ぶ")

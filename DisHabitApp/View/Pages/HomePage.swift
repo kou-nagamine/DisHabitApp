@@ -34,13 +34,14 @@ struct HomePage: View {
                     WeekDaySelector(selectedDate: $selectedDate)
                 }
                 QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar) // 仮
-//            .onChange(of: path) {
-//                if path.isEmpty {
-//                    withAnimation(.easeOut(duration: 0.3)) {
-//                        showTabBar = true
-//                    }
-//                }
-//            }
+
+        }
+        .onChange(of: Router.shared.path) {
+            if Router.shared.path.isEmpty {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showTabBar = true
+                }
+            }
         }
     }
 }

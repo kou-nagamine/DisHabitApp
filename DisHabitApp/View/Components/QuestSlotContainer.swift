@@ -3,6 +3,7 @@ import SwiftUI
 
 struct QuestSlotContainer: View {
     var manager: QuestSlotManager
+    @Binding var showTabBar: Bool
     
     var body: some View {
             VStack {
@@ -27,9 +28,8 @@ struct QuestSlotContainer: View {
                 }
             }
             .onTapGesture {
-                print("QSC onTapGesture")
-//                showTabBar = false
-                Router.shared.detailsNavigationPath.append(manager)
+                showTabBar = false
+                Router.shared.path.append(manager)
             }
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 class Router: ObservableObject {
-    @Published var detailsNavigationPath = NavigationPath()
+    @Published var path = NavigationPath()
     
     static let shared: Router = Router()
 }
