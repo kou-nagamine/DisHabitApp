@@ -31,7 +31,7 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     
     func acceptQuest() async {
         do {
-            print("accept")
+            print("VM: accept quest")
             questSlot.acceptedQuest = questSlot.quest.accept()
             try modelContext.save()
         } catch let error {
@@ -40,11 +40,35 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     }
     
     func toggleTaskCompleted(acceptedTask: SchemaV1.AcceptedTask) async {
-        
+        do {
+            print("VM: toggle task completion")
+            if let acceptedQuest = questSlot.acceptedQuest {
+                if let task = acceptedQuest.acceptedTasks.first(where: { $0.id == acceptedTask.id }) {
+                    task.toggleValue()
+                    try modelContext.save()
+                } else {
+                    throw QuestSlotError.unexpected("Could not find task")
+                }
+            } else {
+                throw QuestSlotError.notAccepted
+            }
+        } catch {
+            print(error)
+        }
     }
     
     func discardAcceptedQuest() async {
-        
+        do {
+            print("VM: give up")
+            if let acceptedQuest = questSlot.acceptedQuest {
+                questSlot.acceptedQuest = nil
+                try modelContext.save()
+            } else {
+                throw QuestSlotError.notAccepted
+            }
+        } catch {
+            print(error)
+        }
     }
     
     func reportQuestCompletion() async {
@@ -54,4 +78,9 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     func redeemTicket() async {
         
     }
+}
+
+enum QuestSlotError: Error {
+    case notAccepted
+    case unexpected(String)
 }

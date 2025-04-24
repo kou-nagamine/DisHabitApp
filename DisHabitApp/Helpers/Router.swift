@@ -1,10 +1,3 @@
-//
-//  Router.swift
-//  DisHabitApp
-//
-//  Created by nafell on 2025/04/24.
-//
-
 import Foundation
 import SwiftUI
 
@@ -13,3 +6,6 @@ class Router: ObservableObject {
     
     static let shared: Router = Router()
 }
+
+
+// Reference: https://stackoverflow.com/questions/74808737/where-to-place-global-navigationpath-in-swiftui
