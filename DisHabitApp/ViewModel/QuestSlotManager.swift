@@ -60,7 +60,7 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     func discardAcceptedQuest() async {
         do {
             print("VM: give up")
-            if let acceptedQuest = questSlot.acceptedQuest {
+            if let _ = questSlot.acceptedQuest {
                 questSlot.acceptedQuest = nil
                 try modelContext.save()
             } else {
@@ -72,11 +72,31 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     }
     
     func reportQuestCompletion() async {
-        
+        do {
+            print("VM: report quest completion")
+            if let acceptedQuest = questSlot.acceptedQuest {
+                acceptedQuest.isCompletionReported = true
+                try modelContext.save()
+            } else {
+                throw QuestSlotError.notAccepted
+            }
+        } catch {
+            print(error)
+        }
     }
     
     func redeemTicket() async {
-        
+        do {
+            print("VM: report quest completion")
+            if let acceptedQuest = questSlot.acceptedQuest {
+                acceptedQuest.redeemReward()
+                try modelContext.save()
+            } else {
+                throw QuestSlotError.notAccepted
+            }
+        } catch {
+            print(error)
+        }
     }
 }
 

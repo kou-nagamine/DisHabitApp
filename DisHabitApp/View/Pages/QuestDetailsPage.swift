@@ -74,7 +74,7 @@ struct QuestDetailsPage: View {
                     VStack(spacing: 20) {
                         if isAccepted {
                             ForEach(acceptedQuest!.acceptedTasks) { acceptedTask in
-                                CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: false, isLabelOnly: false, toggleAction: {
+                                CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: manager.questSlot.acceptedQuest!.isCompletionReported, isLabelOnly: false, toggleAction: {
                                     _Concurrency.Task {
                                         await manager.toggleTaskCompleted(acceptedTask: acceptedTask)
                                     }
