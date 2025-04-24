@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TargetPage: View {
 //    @StateObject var vm: ObjectivesPageViewModel = .init()
+    @Environment(\.modelContext) private var modelContext
+    
+    @Query var objectives: [SchemaV1.Objective]
     
     var body: some View {
         NavigationStack {
@@ -18,15 +22,18 @@ struct TargetPage: View {
                     .font(.largeTitle)
                 ScrollView {
                     VStack(spacing: 20) {
-//                        ForEach(vm.objectives) { objective in
+                        ForEach(objectives) { objective in
 //                            NavigationLink(destination: TaskPage(objective: objective)) {
-//                                Text(objective.text)
-//                                    .font(.title2)
-//                                    .frame(maxWidth: .infinity)
-//                                    .frame(height: 70)
-//                                    .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
+                                Text(objective.text)
+                                    .font(.title2)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 70)
+                                    .background(.gray.gradient.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
+                                    .onTapGesture {
+                                        Router.shared.path.append(objective)
+                                    }
 //                            }
-//                        }
+                        }
                         Text("＋")
                             .font(.title)
                             .frame(maxWidth: .infinity)

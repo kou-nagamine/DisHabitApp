@@ -52,6 +52,9 @@ struct ContentView: View {
             .navigationDestination(for: QuestSlotManager.self) { manager in
                 QuestDetailsPage(manager: manager)
             }
+            .navigationDestination(for: SchemaV1.Objective.self) { objective in
+                TaskPage(objective: objective)
+            }
         }
     }
 }

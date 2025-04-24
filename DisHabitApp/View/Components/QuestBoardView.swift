@@ -21,8 +21,8 @@ struct QuestBoardView: View {
     
     @Query var standbyQuests: [SchemaV1.Quest]
     @Query var dailyQuestBoards: [SchemaV1.DailyQuestBoard]
-    @Query var objectives: [SchemaV1.Objective] //temp
-    @Query var tasks: [SchemaV1.StandbyTask] //temp!!
+//    @Query var objectives: [SchemaV1.Objective] //temp
+//    @Query var tasks: [SchemaV1.StandbyTask] //temp!!
     @Query var qs: [SchemaV1.QuestSlot] //temp!!
     
     @State private var currentQuestSlotManagers: [QuestSlotManager] = []
