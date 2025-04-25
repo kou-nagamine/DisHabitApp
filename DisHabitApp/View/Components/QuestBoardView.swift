@@ -243,6 +243,7 @@ struct QuestBoardView: View {
                 }
             }
             .frame(maxWidth: .infinity)
+            
         }
     }
 }

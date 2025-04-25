@@ -27,8 +27,10 @@ struct StandbyQuestCard: View {
             HStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(manager.questSlot.quest.reward.text)
-                        .font(.title2)
+                        .font(.title)
                         .fontWeight(.bold)
+                        .padding(.bottom, 3)
+                        .lineLimit(1)
                     Text("クリア率")
                         .font(.callout)
                 }
@@ -44,7 +46,7 @@ struct StandbyQuestCard: View {
                     Image(systemName: "play.circle")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
+                        .frame(width: 65, height: 65)
                         .background(.cyan.gradient.opacity(0.1), in: Circle())
                 }
                 // NavigationLinkが反応しないようにする
@@ -53,7 +55,7 @@ struct StandbyQuestCard: View {
                 .allowsHitTesting(true)
             }
             .padding(.horizontal, 25)
-            .padding(.vertical, 25)
+            .padding(.vertical, 30)
         }
         .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
         .overlay {
@@ -62,4 +64,8 @@ struct StandbyQuestCard: View {
                 .fill(.gray.gradient)
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

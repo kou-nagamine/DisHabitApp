@@ -29,6 +29,9 @@ struct TabBar: View {
                 .shadow(color: Color.gray, radius: 4, x: 3, y: 3)
         }
         .padding(.horizontal, 8)
+        .fullScreenCover(isPresented: $isPresented) {
+            AddQuestPage()
+        }
     }
     
     /// TabButton
@@ -77,6 +80,7 @@ struct TabBar: View {
         .contentShape(.rect)
         .offset(y: -45)
         .onTapGesture {
+            isPresented = true
         }
     }
 }
