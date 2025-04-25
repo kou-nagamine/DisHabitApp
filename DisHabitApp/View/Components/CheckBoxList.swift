@@ -53,7 +53,9 @@ struct CheckBoxList: View {
             }
             .padding(.horizontal, 30)
             .onTapGesture {
-                toggleAction()
+                if !isReadonly {
+                    toggleAction()
+                }
             }
         }
     }

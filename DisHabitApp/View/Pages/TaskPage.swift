@@ -6,26 +6,30 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskPage: View {
-    var objective: Objective
-    @ObservedObject var vm: TasksPageViewModel
+    var objective: SchemaV1.Objective
     
-    init(objective: Objective) {
+    @Query var allTasks: [SchemaV1.StandbyTask]
+    var tasks: [SchemaV1.StandbyTask] {
+        return allTasks.filter { $0.objective?.id == objective.id }
+    }
+    
+    init(objective: SchemaV1.Objective) {
         self.objective = objective
-        self.vm = .init(selectedObjective: objective)
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(vm.selectedObjective.text)
+            Text(objective.text)
                 .font(.system(size: 30, weight: .bold))
                 .padding(.top, 20)
                 .padding(.bottom, 35)
                 .padding(.leading, 30)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-                    ForEach(vm.tasks) { task in
+                    ForEach(tasks) { task in
                         Text(task.text)
                             .font(.system(size: 18, weight: .bold))
                             .frame(maxWidth: .infinity)
@@ -38,7 +42,6 @@ struct TaskPage: View {
                                     .fill(.gray.gradient)
                                     .padding(.horizontal, 30)
                             }
-
                     }
                 }
             }

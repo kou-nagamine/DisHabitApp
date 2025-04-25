@@ -1,16 +1,22 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct HomePage: View {
+    @Environment(\.modelContext) private var modelContext
+
+    
     /// Manages the selected date (currentDate) and the weekdays of the current week (week)
     @State private var currentDate: Date = .init()
     
-    ///
-    @State private var path: [QuestBoardNavigation] = []
     @Binding var showTabBar: Bool
     
+    @State var selectedDate: Date = Date() // TODO: タブ切り替えした時に保持される？上位から与えることを考慮する
+    
+    @StateObject private var router = Router.shared
+    
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.path) {
             VStack(spacing: 0) {
                 /// Header
                 VStack(spacing: 0) {
@@ -27,23 +33,20 @@ struct HomePage: View {
                     .padding(.vertical, 10)
                     
                     /// Week Day Selector
-                    WeekDaySelector()
+                    WeekDaySelector(selectedDate: $selectedDate)
                 }
-                QuestBoardView(showTabBar: $showTabBar, path: $path) // 仮
+                QuestBoardView(selectedDate: $selectedDate, showTabBar: $showTabBar) // 仮
+                
             }
-            ///
-            .navigationDestination(for: QuestBoardNavigation.self) { value in
-                switch value {
-                case .questDetails(let questSlot):
-                    QuestDetailsPage(questSlot: questSlot, path: $path)
-                }
-            }
-            .onChange(of: path) {
-                if path.isEmpty {
+            .onChange(of: Router.shared.path) {
+                if Router.shared.path.isEmpty {
                     withAnimation(.easeOut(duration: 0.3)) {
                         showTabBar = true
                     }
                 }
+            }
+            .navigationDestination(for: QuestSlotManager.self) { manager in
+                QuestDetailsPage(manager: manager)
             }
         }
     }

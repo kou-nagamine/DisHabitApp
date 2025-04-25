@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 struct TicketCard: View {
-    @ObservedObject var vm: QuestBoardViewModel
-    var acceptedQuest: AcceptedQuest
+//    @ObservedObject var vm: QuestBoardViewModel
+    var acceptedQuest: SchemaV1.AcceptedQuest
     
     var body: some View {
         if acceptedQuest.reward.isRedeemed {

@@ -2,11 +2,10 @@ import Foundation
 import SwiftUI
 
 struct StandbyQuestCard: View {
-    @ObservedObject var vm: QuestBoardViewModel
-    @State private var path: [QuestBoardNavigation] = []
+    var manager: QuestSlotManager
     
-    var quest: Quest
-    var questSlotId: UUID
+    var quest: SchemaV1.Quest
+//    var questSlotId: UUID
 
     var body: some View {
         ZStack {
@@ -27,7 +26,7 @@ struct StandbyQuestCard: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(quest.reward.text)
+                    Text(manager.questSlot.quest.reward.text)
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(.bottom, 3)
@@ -39,7 +38,9 @@ struct StandbyQuestCard: View {
                 Button(action: {
                     // ボタン固有の処理
                     _Concurrency.Task {
-                        await vm.acceptQuest(questSlotId: questSlotId)
+//                        await vm.acceptQuest(questSlotId: questSlotId)
+                        await manager.acceptQuest()
+//                        manager.questSlot.acceptedQuest = manager.questSlot.quest.accept()
                     }
                 }) {
                     Image(systemName: "play.circle")
