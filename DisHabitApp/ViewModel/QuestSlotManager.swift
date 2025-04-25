@@ -104,3 +104,9 @@ enum QuestSlotError: Error {
     case notAccepted
     case unexpected(String)
 }
+
+public enum QuestBoardTense {
+    case past
+    case today
+    case future
+}
