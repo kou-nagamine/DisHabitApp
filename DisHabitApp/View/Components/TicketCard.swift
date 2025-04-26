@@ -9,27 +9,12 @@ import Foundation
 import SwiftUI
 
 struct TicketCard: View {
-//    @ObservedObject var vm: QuestBoardViewModel
-    var acceptedQuest: SchemaV1.AcceptedQuest
+    var manager: QuestSlotManager
     
     var body: some View {
-        if acceptedQuest.reward.isRedeemed {
-            AcceptedTicketCard()
-        } else {
-            Button(action: {
-                //redeem
-            }, label: {
-                StandByTicketCard()
-            })
-        }
-    }
-}
-
-struct AcceptedTicketCard: View {
-    var body: some View {
         HStack(spacing: 0) {
             HStack(spacing: 0) {
-                Text("御上先生")
+                Text(manager.questSlot.acceptedQuest?.reward.text ?? "")
                     .font(.title)
             }
             .frame(maxWidth: .infinity)
@@ -45,65 +30,22 @@ struct AcceptedTicketCard: View {
             )
             HStack(spacing: 0) {
                 VStack(spacing: 5) {
-                    Text("期日")
-                        .font(.callout)
-                    Text("12/31")
-                        .font(.title3)
-                }
-            }
-            .frame(width: 100, height: 110)
-            .background(.gray.gradient)
-            /// border
-            .overlay(alignment: .leading) {
-                Rectangle()
-                    .strokeBorder(
-                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
-                    )
-                    .foregroundColor(.black)
-                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
-            }
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 0,
-                    bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 15,
-                    topTrailingRadius: 15
-                )
-            )
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 110)
-        .padding(.horizontal, 25)
-    }
-}
+                    if manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false {
+                        Text("使用済み")
+                            .font(.callout)
+                        Text(manager.questSlot.acceptedQuest?.reward.redeemedDate?.formatHourTime() ?? "")
+                            .font(.title3)
+                    } else {
+                        Text("期日")
+                            .font(.callout)
+                        Text(manager.questSlot.board?.date.formatMonthDay() ?? "")
+                            .font(.title3)
+                    }
 
-struct StandByTicketCard: View {
-    var body: some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 0) {
-                Text("御上先生")
-                    .font(.title)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 110)
-            .background(.white)
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 15,
-                    bottomLeadingRadius: 15,
-                    bottomTrailingRadius: 0,
-                    topTrailingRadius: 0
-                )
-            )
-            HStack(spacing: 0) {
-                VStack(spacing: 5) {
-                    Text("期日")
-                        .font(.callout)
-                    Text("12/31")
-                        .font(.title3)
                 }
             }
             .frame(width: 100, height: 110)
+//            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .gray.gradient : .white)
             .background(.white)
             /// border
             .overlay(alignment: .leading) {
@@ -122,15 +64,19 @@ struct StandByTicketCard: View {
                     topTrailingRadius: 15
                 )
             )
+            .allowsHitTesting(true)
+            .onTapGesture {
+                if let acceptedQuest = manager.questSlot.acceptedQuest {
+                    if acceptedQuest.reward.isRedeemed {
+                        return
+                    }
+                    
+                    acceptedQuest.redeemReward()
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .frame(height: 110)
         .padding(.horizontal, 25)
     }
-}
-
-
-#Preview {
-    AcceptedTicketCard()
-        .background(.gray.gradient.opacity(0.2))
 }

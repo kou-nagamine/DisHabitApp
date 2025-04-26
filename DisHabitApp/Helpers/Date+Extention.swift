@@ -79,6 +79,20 @@ extension Date {
     func weekday() -> Int {
         return Calendar.current.component(.weekday, from: self)
     }
+    
+    func formatMonthDay() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        dateFormatter.dateFormat = "MM/dd"
+        return dateFormatter.string(from: self)
+    }
+    
+    func formatHourTime() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        dateFormatter.dateFormat = "H:mm"
+        return dateFormatter.string(from: self)
+    }
 }
 
 extension View {
