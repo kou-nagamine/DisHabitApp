@@ -9,12 +9,7 @@ struct QuestSlotContainer: View {
             VStack {
                 if let acceptedQuest = manager.questSlot.acceptedQuest {
                     if acceptedQuest.isCompletionReported {
-//                        TicketCard(manager: manager, acceptedQuest: acceptedQuest)
-//                            .onTapGesture {
-//                                withAnimation(.easeOut(duration: 0.3)) {
-//                                    showTabBar = false
-//                                }
-//                            }
+                        TicketCard(manager: manager)
                     }
                     else {
                         AcceptedQuestCard(manager: manager)
