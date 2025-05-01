@@ -8,8 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct TargetPage: View {
-//    @StateObject var vm: ObjectivesPageViewModel = .init()
+struct ObjectivePage: View {
     @Environment(\.modelContext) private var modelContext
     
     @Query var objectives: [SchemaV1.Objective]
@@ -53,5 +52,5 @@ struct TargetPage: View {
 }
 
 #Preview {
-    TargetPage()
+    ObjectivePage()
 }
