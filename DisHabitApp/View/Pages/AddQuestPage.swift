@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddQuestPage: View {
-    @State var inputName = ""
+    @State var rewardName = ""
     @Environment(\.dismiss) private var dismiss
     
     @Environment(\.modelContext) private var modelContext
@@ -31,7 +31,7 @@ struct AddQuestPage: View {
     @State var selectedTasks: [SchemaV1.StandbyTask] = []
     
     private func createQuest() {
-        let newQuest = SchemaV1.Quest(activatedDayOfWeeks: self.weekDayDict, reward: SchemaV1.Reward(text: self.inputName), tasks: self.selectedTasks)
+        let newQuest = SchemaV1.Quest(activatedDayOfWeeks: self.weekDayDict, reward: SchemaV1.Reward(text: self.rewardName), tasks: self.selectedTasks)
         
         // modelContext.insert
     }
@@ -63,7 +63,7 @@ struct AddQuestPage: View {
                     .padding(.top, 30)
                     Spacer()
                     VStack (spacing: 30){
-                        TextField("楽しいこと", text: $inputName)
+                        TextField("楽しいこと", text: $rewardName)
                             .font(.largeTitle)
                             .padding(.bottom, 10)
                             .overlay(alignment: .bottom) {
@@ -115,7 +115,11 @@ struct AddQuestPage: View {
                                                 .stroke(Color.gray, lineWidth: 1)
                                         )
                                         .onTapGesture {
-                                            self.rewardScore = score
+                                            if self.rewardScore == score {
+                                                self.rewardScore = 0 // deselect
+                                            } else {
+                                                self.rewardScore = score
+                                            }
                                         }
                                 }
                             }
