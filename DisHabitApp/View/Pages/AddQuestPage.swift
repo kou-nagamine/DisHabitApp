@@ -13,7 +13,7 @@ struct AddQuestPage: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @State var rewardScore: Int = 0
+    @State var rewardScore: Int = -1
     @State var WeekDayList: [String] = ["日", "月", "火", "水", "木", "金", "土"]
 
     let RewardScoreList: Array<Int> = [1,2,3,4,5]
@@ -33,7 +33,7 @@ struct AddQuestPage: View {
     private func createQuest() {
         let newQuest = SchemaV1.Quest(activatedDayOfWeeks: self.weekDayDict, reward: SchemaV1.Reward(text: self.rewardName), tasks: self.selectedTasks)
         
-        // modelContext.insert
+        modelContext.insert(newQuest)
     }
     
     // validatorをcomputed propertyにする
@@ -116,7 +116,7 @@ struct AddQuestPage: View {
                                         )
                                         .onTapGesture {
                                             if self.rewardScore == score {
-                                                self.rewardScore = 0 // deselect
+                                                self.rewardScore = -1 // deselect
                                             } else {
                                                 self.rewardScore = score
                                             }
@@ -147,6 +147,21 @@ struct AddQuestPage: View {
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
             .background(.gray.gradient.opacity(0.2))
+            VStack() {
+                Button(
+                    action: {
+                        createQuest()
+                    }
+                   ,label:{
+                    Text("登録")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(width: 300, height: 50)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                })
+            }
+            .frame(maxHeight: 80, alignment: .bottom)
         }
     }
 }
