@@ -11,11 +11,42 @@ struct AddQuestPage: View {
     @State var inputName = ""
     @Environment(\.dismiss) private var dismiss
     
-    @State var currentReward: String = ""
+    @Environment(\.modelContext) private var modelContext
+    
+    @State var rewardScore: Int = 0
     @State var WeekDayList: [String] = ["日", "月", "火", "水", "木", "金", "土"]
 
-    let RewardPointList: Array<String> = ["1", "2", "3", "4", "5"]
+    let RewardScoreList: Array<Int> = [1,2,3,4,5]
     let days: Array<String> = ["日", "月", "火", "水", "木", "金", "土"]
+    
+    var weekDayDict: [Int:Bool] {
+        var dict:[Int:Bool] = [:]
+        for (index, value) in self.days.enumerated() {
+            dict[index+1] = WeekDayList.contains(value)
+        }
+        print(dict.description)
+        return dict
+    }
+    
+    @State var selectedTasks: [SchemaV1.StandbyTask] = []
+    
+    private func createQuest() {
+        let newQuest = SchemaV1.Quest(activatedDayOfWeeks: self.weekDayDict, reward: SchemaV1.Reward(text: self.inputName), tasks: self.selectedTasks)
+        
+        // modelContext.insert
+    }
+    
+    // validatorをcomputed propertyにする
+    
+    // []=pass, error=some string
+    private func validate() -> [String] {
+        // name is empty
+        // occasion is 0
+        // no tasks
+        
+        // rewardpoint can be nil??
+        return []
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,10 +72,11 @@ struct AddQuestPage: View {
                                     .foregroundColor(.gray)
                             }
                         VStack(alignment: .leading, spacing: 5){
-                            Text("頻度：毎日")
+                            Text("頻度: \(weekDayDict.weeklyOccasionDescription())")
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .padding(.vertical, 10)
+
                             HStack(spacing: 7) {
                                 ForEach(days, id: \.self) { day in
                                     Text(day)
@@ -73,17 +105,17 @@ struct AddQuestPage: View {
                                 .fontWeight(.bold)
                                 .padding(.vertical, 10)
                             HStack(spacing: 10) {
-                                ForEach(RewardPointList, id: \.self) { rewardPoint in
-                                    Text(rewardPoint)
+                                ForEach(RewardScoreList, id: \.self) { score in
+                                    Text(score.description)
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 60)
-                                        .background(currentReward == rewardPoint ? Color.blue : Color.white, in: RoundedRectangle(cornerRadius: 20))
+                                        .background(score == self.rewardScore ? Color.blue : Color.white, in: RoundedRectangle(cornerRadius: 20))
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 20)
                                                 .stroke(Color.gray, lineWidth: 1)
                                         )
                                         .onTapGesture {
-                                            currentReward = rewardPoint
+                                            self.rewardScore = score
                                         }
                                 }
                             }
