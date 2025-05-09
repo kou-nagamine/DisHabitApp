@@ -36,11 +36,12 @@ struct StandbyQuestCard: View {
                 }
                 Spacer()
                 Button(action: {
-                    // ボタン固有の処理
+                    if manager.tense != .today { // 当日のみ操作可能
+                        return;
+                    }
+                    
                     _Concurrency.Task {
-//                        await vm.acceptQuest(questSlotId: questSlotId)
                         await manager.acceptQuest()
-//                        manager.questSlot.acceptedQuest = manager.questSlot.quest.accept()
                     }
                 }) {
                     Image(systemName: "play.circle")
