@@ -29,7 +29,7 @@ struct QuestBoardView: View {
     
     @MainActor
     private func updateBoardManagers(for date: Date) {
-        print("Updating board managers for date: \(date), tense: \(tense)")
+        print("Updating board managers for date: \(date), tense: \(date.tense())")
         // 既存のボードを探す
         if let board = dailyQuestBoards.first(where: { $0.date.isSameDayAs(date)}) {
             print("Found existing board for \(date)")
@@ -38,7 +38,7 @@ struct QuestBoardView: View {
                     modelContext: modelContext,
                     board: board,
                     questSlot: $0,
-                    tense: tense // tenseを渡す
+                    tense: date.tense() // tenseを渡す
                 )
             }
         } else {
@@ -159,13 +159,13 @@ struct QuestBoardView: View {
                             for board in dailyQuestBoards {
                                 print(board.date)
                             }
-                            print("questSlots:", qs.count)
-                            for q in qs {
-                                print(q.quest.reward.text)
-                            }
-                            _Concurrency.Task {
-                                //                            await vm.debug_ResetAcceptedQuests()
-                            }
+//                            print("questSlots:", qs.count)
+//                            for q in qs {
+//                                print(q.quest.reward.text)
+//                            }
+//                            _Concurrency.Task {
+//                                await vm.debug_ResetAcceptedQuests()
+//                            }
                             print("qs managers", currentQuestSlotManagers.count)
                         } label: {
                             Text("DEBUG:受注リセット")

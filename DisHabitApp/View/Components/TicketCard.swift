@@ -66,6 +66,9 @@ struct TicketCard: View {
             )
             .allowsHitTesting(true)
             .onTapGesture {
+                if manager.tense != .today {
+                    return
+                }
                 if let acceptedQuest = manager.questSlot.acceptedQuest {
                     if acceptedQuest.reward.isRedeemed {
                         return

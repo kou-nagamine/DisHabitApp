@@ -84,7 +84,7 @@ extension SchemaV1 {
     @Model
     class Quest: Identifiable {
         var id: UUID
-        var activatedDayOfWeeks: [Int: Bool]
+        var activatedDayOfWeeks: [Int: Bool] // 1:Sun - 7:Sat
         @Relationship var reward: Reward
         @Relationship var tasks: [StandbyTask]
 

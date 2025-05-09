@@ -59,6 +59,7 @@ struct QuestDetailsPage: View {
                     }
                     .frame(maxWidth: .infinity) // Centerよせ
                     .padding(.bottom, 70)
+                    .disabled(manager.tense != .today)
                 }
 
             }
@@ -74,10 +75,15 @@ struct QuestDetailsPage: View {
                     VStack(spacing: 20) {
                         if isAccepted {
                             ForEach(acceptedQuest!.acceptedTasks) { acceptedTask in
-                                CheckBoxList(isSelected: acceptedTask.isCompleted, taskName: acceptedTask.text, isReadonly: manager.questSlot.acceptedQuest!.isCompletionReported, isLabelOnly: false, toggleAction: {
-                                    _Concurrency.Task {
-                                        await manager.toggleTaskCompleted(acceptedTask: acceptedTask)
-                                    }
+                                CheckBoxList(
+                                    isSelected: acceptedTask.isCompleted,
+                                    taskName: acceptedTask.text,
+                                    isReadonly: manager.tense != .today || manager.questSlot.acceptedQuest!.isCompletionReported, // 当日かつクエスト未完了の場合のみ操作可能
+                                    isLabelOnly: false,
+                                    toggleAction: {
+                                        _Concurrency.Task {
+                                            await manager.toggleTaskCompleted(acceptedTask: acceptedTask)
+                                        }
                                 })
                                 // TODO: isReadonlyの実装/過去日の場合のflagを上の階層から持ってくる
                             }
@@ -88,7 +94,7 @@ struct QuestDetailsPage: View {
                         }
                     }
                 }
-                if isAccepted {
+                if isAccepted && manager.tense == .today {
                     if !acceptedQuest!.isAllTaskCompleted {
                         Button {
                             showDiscardAlert.toggle()
