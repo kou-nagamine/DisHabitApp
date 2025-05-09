@@ -69,7 +69,7 @@ extension Date {
     }
 
     func isSameDayAs(_ date: Date) -> Bool {
-        return Calendar.current.isDateInToday(date)
+        return Calendar.current.isDate(self, inSameDayAs: date)
     }
 
     func startOfDay() -> Date {
@@ -92,6 +92,17 @@ extension Date {
         dateFormatter.locale = Locale(identifier: "ja_JP")
         dateFormatter.dateFormat = "H:mm"
         return dateFormatter.string(from: self)
+    }
+    
+    func tense() -> QuestBoardTense {
+        let today = Date()
+        if self.isSameDayAs(today) {
+            return .today
+        } else if self < today { // isSameDayAsに引っかからなかったモノのみここに到達するので、小なり現在時刻でOK
+            return .past
+        } else {
+            return .future
+        }
     }
 }
 
