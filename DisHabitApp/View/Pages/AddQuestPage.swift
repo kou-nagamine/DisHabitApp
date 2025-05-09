@@ -140,6 +140,9 @@ struct AddQuestPage: View {
                     .padding(.bottom, 15)
                 ScrollView {
                     VStack (spacing: 20){
+                        ForEach (selectedTasks) { task in
+                            Text(task.text)
+                        }
                         AddTaskButton(selectedTasks: $selectedTasks)
                     }
                 }
