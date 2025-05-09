@@ -140,7 +140,7 @@ struct AddQuestPage: View {
                     .padding(.bottom, 15)
                 ScrollView {
                     VStack (spacing: 20){
-                        AddTaskButton()
+                        AddTaskButton(selectedTasks: $selectedTasks)
                     }
                 }
                 .navigationBarBackButtonHidden(true)

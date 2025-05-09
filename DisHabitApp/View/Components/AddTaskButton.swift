@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddTaskButton: View {
+    @Binding var selectedTasks: [SchemaV1.StandbyTask]
     
     @State private var isPresented: Bool = false
     
@@ -30,11 +31,12 @@ struct AddTaskButton: View {
             isPresented.toggle()
         }
         .sheet(isPresented: $isPresented) {
-            TaskSelectPage()
+            TaskSelectPage(selectedTasks: $selectedTasks)
         }
     }
 }
 
 #Preview {
-    AddTaskButton()
+    @State var selectedTasks: [SchemaV1.StandbyTask] = []
+    AddTaskButton(selectedTasks: $selectedTasks)
 }
