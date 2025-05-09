@@ -187,7 +187,7 @@ struct AddQuestPage: View {
                 ScrollView {
                     VStack (spacing: 20){
                         ForEach (selectedTasks) { task in
-                            Text(task.text)
+                            CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, toggleAction: {})
                         }
                         AddTaskButton(selectedTasks: $selectedTasks)
                     }
@@ -210,7 +210,7 @@ struct AddQuestPage: View {
                         .cornerRadius(10)
                 })
             }
-            .frame(maxHeight: 80, alignment: .bottom)
+            .frame(maxHeight: 63, alignment: .bottom)
         }
     }
 }
