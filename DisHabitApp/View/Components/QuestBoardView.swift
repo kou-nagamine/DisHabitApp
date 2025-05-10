@@ -19,7 +19,9 @@ struct QuestBoardView: View {
         }
     }
     
-    @Query var standbyQuests: [Quest]
+    @Query(filter: #Predicate<Quest> {quest in
+        quest.isArchived == false
+    }) var standbyQuests: [Quest]
     @Query var dailyQuestBoards: [DailyQuestBoard]
 //    @Query var objectives: [Objective] //temp
 //    @Query var tasks: [StandbyTask] //temp!!
@@ -168,13 +170,13 @@ struct QuestBoardView: View {
 //                            }
                             print("qs managers", currentQuestSlotManagers.count)
                         } label: {
-                            Text("DEBUG:受注リセット")
+                            Text("print")
                         }
                         
                         Button {
                             do {
-                                try modelContext.delete(model: DailyQuestBoard.self)
-                                try modelContext.delete(model: DailyQuestBoard.self)
+//                                try modelContext.delete(model: DailyQuestBoard.self)
+//                                try modelContext.delete(model: DailyQuestBoard.self)
                                 //                            let a = tasks
                                 //                            let b = objectives
                                 //                            let c = standbyQuests
@@ -189,11 +191,11 @@ struct QuestBoardView: View {
                                 let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
                                 let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
                                 
-                                let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
-                                let reward2 = Reward(id: UUID(), text: "映画を見る")
+//                                let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
+//                                let reward2 = Reward(id: UUID(), text: "映画を見る")
                                 
-                                let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
-                                let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
+//                                let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+//                                let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
                                 
                                 
                                 modelContext.insert(objective1)
@@ -204,10 +206,10 @@ struct QuestBoardView: View {
                                 modelContext.insert(task3)
                                 modelContext.insert(task4)
                                 modelContext.insert(task5)
-                                modelContext.insert(reward1)
-                                modelContext.insert(reward2)
-                                modelContext.insert(quest1)
-                                modelContext.insert(quest2)
+//                                modelContext.insert(reward1)
+//                                modelContext.insert(reward2)
+//                                modelContext.insert(quest1)
+//                                modelContext.insert(quest2)
                                 
                                 try modelContext.save()
                                 
