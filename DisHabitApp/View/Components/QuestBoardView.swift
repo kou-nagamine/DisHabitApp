@@ -43,6 +43,27 @@ struct QuestBoardView: View {
                     tense: date.tense() // tenseを渡す
                 )
             }
+            if date.tense() == .today {
+                var todayQuests: [Quest] = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }
+                let currentCount =  currentQuestSlotManagers.count
+                let standbyCount = todayQuests.count
+                if currentCount < standbyCount { // クエストが増えていた時
+                    for q in currentQuestSlotManagers {
+                        todayQuests = todayQuests.filter { $0.id != q.questSlot.quest.id } // 既存Questから1つずつ消去する
+                    }
+                    for q in todayQuests {
+                        let questSlot = QuestSlot(board: board, quest: q)
+                        modelContext.insert(questSlot)
+                        currentQuestSlotManagers.append(QuestSlotManager(modelContext: modelContext, board: board, questSlot: questSlot, tense: .today))
+                    }
+                } else if currentCount > standbyCount { // クエストが減っていた時
+                    print("wow")
+                    // 削除アクションの方でvalidateするので、ここでは問答無用で削除する
+                } else {
+                    print("yes")
+                    // 何もしない
+                }
+            }
         } else {
             // 存在しない場合のみボードを作成
             print("No board found for \(date). Determining action based on tense.")
@@ -237,6 +258,10 @@ struct QuestBoardView: View {
                     List { } // ↑の内容をリストに書いても動作しない。RPのトリガーとして以下のハンドラを記述している
                         .onChange(of: selectedDate) { _, newDate in // selectedDate の変更を監視
                             updateBoardManagers(for: newDate)
+                        }
+                        .onChange(of: standbyQuests) { _, quests in
+                            print("onChange(of: standbyQuests)")
+                            updateBoardManagers(for: selectedDate)
                         }
                         .onAppear { // 最初に表示されたときにも更新
                             updateBoardManagers(for: selectedDate)
