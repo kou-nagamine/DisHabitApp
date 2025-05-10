@@ -94,14 +94,14 @@ extension SchemaValpha010 {
     @Model
     class Quest: Identifiable {
         var id: UUID
-        var archived: Bool
+        var isArchived: Bool
         var activatedDayOfWeeks: [Int: Bool] // 1:Sun - 7:Sat
         @Relationship var reward: Reward
         @Relationship var tasks: [StandbyTask]
 
-        init(id: UUID = UUID(), archived: Bool = false, activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
+        init(id: UUID = UUID(), isArchived: Bool = false, activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
             self.id = id
-            self.archived = archived
+            self.isArchived = isArchived
             self.activatedDayOfWeeks = activatedDayOfWeeks
             self.reward = reward
             self.tasks = tasks

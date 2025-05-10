@@ -30,7 +30,7 @@ struct DisHabitAppApp: App {
                 // Create our `ModelContainer`
                 modelContainer = try ModelContainer(
                     for: schema,
-                    migrationPlan: MigrationPlan.self,
+//                    migrationPlan: MigrationPlan.self,
                     configurations: defaultConfiguration
                 )
                 
