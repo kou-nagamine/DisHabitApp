@@ -4,7 +4,7 @@ import SwiftUI
 struct StandbyQuestCard: View {
     var manager: QuestSlotManager
     
-    var quest: SchemaV1.Quest
+    var quest: Quest
 //    var questSlotId: UUID
 
     var body: some View {

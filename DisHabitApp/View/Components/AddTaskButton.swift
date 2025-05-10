@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddTaskButton: View {
-    @Binding var selectedTasks: [SchemaV1.StandbyTask]
+    @Binding var selectedTasks: [StandbyTask]
     
     @State private var isPresented: Bool = false
     
@@ -37,6 +37,6 @@ struct AddTaskButton: View {
 }
 
 #Preview {
-    @State var selectedTasks: [SchemaV1.StandbyTask] = []
+    @State var selectedTasks: [StandbyTask] = []
     AddTaskButton(selectedTasks: $selectedTasks)
 }

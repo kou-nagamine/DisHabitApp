@@ -1,6 +1,16 @@
 import Foundation
 import SwiftData
 
+typealias Quest = SchemaValpha010.Quest
+typealias StandbyTask = SchemaValpha010.StandbyTask
+typealias Objective = SchemaValpha010.Objective
+typealias DailyQuestBoard = SchemaValpha010.DailyQuestBoard
+typealias QuestSlot = SchemaValpha010.QuestSlot
+typealias AcceptedQuest = SchemaValpha010.AcceptedQuest
+typealias AcceptedTask = SchemaValpha010.AcceptedTask
+typealias Reward = SchemaValpha010.Reward
+typealias RedeemableReward = SchemaValpha010.RedeemableReward
+
 enum SchemaValpha010: VersionedSchema {
     static var versionIdentifier: Schema.Version = Schema.Version(0, 1, 0)
     static var models: [any PersistentModel.Type] {
