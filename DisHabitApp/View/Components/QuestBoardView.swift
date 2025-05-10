@@ -48,9 +48,12 @@ struct QuestBoardView: View {
                 let currentCount =  currentQuestSlotManagers.count
                 let standbyCount = todayQuests.count
                 if currentCount < standbyCount { // クエストが増えていた時
+                    // 差分のクエスト(新規作成されたクエスト)を取り出す
                     for q in currentQuestSlotManagers {
                         todayQuests = todayQuests.filter { $0.id != q.questSlot.quest.id } // 既存Questから1つずつ消去する
                     }
+                    
+                    // 差分からQuestSlot+Managerを作成する
                     for q in todayQuests {
                         let questSlot = QuestSlot(board: board, quest: q)
                         modelContext.insert(questSlot)
@@ -59,6 +62,7 @@ struct QuestBoardView: View {
                 } else if currentCount > standbyCount { // クエストが減っていた時
                     print("wow")
                     // 削除アクションの方でvalidateするので、ここでは問答無用で削除する
+                    // 検証: isArchivedの変更通知がここまで届くか？
                 } else {
                     print("yes")
                     // 何もしない
