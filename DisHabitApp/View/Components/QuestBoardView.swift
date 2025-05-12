@@ -62,7 +62,12 @@ struct QuestBoardView: View {
                 } else if currentCount > standbyCount { // クエストが減っていた時
                     print("wow")
                     // 削除アクションの方でvalidateするので、ここでは問答無用で削除する
-                    // 検証: isArchivedの変更通知がここまで届くか？
+                    let archived = currentQuestSlotManagers.filter { $0.questSlot.quest.isArchived }
+                    for qsm in archived {
+                        currentQuestSlotManagers = currentQuestSlotManagers.filter { $0.questSlot.quest.id != qsm.questSlot.quest.id }
+                        board.questSlots = board.questSlots.filter { $0.quest.id != qsm.questSlot.quest.id }
+                        modelContext.delete(qsm.questSlot)
+                    }
                 } else {
                     print("yes")
                     // 何もしない
