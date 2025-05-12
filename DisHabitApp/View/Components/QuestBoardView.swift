@@ -43,7 +43,9 @@ struct QuestBoardView: View {
                     tense: date.tense() // tenseを渡す
                 )
             }
-            if date.tense() == .today {
+            // standbyQuestsとboardのquestSlotを比較し、差分に対して処理する
+            // 未来のboardを表示している最中にクエストが複数追加されている状態があり得るため
+            if date.tense() != .past {
                 var todayQuests: [Quest] = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }
                 let currentCount =  currentQuestSlotManagers.count
                 let standbyCount = todayQuests.count
