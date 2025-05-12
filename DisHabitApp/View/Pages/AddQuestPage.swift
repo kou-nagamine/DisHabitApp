@@ -44,6 +44,8 @@ struct AddQuestPage: View {
         let newQuest = Quest(activatedDayOfWeeks: self.weekDayDict, reward: Reward(text: self.rewardName), tasks: self.selectedTasks)
         
         modelContext.insert(newQuest)
+        
+        dismiss()
     }
     
     /// validator: true == success; false == error
