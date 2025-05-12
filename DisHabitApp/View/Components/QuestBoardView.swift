@@ -44,7 +44,8 @@ struct QuestBoardView: View {
                 )
             }
             // standbyQuestsとboardのquestSlotを比較し、差分に対して処理する
-            // 未来のboardを表示している最中にクエストが複数追加されている状態があり得るため
+            // 未来のboardを表示している最中にクエストが複数追加されている状態→当日boardに切り替える操作があり得る
+            // add/archiveしたときに全対象boardに対して更新処理を行うのではなく、表示をリクエストされた段階で差分更新処理を実行する
             if date.tense() != .past {
                 var todayQuests: [Quest] = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }
                 let currentCount =  currentQuestSlotManagers.count
