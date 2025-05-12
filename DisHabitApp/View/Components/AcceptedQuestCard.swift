@@ -2,13 +2,7 @@ import Foundation
 import SwiftUI
 
 struct AcceptedQuestCard: View {
-//    @ObservedObject var vm: QuestBoardViewModel
     var manager: QuestSlotManager
-    
-    var computed: String {
-        print("AQCard: Render")
-        return "Computed"
-    }
     
     var body: some View {
         if let acceptedQuest = manager.questSlot.acceptedQuest {
@@ -19,7 +13,7 @@ struct AcceptedQuestCard: View {
                             .font(.title2)
                             .fontWeight(.bold)
                         HStack {
-                            Text(computed)
+                            Text(manager.questSlot.quest.activatedDayOfWeeks.weeklyOccasionDescription())
                                 .font(.callout)
                         }
                     }

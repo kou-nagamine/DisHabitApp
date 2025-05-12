@@ -30,13 +30,13 @@ struct QuestDetailsPage: View {
                 .font(.title)
                 .padding(.leading, 30)
                 .tint(.black)
-                Text(isAccepted ? acceptedQuest!.reward.text : quest.reward.text)
+                Text(isAccepted ? acceptedQuest?.reward.text ?? "" : quest.reward.text)
                     .font(.system(size: 40, weight: .bold))
                     .fontWeight(.bold)
                     .padding(.leading, 30)
                     .padding(.bottom, 45)
                 if isAccepted {
-                    PieChart(progress: acceptedQuest!.taskCompletionRate, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2)
+                    PieChart(progress: acceptedQuest?.taskCompletionRate ?? 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2)
                         .frame(maxWidth: .infinity) // Centerよせ
                         .padding(.bottom, 70)
                 } else {
@@ -73,12 +73,12 @@ struct QuestDetailsPage: View {
                 Spacer()
                 ScrollView(.vertical) {
                     VStack(spacing: 20) {
-                        if isAccepted {
-                            ForEach(acceptedQuest!.acceptedTasks) { acceptedTask in
+                        if let acceptedQuest = manager.questSlot.acceptedQuest {
+                            ForEach(acceptedQuest.acceptedTasks) { acceptedTask in
                                 CheckBoxList(
                                     isSelected: acceptedTask.isCompleted,
                                     taskName: acceptedTask.text,
-                                    isReadonly: manager.tense != .today || manager.questSlot.acceptedQuest!.isCompletionReported, // 当日かつクエスト未完了の場合のみ操作可能
+                                    isReadonly: manager.tense != .today || acceptedQuest.isCompletionReported, // 当日かつクエスト未完了の場合のみ操作可能
                                     isLabelOnly: false,
                                     toggleAction: {
                                         _Concurrency.Task {
@@ -94,137 +94,138 @@ struct QuestDetailsPage: View {
                         }
                     }
                 }
-                if isAccepted && manager.tense == .today {
-                    if !acceptedQuest!.isAllTaskCompleted {
-                        Button {
-                            showDiscardAlert.toggle()
-                        } label: {
-                            Text("諦める")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .foregroundStyle(.white)
-                                .background(.red)
-                                .padding(.horizontal, 30)
-                                .padding(.bottom, 25)
-                                .shadow(radius: 5, x: 2, y: 2)
-                        }
-                        .alert(isPresented: $showDiscardAlert) {
-                            /// alertのdialogの見た目
-                            VStack(spacing: 0) {
-                                Text("本当に諦めますか？")
+                if manager.tense == .today {
+                    if let acceptedQuest = manager.questSlot.acceptedQuest {
+                        if !acceptedQuest.isAllTaskCompleted {
+                            Button {
+                                showDiscardAlert.toggle()
+                            } label: {
+                                Text("諦める")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .foregroundStyle(.white)
+                                    .background(.red)
+                                    .padding(.horizontal, 30)
+                                    .padding(.bottom, 25)
+                                    .shadow(radius: 5, x: 2, y: 2)
+                            }
+                            .alert(isPresented: $showDiscardAlert) {
+                                /// alertのdialogの見た目
+                                VStack(spacing: 0) {
+                                    Text("本当に諦めますか？")
                                     
-                                VStack(spacing: 15) {
-                                    Button {
-                                        _Concurrency.Task {
-                                            await manager.discardAcceptedQuest()
-                                            showDiscardAlert.toggle()
+                                    VStack(spacing: 15) {
+                                        Button {
+                                            _Concurrency.Task {
+                                                await manager.discardAcceptedQuest()
+                                                showDiscardAlert.toggle()
+                                            }
+                                        } label: {
+                                            Text("諦める")
+                                                .font(.system(size: 23, weight: .bold))
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 50)
+                                                .background(.red.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal, 35)
+                                                .foregroundColor(.black)
                                         }
-                                    } label: {
-                                        Text("諦める")
-                                            .font(.system(size: 23, weight: .bold))
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 50)
-                                            .background(.red.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal, 35)
-                                            .foregroundColor(.black)
-                                    }
-                                    Button {
-                                        showDiscardAlert.toggle()
-                                    } label: {
-                                        Text("もう少し頑張る")
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 50)
-                                            .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal, 35)
-                                            .foregroundColor(.black)
+                                        Button {
+                                            showDiscardAlert.toggle()
+                                        } label: {
+                                            Text("もう少し頑張る")
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 50)
+                                                .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal, 35)
+                                                .foregroundColor(.black)
+                                        }
                                     }
                                 }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 45))
+                                .padding(.horizontal, 35)
+                                .padding(.vertical, 170)
+                            } background: {
+                                Rectangle()
+                                    .fill(.primary.opacity(0.35))
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(.white, in: RoundedRectangle(cornerRadius: 45))
-                            .padding(.horizontal, 35)
-                            .padding(.vertical, 170)
-                        } background: {
-                            Rectangle()
-                                .fill(.primary.opacity(0.35))
-                        }
-                    } else {
-                        
-                        Button {
-                            _Concurrency.Task {
-                                await manager.reportQuestCompletion()
-                                showCompletionAlert.toggle()
-                            }
-                        } label: {
-                            Text("完了")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(Color.blue.gradient, in: RoundedRectangle(cornerRadius: 30))
-                                .padding(.horizontal, 30)
-                                .padding(.bottom, 25)
-                                .shadow(radius: 5, x: 2, y: 2)
-                        }
-                        .alert(isPresented: $showCompletionAlert) {
-                            /// alertのdialogの見た目
-                            VStack(spacing: 0) {
-                                VStack(spacing: 8) {
-                                    Circle()
-                                        .frame(width: 150, height: 150)
-                                    Text(acceptedQuest!.reward.text)
-                                        .font(.system(size: 35, weight: .bold))
-                                        .padding(.bottom, 40)
+                        } else {
+                            
+                            Button {
+                                _Concurrency.Task {
+                                    await manager.reportQuestCompletion()
+                                    showCompletionAlert.toggle()
                                 }
-                                VStack(spacing: 15) {
-                                    Button {
-                                        _Concurrency.Task {
-                                            await manager.redeemTicket()
+                            } label: {
+                                Text("完了")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(Color.blue.gradient, in: RoundedRectangle(cornerRadius: 30))
+                                    .padding(.horizontal, 30)
+                                    .padding(.bottom, 25)
+                                    .shadow(radius: 5, x: 2, y: 2)
+                            }
+                            .alert(isPresented: $showCompletionAlert) {
+                                /// alertのdialogの見た目
+                                VStack(spacing: 0) {
+                                    VStack(spacing: 8) {
+                                        Circle()
+                                            .frame(width: 150, height: 150)
+                                        Text(acceptedQuest.reward.text)
+                                            .font(.system(size: 35, weight: .bold))
+                                            .padding(.bottom, 40)
+                                    }
+                                    VStack(spacing: 15) {
+                                        Button {
+                                            _Concurrency.Task {
+                                                await manager.redeemTicket()
+                                                showCompletionAlert.toggle()
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                    Router.shared.path.removeLast()
+                                                }
+                                            }
+                                            
+                                        } label: {
+                                            Text("今すぐ遊ぶ")
+                                                .font(.system(size: 23, weight: .bold))
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 50)
+                                                .background(.green.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal, 35)
+                                                .foregroundColor(.black)
+                                        }
+                                        Button {
                                             showCompletionAlert.toggle()
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                                 Router.shared.path.removeLast()
                                             }
+                                        } label: {
+                                            Text("後で遊ぶ")
+                                                .frame(maxWidth: .infinity)
+                                                .frame(height: 50)
+                                                .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal, 35)
+                                                .foregroundColor(.black)
                                         }
-
-                                    } label: {
-                                        Text("今すぐ遊ぶ")
-                                            .font(.system(size: 23, weight: .bold))
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 50)
-                                            .background(.green.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal, 35)
-                                            .foregroundColor(.black)
-                                    }
-                                    Button {
-                                        showCompletionAlert.toggle()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            Router.shared.path.removeLast()
-                                        }
-                                    } label: {
-                                        Text("後で遊ぶ")
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 50)
-                                            .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal, 35)
-                                            .foregroundColor(.black)
                                     }
                                 }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 45))
+                                .padding(.horizontal, 35)
+                                .padding(.vertical, 170)
+                            } background: {
+                                Rectangle()
+                                    .fill(.primary.opacity(0.35))
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(.white, in: RoundedRectangle(cornerRadius: 45))
-                            .padding(.horizontal, 35)
-                            .padding(.vertical, 170)
-                        } background: {
-                            Rectangle()
-                                .fill(.primary.opacity(0.35))
                         }
+                    } else {
                     }
-                } else {
-                    // TODO: 受注ボタン
                 }
             }
             .navigationBarBackButtonHidden(true)

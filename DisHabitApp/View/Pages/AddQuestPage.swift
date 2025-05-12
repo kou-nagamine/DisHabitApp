@@ -28,7 +28,7 @@ struct AddQuestPage: View {
         return dict
     }
     
-    @State var selectedTasks: [SchemaV1.StandbyTask] = []
+    @State var selectedTasks: [StandbyTask] = []
     
     @State var isSubmitPressed: Bool = false
     
@@ -41,9 +41,11 @@ struct AddQuestPage: View {
         
         print("validate pass")
         
-        let newQuest = SchemaV1.Quest(activatedDayOfWeeks: self.weekDayDict, reward: SchemaV1.Reward(text: self.rewardName), tasks: self.selectedTasks)
+        let newQuest = Quest(activatedDayOfWeeks: self.weekDayDict, reward: Reward(text: self.rewardName), tasks: self.selectedTasks)
         
         modelContext.insert(newQuest)
+        
+        dismiss()
     }
     
     /// validator: true == success; false == error

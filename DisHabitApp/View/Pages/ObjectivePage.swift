@@ -11,7 +11,7 @@ import SwiftData
 struct ObjectivePage: View {
     @Environment(\.modelContext) private var modelContext
     
-    @Query var objectives: [SchemaV1.Objective]
+    @Query var objectives: [Objective]
     
     @StateObject private var router = Router.shared
     
@@ -44,7 +44,7 @@ struct ObjectivePage: View {
                 }
             }
             .padding(.horizontal, 30)
-            .navigationDestination(for: SchemaV1.Objective.self) { objective in
+            .navigationDestination(for: Objective.self) { objective in
                 TaskPage(objective: objective)
             }
         }

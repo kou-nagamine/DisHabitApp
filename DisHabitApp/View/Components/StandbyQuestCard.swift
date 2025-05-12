@@ -4,7 +4,7 @@ import SwiftUI
 struct StandbyQuestCard: View {
     var manager: QuestSlotManager
     
-    var quest: SchemaV1.Quest
+    var quest: Quest
 //    var questSlotId: UUID
 
     var body: some View {
@@ -31,7 +31,7 @@ struct StandbyQuestCard: View {
                         .fontWeight(.bold)
                         .padding(.bottom, 3)
                         .lineLimit(1)
-                    Text("クリア率")
+                    Text(manager.questSlot.quest.activatedDayOfWeeks.weeklyOccasionDescription())
                         .font(.callout)
                 }
                 Spacer()

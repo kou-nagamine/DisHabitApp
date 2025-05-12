@@ -18,10 +18,10 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     let id: String
     let tense: QuestBoardTense
     
-    var questSlot: SchemaV1.QuestSlot
-    var board: SchemaV1.DailyQuestBoard
+    var questSlot: QuestSlot
+    var board: DailyQuestBoard
     
-    init(modelContext: ModelContext, board: SchemaV1.DailyQuestBoard, questSlot: SchemaV1.QuestSlot, tense: QuestBoardTense) {
+    init(modelContext: ModelContext, board: DailyQuestBoard, questSlot: QuestSlot, tense: QuestBoardTense) {
         self.id = questSlot.id
         self.modelContext = modelContext
         self.board = board
@@ -31,7 +31,6 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     
     func acceptQuest() async {
         do {
-            print("VM: accept quest")
             questSlot.acceptedQuest = questSlot.quest.accept()
             try modelContext.save()
         } catch let error {
@@ -39,9 +38,8 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
         }
     }
     
-    func toggleTaskCompleted(acceptedTask: SchemaV1.AcceptedTask) async {
+    func toggleTaskCompleted(acceptedTask: AcceptedTask) async {
         do {
-            print("VM: toggle task completion")
             if let acceptedQuest = questSlot.acceptedQuest {
                 if let task = acceptedQuest.acceptedTasks.first(where: { $0.id == acceptedTask.id }) {
                     task.toggleValue()
@@ -59,7 +57,6 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     
     func discardAcceptedQuest() async {
         do {
-            print("VM: give up")
             if let _ = questSlot.acceptedQuest {
                 questSlot.acceptedQuest = nil
                 try modelContext.save()
@@ -73,7 +70,6 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     
     func reportQuestCompletion() async {
         do {
-            print("VM: report quest completion")
             if let acceptedQuest = questSlot.acceptedQuest {
                 acceptedQuest.isCompletionReported = true
                 try modelContext.save()
@@ -87,7 +83,6 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     
     func redeemTicket() async {
         do {
-            print("VM: report quest completion")
             if let acceptedQuest = questSlot.acceptedQuest {
                 acceptedQuest.redeemReward()
                 try modelContext.save()
@@ -97,6 +92,14 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
         } catch {
             print(error)
         }
+    }
+    
+    func archiveQuest() {
+        if questSlot.acceptedQuest != nil {
+            return
+        }
+        
+        questSlot.quest.isArchived = true
     }
 }
 

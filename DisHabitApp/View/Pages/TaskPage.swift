@@ -9,14 +9,14 @@ import SwiftUI
 import SwiftData
 
 struct TaskPage: View {
-    var objective: SchemaV1.Objective
+    var objective: Objective
     
-    @Query var allTasks: [SchemaV1.StandbyTask]
-    var tasks: [SchemaV1.StandbyTask] {
+    @Query var allTasks: [StandbyTask]
+    var tasks: [StandbyTask] {
         return allTasks.filter { $0.objective?.id == objective.id }
     }
     
-    init(objective: SchemaV1.Objective) {
+    init(objective: Objective) {
         self.objective = objective
     }
     

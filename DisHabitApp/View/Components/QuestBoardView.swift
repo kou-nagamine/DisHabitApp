@@ -19,11 +19,13 @@ struct QuestBoardView: View {
         }
     }
     
-    @Query var standbyQuests: [SchemaV1.Quest]
-    @Query var dailyQuestBoards: [SchemaV1.DailyQuestBoard]
-//    @Query var objectives: [SchemaV1.Objective] //temp
-//    @Query var tasks: [SchemaV1.StandbyTask] //temp!!
-    @Query var qs: [SchemaV1.QuestSlot] //temp!!
+    @Query(filter: #Predicate<Quest> {quest in
+        quest.isArchived == false
+    }) var standbyQuests: [Quest]
+    @Query var dailyQuestBoards: [DailyQuestBoard]
+//    @Query var objectives: [Objective] //temp
+//    @Query var tasks: [StandbyTask] //temp!!
+    @Query var qs: [QuestSlot] //temp!!
     
     @State private var currentQuestSlotManagers: [QuestSlotManager] = []
     
@@ -40,6 +42,39 @@ struct QuestBoardView: View {
                     questSlot: $0,
                     tense: date.tense() // tenseを渡す
                 )
+            }
+            // standbyQuestsとboardのquestSlotを比較し、差分に対して処理する
+            // 未来のboardを表示している最中にクエストが複数追加されている状態→当日boardに切り替える操作があり得る
+            // add/archiveしたときに全対象boardに対して更新処理を行うのではなく、表示をリクエストされた段階で差分更新処理を実行する
+            if date.tense() != .past {
+                var todayQuests: [Quest] = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }
+                let currentCount =  currentQuestSlotManagers.count
+                let standbyCount = todayQuests.count
+                if currentCount < standbyCount { // クエストが増えていた時
+                    // 差分のクエスト(新規作成されたクエスト)を取り出す
+                    for q in currentQuestSlotManagers {
+                        todayQuests = todayQuests.filter { $0.id != q.questSlot.quest.id } // 既存Questから1つずつ消去する
+                    }
+                    
+                    // 差分からQuestSlot+Managerを作成する
+                    for q in todayQuests {
+                        let questSlot = QuestSlot(board: board, quest: q)
+                        modelContext.insert(questSlot)
+                        currentQuestSlotManagers.append(QuestSlotManager(modelContext: modelContext, board: board, questSlot: questSlot, tense: .today))
+                    }
+                } else if currentCount > standbyCount { // クエストが減っていた時
+                    print("wow")
+                    // 削除アクションの方でvalidateするので、ここでは問答無用で削除する
+                    let archived = currentQuestSlotManagers.filter { $0.questSlot.quest.isArchived }
+                    for qsm in archived {
+                        currentQuestSlotManagers = currentQuestSlotManagers.filter { $0.questSlot.quest.id != qsm.questSlot.quest.id }
+                        board.questSlots = board.questSlots.filter { $0.quest.id != qsm.questSlot.quest.id }
+                        modelContext.delete(qsm.questSlot)
+                    }
+                } else {
+                    print("yes")
+                    // 何もしない
+                }
             }
         } else {
             // 存在しない場合のみボードを作成
@@ -64,10 +99,10 @@ struct QuestBoardView: View {
         print("Creating new DailyQuestBoard for \(date)")
 
         
-        let newBoard = SchemaV1.DailyQuestBoard(date: date, questSlots: [])
+        let newBoard = DailyQuestBoard(date: date, questSlots: [])
         
         // activeQuestsの中から、指定された日付の曜日を持つQuestからQuestSlotを作成
-        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { SchemaV1.QuestSlot(board:newBoard, quest: $0) }
+        let questSlots = standbyQuests.filter { $0.activatedDayOfWeeks[date.weekday()] == true }.map { QuestSlot(board:newBoard, quest: $0) }
         
         for questSlot in questSlots {
             modelContext.insert(questSlot)
@@ -168,32 +203,32 @@ struct QuestBoardView: View {
 //                            }
                             print("qs managers", currentQuestSlotManagers.count)
                         } label: {
-                            Text("DEBUG:受注リセット")
+                            Text("print")
                         }
                         
                         Button {
                             do {
-                                try modelContext.delete(model: SchemaV1.DailyQuestBoard.self)
-                                try modelContext.delete(model: SchemaV1.DailyQuestBoard.self)
+//                                try modelContext.delete(model: DailyQuestBoard.self)
+//                                try modelContext.delete(model: DailyQuestBoard.self)
                                 //                            let a = tasks
                                 //                            let b = objectives
                                 //                            let c = standbyQuests
                                 
-                                let objective1 = SchemaV1.Objective(id: UUID(), text: "健康的な生活を送る")
-                                let objective2 = SchemaV1.Objective(id: UUID(), text: "勉強習慣を身につける")
-                                let objective3 = SchemaV1.Objective(id: UUID(), text: "運動を習慣化する")
+                                let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
+                                let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
+                                let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
                                 
-                                let task1 = SchemaV1.StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
-                                let task2 = SchemaV1.StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
-                                let task3 = SchemaV1.StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
-                                let task4 = SchemaV1.StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
-                                let task5 = SchemaV1.StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
+                                let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
+                                let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
+                                let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
+                                let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
+                                let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
                                 
-                                let reward1 = SchemaV1.Reward(id: UUID(), text: "好きなお菓子を1つ買う")
-                                let reward2 = SchemaV1.Reward(id: UUID(), text: "映画を見る")
+//                                let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
+//                                let reward2 = Reward(id: UUID(), text: "映画を見る")
                                 
-                                let quest1 = SchemaV1.Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
-                                let quest2 = SchemaV1.Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
+//                                let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+//                                let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
                                 
                                 
                                 modelContext.insert(objective1)
@@ -204,10 +239,10 @@ struct QuestBoardView: View {
                                 modelContext.insert(task3)
                                 modelContext.insert(task4)
                                 modelContext.insert(task5)
-                                modelContext.insert(reward1)
-                                modelContext.insert(reward2)
-                                modelContext.insert(quest1)
-                                modelContext.insert(quest2)
+//                                modelContext.insert(reward1)
+//                                modelContext.insert(reward2)
+//                                modelContext.insert(quest1)
+//                                modelContext.insert(quest2)
                                 
                                 try modelContext.save()
                                 
@@ -235,6 +270,10 @@ struct QuestBoardView: View {
                     List { } // ↑の内容をリストに書いても動作しない。RPのトリガーとして以下のハンドラを記述している
                         .onChange(of: selectedDate) { _, newDate in // selectedDate の変更を監視
                             updateBoardManagers(for: newDate)
+                        }
+                        .onChange(of: standbyQuests) { _, quests in
+                            print("onChange(of: standbyQuests)")
+                            updateBoardManagers(for: selectedDate)
                         }
                         .onAppear { // 最初に表示されたときにも更新
                             updateBoardManagers(for: selectedDate)

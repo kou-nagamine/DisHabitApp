@@ -1,14 +1,24 @@
 import Foundation
 import SwiftData
 
-enum SchemaV1: VersionedSchema {
-    static var versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
+typealias Quest = SchemaValpha010.Quest
+typealias StandbyTask = SchemaValpha010.StandbyTask
+typealias Objective = SchemaValpha010.Objective
+typealias DailyQuestBoard = SchemaValpha010.DailyQuestBoard
+typealias QuestSlot = SchemaValpha010.QuestSlot
+typealias AcceptedQuest = SchemaValpha010.AcceptedQuest
+typealias AcceptedTask = SchemaValpha010.AcceptedTask
+typealias Reward = SchemaValpha010.Reward
+typealias RedeemableReward = SchemaValpha010.RedeemableReward
+
+enum SchemaValpha010: VersionedSchema {
+    static var versionIdentifier: Schema.Version = Schema.Version(0, 1, 0)
     static var models: [any PersistentModel.Type] {
         [ Quest.self, StandbyTask.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self, RedeemableReward.self ]
     }
 }
 
-extension SchemaV1 {
+extension SchemaValpha010 {
     @Model
     class Objective: Identifiable {
         var id: UUID
@@ -84,12 +94,14 @@ extension SchemaV1 {
     @Model
     class Quest: Identifiable {
         var id: UUID
+        var isArchived: Bool
         var activatedDayOfWeeks: [Int: Bool] // 1:Sun - 7:Sat
         @Relationship var reward: Reward
         @Relationship var tasks: [StandbyTask]
 
-        init(id: UUID = UUID(), activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
+        init(id: UUID = UUID(), isArchived: Bool = false, activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
             self.id = id
+            self.isArchived = isArchived
             self.activatedDayOfWeeks = activatedDayOfWeeks
             self.reward = reward
             self.tasks = tasks

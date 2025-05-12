@@ -9,13 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct TaskSelectPage: View {
-    @Binding var selectedTasks: [SchemaV1.StandbyTask]
+    @Binding var selectedTasks: [StandbyTask]
     
     @Environment(\.dismiss) private var dismiss
-    @Query var objectives: [SchemaV1.Objective]
-    @Query var tasks: [SchemaV1.StandbyTask]
+    @Query var objectives: [Objective]
+    @Query var tasks: [StandbyTask]
     
-    private func toggleAction(for task: SchemaV1.StandbyTask) {
+    private func toggleAction(for task: StandbyTask) {
         if isTaskSelected(for: task) {
             selectedTasks.removeAll(where: { $0.id == task.id })
         } else {
@@ -23,7 +23,7 @@ struct TaskSelectPage: View {
         }
     }
     
-    private func isTaskSelected(for task: SchemaV1.StandbyTask) -> Bool {
+    private func isTaskSelected(for task: StandbyTask) -> Bool {
         return selectedTasks.contains(where: { $0.id == task.id })
     }
     
@@ -60,6 +60,6 @@ struct TaskSelectPage: View {
 
 
 #Preview {
-    @State var selectedTasks: [SchemaV1.StandbyTask] = []
+    @State var selectedTasks: [StandbyTask] = []
     TaskSelectPage(selectedTasks: $selectedTasks)
 }
