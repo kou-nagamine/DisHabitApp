@@ -31,7 +31,7 @@ struct StandbyQuestCard: View {
                         .fontWeight(.bold)
                         .padding(.bottom, 3)
                         .lineLimit(1)
-                    Text("クリア率")
+                    Text(manager.questSlot.quest.activatedDayOfWeeks.weeklyOccasionDescription())
                         .font(.callout)
                 }
                 Spacer()
