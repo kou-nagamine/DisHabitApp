@@ -25,9 +25,10 @@ struct HomePage: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                         Spacer()
-                        Image(systemName: "gearshape")
-                            .resizable()
-                            .frame(width: 30, height: 30)
+                        /// 設定項目がないためTestFlightでは必要ない
+//                        Image(systemName: "gearshape")
+//                            .resizable()
+//                            .frame(width: 30, height: 30)
                     }
                     .padding(.horizontal, 22)
                     .padding(.vertical, 10)
