@@ -37,6 +37,7 @@ struct AddQuestPage: View {
         
         if !validateAll {
             print("validate fail")
+            return
         }
         
         print("validate pass")
