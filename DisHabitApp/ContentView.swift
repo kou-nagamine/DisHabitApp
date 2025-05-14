@@ -24,7 +24,7 @@ struct ContentView: View {
                         .toolbarVisibility(.hidden, for: .tabBar)
                     }
                     Tab(value: TabItem.task) {
-                        ObjectivePage()
+                        ObjectiveTaskPage()
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                 }
@@ -37,7 +37,7 @@ struct ContentView: View {
                     }
                     .tag(TabItem.home)
                     .toolbar(.hidden, for: .tabBar)
-                    ObjectivePage()
+                    ObjectiveTaskPage()
                         .tag(TabItem.task)
                         .toolbar(.hidden, for: .tabBar)
                 }
