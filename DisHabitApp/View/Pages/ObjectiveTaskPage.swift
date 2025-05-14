@@ -15,7 +15,7 @@ struct ObjectiveTaskPage: View {
                 VStack(alignment: .leading, spacing: 20) {
                     ForEach(objectives) { objective in
                         Text(objective.text)
-                            .font(.title)
+                            .font(.title2)
                             .padding(.leading, 30)
                         ForEach(tasks) { task in
                             /// checkedはselectedTasks.contains()で判定する
