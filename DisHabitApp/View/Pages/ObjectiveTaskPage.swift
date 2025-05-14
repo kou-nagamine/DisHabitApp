@@ -22,7 +22,7 @@ struct ObjectiveTaskPage: View {
                             /// toggleActionでappend/removeする
                             if let taskobj = task.objective {
                                 if taskobj.id == objective.id {
-                                    CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true,
+                                    CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, checkedStyle: .select,
                                         toggleAction: {})
                                 }
                             }

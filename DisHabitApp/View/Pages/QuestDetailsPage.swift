@@ -134,6 +134,7 @@ struct QuestDetailsPage: View {
                                     taskName: acceptedTask.text,
                                     isReadonly: manager.tense != .today || acceptedQuest.isCompletionReported, // 当日かつクエスト未完了の場合のみ操作可能
                                     isLabelOnly: false,
+                                    checkedStyle: .complete,
                                     toggleAction: {
                                         _Concurrency.Task {
                                             await manager.toggleTaskCompleted(acceptedTask: acceptedTask)
@@ -143,7 +144,7 @@ struct QuestDetailsPage: View {
                             }
                         } else {
                             ForEach(quest.tasks) { task in
-                                CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, toggleAction: { /* Do nothing */ })
+                                CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, checkedStyle: .complete, toggleAction: { /* Do nothing */ })
                            }
                         }
                     }
