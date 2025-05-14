@@ -95,9 +95,10 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
     }
     
     func archiveQuest() {
-        if questSlot.acceptedQuest != nil {
-            return
-        }
+        ///  進行中のクエストdelete不可のユースケースなさそう、以下コードコメントアウト
+//        if questSlot.acceptedQuest != nil {
+//            return
+//        }
         
         questSlot.quest.isArchived = true
     }
