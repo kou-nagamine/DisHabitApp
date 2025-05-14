@@ -43,7 +43,7 @@ struct TaskSelectPage: View {
                             /// toggleActionでappend/removeする
                             if let taskobj = task.objective {
                                 if taskobj.id == objective.id {
-                                    CheckBoxList(isSelected: isTaskSelected(for: task), taskName: task.text, isReadonly: false, isLabelOnly: false,
+                                    CheckBoxList(isSelected: isTaskSelected(for: task), taskName: task.text, isReadonly: false, isLabelOnly: false, checkedStyle: .select,
                                         toggleAction: {
                                         toggleAction(for: task)
                                     })

@@ -189,7 +189,7 @@ struct AddQuestPage: View {
                 ScrollView {
                     VStack (spacing: 20){
                         ForEach (selectedTasks) { task in
-                            CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, toggleAction: {})
+                            CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, checkedStyle: .select, toggleAction: {})
                         }
                         AddTaskButton(selectedTasks: $selectedTasks)
                     }

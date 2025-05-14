@@ -7,7 +7,17 @@ struct CheckBoxList: View {
     var taskName: String
     var isReadonly: Bool
     var isLabelOnly: Bool
+    var checkedStyle: CheckedStyle
     var toggleAction: () -> Void
+    
+    func checkedBackgroundColor(checkedStyle: CheckedStyle) -> Color {
+        switch checkedStyle {
+        case .complete:
+            return .gray
+        case .select:
+            return .blue
+        }
+    }
     
     var body: some View {
         VStack (spacing: 20){
@@ -38,13 +48,15 @@ struct CheckBoxList: View {
                 // text
                 Text(taskName)
                     .font(.system(size: 20, weight: .medium))
-                    .strikethrough(isSelected)
+                    .strikethrough(checkedStyle == .complete ? isSelected : false)
+                    .bold(checkedStyle == .select ? isSelected : false)
+                    .foregroundColor(isSelected ? .white : .black)
                     .padding(.leading, 10)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
             .frame(height: 65)
-            .background(isSelected ? .gray : .white, in: RoundedRectangle(cornerRadius: 18))
+            .background(isSelected ? checkedBackgroundColor(checkedStyle: checkedStyle) : .white, in: RoundedRectangle(cornerRadius: 18))
             .shadow(color: .gray.opacity(0.2), radius: 2, x: 2, y: 2)
             .overlay {
                 RoundedRectangle(cornerRadius: 18)
@@ -61,6 +73,11 @@ struct CheckBoxList: View {
     }
 }
 
+public enum CheckedStyle: String, CaseIterable {
+    case complete
+    case select
+}
+
 #Preview {
-    CheckBoxList(isSelected: false, taskName: "英単語5個", isReadonly: false, isLabelOnly: false, toggleAction: {})
+    CheckBoxList(isSelected: false, taskName: "英単語5個", isReadonly: false, isLabelOnly: false, checkedStyle: .select, toggleAction: {})
 }
