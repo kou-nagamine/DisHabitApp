@@ -3,6 +3,7 @@ import SwiftUI
 
 struct StandbyQuestCard: View {
     var manager: QuestSlotManager
+    @Binding var showTabBar: Bool
     
     var quest: Quest
 //    var questSlotId: UUID
@@ -42,6 +43,9 @@ struct StandbyQuestCard: View {
                     
                     _Concurrency.Task {
                         await manager.acceptQuest()
+                        try await Task.sleep(for: .milliseconds(250))
+                        showTabBar = false
+                        Router.shared.path.append(manager)
                     }
                 }) {
                     Image(systemName: "play.circle")
