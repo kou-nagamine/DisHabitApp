@@ -78,6 +78,17 @@ struct TicketCard: View {
                 }
             }
         }
+        .overlay() {
+            RoundedRectangle(cornerRadius: 25)
+                .stroke(
+                    .linearGradient(colors: [
+                        .gray.opacity(0.5),
+                        .gray.opacity(0.6),
+                        .gray.opacity(0.7),
+                        .gray.opacity(0.8)
+                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+        }
         .frame(maxWidth: .infinity)
         .frame(height: 110)
         .padding(.horizontal, 25)

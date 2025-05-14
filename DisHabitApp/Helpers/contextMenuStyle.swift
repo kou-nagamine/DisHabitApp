@@ -22,7 +22,7 @@ struct contextMenuStyle<Content: View>: View {
                 BackgroundView()
             }
             .compositingGroup() /// 全てまとめて、個別に影がかかるバクを解消するよう
-            /// shadow (optional)
+            /// shadowの設定
             .shadow(color: .black.opacity(0.15), radius: 8, x: 8, y: 8)
             .shadow(color: .black.opacity(0.1), radius: 5, x: -5, y: -5)
             .onGeometryChange(for: CGSize.self) {
