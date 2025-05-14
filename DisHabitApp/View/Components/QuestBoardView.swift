@@ -166,94 +166,94 @@ struct QuestBoardView: View {
                 Spacer() // 要検討
                 VStack(spacing: 18) {
 #if DEBUG
-                    VStack{
-                        Button {
-                            let boards = dailyQuestBoards /*.filter { $0.date.isSameDayAs(self.selectedDate)}*/
-                            print("Found \(boards.count) boards")
-                            print("QS: \(qs.count)")
-                            for board in boards {
-                                print("Removing board")
-                                modelContext.delete(board)
-                            }
-                            for q in qs {
-                                print("Removing QuestSlot")
-                                modelContext.delete(q)
-                            }
-                            do {
-                                try modelContext.save()
-                                print("removed stuff")
-                            } catch {
-                                print("Failed to save: \(error)")
-                            }
-                        } label: {
-                            Text("Board削除")
-                        }
-                        
-                        Button {
-                            print("boards:", dailyQuestBoards.count)
-                            for board in dailyQuestBoards {
-                                print(board.date)
-                            }
-//                            print("questSlots:", qs.count)
+//                    VStack{
+//                        Button {
+//                            let boards = dailyQuestBoards /*.filter { $0.date.isSameDayAs(self.selectedDate)}*/
+//                            print("Found \(boards.count) boards")
+//                            print("QS: \(qs.count)")
+//                            for board in boards {
+//                                print("Removing board")
+//                                modelContext.delete(board)
+//                            }
 //                            for q in qs {
-//                                print(q.quest.reward.text)
+//                                print("Removing QuestSlot")
+//                                modelContext.delete(q)
 //                            }
-//                            _Concurrency.Task {
-//                                await vm.debug_ResetAcceptedQuests()
+//                            do {
+//                                try modelContext.save()
+//                                print("removed stuff")
+//                            } catch {
+//                                print("Failed to save: \(error)")
 //                            }
-                            print("qs managers", currentQuestSlotManagers.count)
-                        } label: {
-                            Text("print")
-                        }
-                        
-                        Button {
-                            do {
-//                                try modelContext.delete(model: DailyQuestBoard.self)
-//                                try modelContext.delete(model: DailyQuestBoard.self)
-                                //                            let a = tasks
-                                //                            let b = objectives
-                                //                            let c = standbyQuests
-                                
-                                let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
-                                let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
-                                let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
-                                
-                                let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
-                                let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
-                                let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
-                                let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
-                                let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
-                                
-//                                let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
-//                                let reward2 = Reward(id: UUID(), text: "映画を見る")
-                                
-//                                let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
-//                                let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
-                                
-                                
-                                modelContext.insert(objective1)
-                                modelContext.insert(objective2)
-                                modelContext.insert(objective3)
-                                modelContext.insert(task1)
-                                modelContext.insert(task2)
-                                modelContext.insert(task3)
-                                modelContext.insert(task4)
-                                modelContext.insert(task5)
-//                                modelContext.insert(reward1)
-//                                modelContext.insert(reward2)
-//                                modelContext.insert(quest1)
-//                                modelContext.insert(quest2)
-                                
-                                try modelContext.save()
-                                
-                                print("Deleted board & qs table")
-                            } catch {
-                                print("Failed to clear board & qs table: \(error)")
-                            }
-                        } label: {
-                            Text("Board/QSテーブルをリセット")
-                        }
-                    }
+//                        } label: {
+//                            Text("Board削除")
+//                        }
+//                        
+//                        Button {
+//                            print("boards:", dailyQuestBoards.count)
+//                            for board in dailyQuestBoards {
+//                                print(board.date)
+//                            }
+////                            print("questSlots:", qs.count)
+////                            for q in qs {
+////                                print(q.quest.reward.text)
+////                            }
+////                            _Concurrency.Task {
+////                                await vm.debug_ResetAcceptedQuests()
+////                            }
+//                            print("qs managers", currentQuestSlotManagers.count)
+//                        } label: {
+//                            Text("print")
+//                        }
+//                        
+//                        Button {
+//                            do {
+////                                try modelContext.delete(model: DailyQuestBoard.self)
+////                                try modelContext.delete(model: DailyQuestBoard.self)
+//                                //                            let a = tasks
+//                                //                            let b = objectives
+//                                //                            let c = standbyQuests
+//                                
+//                                let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
+//                                let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
+//                                let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
+//                                
+//                                let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
+//                                let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
+//                                let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
+//                                let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
+//                                let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
+//                                
+////                                let reward1 = Reward(id: UUID(), text: "好きなお菓子を1つ買う")
+////                                let reward2 = Reward(id: UUID(), text: "映画を見る")
+//                                
+////                                let quest1 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward1, tasks: [task1, task2, task5])
+////                                let quest2 = Quest(id: UUID(), activatedDayOfWeeks: [1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true], reward: reward2, tasks: [task4, task5])
+//                                
+//                                
+//                                modelContext.insert(objective1)
+//                                modelContext.insert(objective2)
+//                                modelContext.insert(objective3)
+//                                modelContext.insert(task1)
+//                                modelContext.insert(task2)
+//                                modelContext.insert(task3)
+//                                modelContext.insert(task4)
+//                                modelContext.insert(task5)
+////                                modelContext.insert(reward1)
+////                                modelContext.insert(reward2)
+////                                modelContext.insert(quest1)
+////                                modelContext.insert(quest2)
+//                                
+//                                try modelContext.save()
+//                                
+//                                print("Deleted board & qs table")
+//                            } catch {
+//                                print("Failed to clear board & qs table: \(error)")
+//                            }
+//                        } label: {
+//                            Text("Board/QSテーブルをリセット")
+//                        }
+//                    }
 #endif
                     
                     if currentQuestSlotManagers.count > 0 {
@@ -264,7 +264,7 @@ struct QuestBoardView: View {
                             }
                         }
                     } else {
-                        Text("クエストがありません。[クエストを追加する]") // TODO: ボタンを追加
+                        Text("クエストがありません。") // TODO: ボタンを追加
                     }
                     
                     List { } // ↑の内容をリストに書いても動作しない。RPのトリガーとして以下のハンドラを記述している

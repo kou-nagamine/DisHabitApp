@@ -16,14 +16,14 @@ struct QuestSlotContainer: View {
                     }
                     
                 } else {
-                    StandbyQuestCard(manager: manager, quest: manager.questSlot.quest)
+                    StandbyQuestCard(manager: manager, showTabBar: $showTabBar, quest: manager.questSlot.quest)
                 }
 #if DEBUG
-                Button (action: {
-                    manager.archiveQuest()
-                }, label: {
-                    Text("削除")
-                })
+//                Button (action: {
+//                    manager.archiveQuest()
+//                }, label: {
+//                    Text("削除")
+//                })
 #endif
             }
             .onTapGesture {

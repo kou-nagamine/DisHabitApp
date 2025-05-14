@@ -24,27 +24,27 @@ struct AcceptedQuestCard: View {
                 .padding(.vertical, 25)
                 
 #if DEBUG
-                HStack {
-                    Button(action: {
-                        print(manager.questSlot.acceptedQuest!.acceptedTasks.count)
-                        manager.questSlot.acceptedQuest!.acceptedTasks[0].isCompleted = true
-                    }, label: {
-                        Text("1つ完了させる")
-                    })
-                    Button(action: {
-                        for task in acceptedQuest.acceptedTasks {
-                            task.isCompleted = false
-                        }
-                    }, label: {
-                        Text("リセット")
-                    })
-                    Button(action: {
-                        manager.questSlot.acceptedQuest = nil
-                    }, label: {
-                        Text("諦める")
-                    })
-                    
-                }
+//                HStack {
+//                    Button(action: {
+//                        print(manager.questSlot.acceptedQuest!.acceptedTasks.count)
+//                        manager.questSlot.acceptedQuest!.acceptedTasks[0].isCompleted = true
+//                    }, label: {
+//                        Text("1つ完了させる")
+//                    })
+//                    Button(action: {
+//                        for task in acceptedQuest.acceptedTasks {
+//                            task.isCompleted = false
+//                        }
+//                    }, label: {
+//                        Text("リセット")
+//                    })
+//                    Button(action: {
+//                        manager.questSlot.acceptedQuest = nil
+//                    }, label: {
+//                        Text("諦める")
+//                    })
+//                    
+//                }
 #endif
                 
             }
