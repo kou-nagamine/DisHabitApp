@@ -8,6 +8,10 @@ struct QuestDetailsPage: View {
     @State private var showDiscardAlert = false
     @Environment(\.dismiss) var dismiss
     
+    @State private var isExpended: Bool = false
+    @State private var menuPosition: CGRect = .zero
+    @Environment(\.colorScheme) private var colorScheme
+    
     init(manager: QuestSlotManager) {
         self.manager = manager
     }
@@ -20,16 +24,66 @@ struct QuestDetailsPage: View {
         VStack(spacing: 0){
             VStack(alignment: .leading, spacing: 20) {
                 // Back Navigation Arrow
-                Button(
-                    action: {
-                        Router.shared.path.removeLast()
-                    }, label: {
-                        Image(systemName: "arrow.left")
+                HStack(spacing: 0) {
+                    Button(
+                        action: {
+                            Router.shared.path.removeLast()
+                        }, label: {
+                            Image(systemName: "arrow.left")
+                        }
+                    )
+                    .font(.title)
+                    .tint(.black)
+                    Spacer(minLength: 0)
+                    Button {
+                        isExpended = true
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.title3)
+                            .foregroundStyle(isExpended ? colorScheme.currentColor : Color.primary)
+                            .frame(width: 45, height: 45)
+                            .background {
+                                ZStack {
+                                    Rectangle()
+                                        .fill(.ultraThinMaterial)
+                                    
+                                    Rectangle()
+                                        .fill(Color.primary.opacity(isExpended ? 1 : 0.03))
+                                }
+                                .clipShape(.circle)
+                            }
                     }
-                )
-                .font(.title)
-                .padding(.leading, 30)
-                .tint(.black)
+                    .onGeometryChange(for: CGRect.self) {
+                        $0.frame(in: .global)
+                    } action: { newValue in
+                        menuPosition = newValue
+                    }
+                }
+                .padding(.horizontal, 30)
+                .overlay(alignment: .topLeading) {
+                    ZStack(alignment: .topLeading) {
+                        Rectangle()
+                            .foregroundStyle(.clear)
+                            .contentShape(.rect)
+                            .onTapGesture {
+                                withAnimation(.snappy(duration: 0.3, extraBounce: 0)) {
+                                    isExpended = false
+                                }
+                            }
+                            .allowsHitTesting(isExpended)
+                        
+                        ZStack {
+                            if isExpended {
+                                contextMenuStyle {
+                                    MenuBarControls(manager: manager)
+                                        .frame(width: 220, height: 120)
+                                }
+                                .offset(x: menuPosition.minX - 220 + menuPosition.width, y: menuPosition.maxY + 10)
+                                .ignoresSafeArea()
+                            }
+                        }
+                    }
+                }
                 Text(isAccepted ? acceptedQuest?.reward.text ?? "" : quest.reward.text)
                     .font(.system(size: 40, weight: .bold))
                     .fontWeight(.bold)
@@ -230,6 +284,43 @@ struct QuestDetailsPage: View {
             }
             .navigationBarBackButtonHidden(true)
             .background(.gray.gradient.opacity(0.2))
+        }
+    }
+}
+
+struct MenuBarControls: View {
+    var manager: QuestSlotManager
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            CustomButton(title: "Edit", image: "square.and.pencil") {
+                print("ここに、editの処理をお書きいただければ〜")
+            }
+            .foregroundStyle(.gray.opacity(0.3))
+            CustomButton(title: "Delete", image: "trash"){
+                manager.archiveQuest()
+                dismiss()
+            }
+            .foregroundStyle(.red)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+    }
+    
+    @ViewBuilder
+    private func CustomButton(title: String, image: String, action: @escaping () -> () = { }) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .font(.callout.bold())
+                
+                Spacer(minLength: 0)
+                
+                Image(systemName: image)
+                    .font(.title3)
+            }
+            .frame(maxHeight: .infinity)
         }
     }
 }
