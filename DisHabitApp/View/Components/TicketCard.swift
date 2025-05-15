@@ -15,7 +15,7 @@ struct TicketCard: View {
         HStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text(manager.questSlot.acceptedQuest?.reward.text ?? "")
-                    .font(.title)
+                    .font(.title2)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 110)

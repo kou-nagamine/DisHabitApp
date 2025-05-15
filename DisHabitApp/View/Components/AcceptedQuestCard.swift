@@ -12,10 +12,9 @@ struct AcceptedQuestCard: View {
                         Text(acceptedQuest.reward.text)
                             .font(.title2)
                             .fontWeight(.bold)
-                        HStack {
-                            Text(manager.questSlot.quest.activatedDayOfWeeks.weeklyOccasionDescription())
-                                .font(.callout)
-                        }
+                            .lineLimit(1)
+                        Text(manager.questSlot.quest.activatedDayOfWeeks.weeklyOccasionDescription())
+                            .font(.callout)
                     }
                     Spacer()
                     PieChart(progress: acceptedQuest.taskCompletionRate, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2)
