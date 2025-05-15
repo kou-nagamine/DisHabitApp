@@ -11,15 +11,18 @@ import SwiftUI
 struct TicketCard: View {
     var manager: QuestSlotManager
     
+    /// チケットカードは、Ticket Title AreaとTicket Tear Off Areaの二つの部品を組み合わせて作成しているので、高さをそれぞれで設定してます！！！！
     var body: some View {
         HStack(spacing: 0) {
+            /// Ticket Title Area
             HStack(spacing: 0) {
                 Text(manager.questSlot.acceptedQuest?.reward.text ?? "")
                     .font(.title2)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 110)
+            .frame(height: 110) /// 高さを指定
             .background(.white)
+            ///  左のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
                     topLeadingRadius: 15,
@@ -28,6 +31,7 @@ struct TicketCard: View {
                     topTrailingRadius: 0
                 )
             )
+            /// Ticket Tear Off Area
             HStack(spacing: 0) {
                 VStack(spacing: 5) {
                     if manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false {
@@ -44,18 +48,10 @@ struct TicketCard: View {
 
                 }
             }
-            .frame(width: 100, height: 110)
+            .frame(width: 100, height: 110) /// 高さを指定
 //            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .gray.gradient : .white)
-            .background(.white)
-            /// border
-            .overlay(alignment: .leading) {
-                Rectangle()
-                    .strokeBorder(
-                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
-                    )
-                    .foregroundColor(.black)
-                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
-            }
+            .background(.blue) ///  ここが、チケットの切り取られる部分の色です今、青にしてる！！！！　何かしらがtrueかfalseになったら、グレイアウトをするコードを書いてくれー
+            ///  右のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
                     topLeadingRadius: 0,
@@ -64,7 +60,15 @@ struct TicketCard: View {
                     topTrailingRadius: 15
                 )
             )
-            .allowsHitTesting(true)
+            /// 切り取り線
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .strokeBorder(
+                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
+                    )
+                    .foregroundColor(.black)
+                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
+            }
             .onTapGesture {
                 if manager.tense != .today {
                     return
@@ -78,6 +82,7 @@ struct TicketCard: View {
                 }
             }
         }
+        /// card 全体のstroke
         .overlay() {
             RoundedRectangle(cornerRadius: 25)
                 .stroke(
@@ -90,7 +95,6 @@ struct TicketCard: View {
                 )
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 110)
         .padding(.horizontal, 25)
     }
 }
