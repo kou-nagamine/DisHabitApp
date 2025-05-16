@@ -231,8 +231,10 @@ struct QuestDetailsPage: View {
                                 /// alertのdialogの見た目
                                 VStack(spacing: 0) {
                                     VStack(spacing: 8) {
-                                        Circle()
-                                            .frame(width: 150, height: 150)
+                                        Image(systemName: "party.popper")
+                                            .resizable()
+                                            .frame(width: 125, height: 125)
+                                            .foregroundColor(.black.opacity(0.7))
                                         Text(acceptedQuest.reward.text)
                                             .font(.system(size: 35, weight: .bold))
                                             .padding(.bottom, 40)
