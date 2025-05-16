@@ -17,7 +17,7 @@ struct AcceptedQuestCard: View {
                             .font(.callout)
                     }
                     Spacer()
-                    PieChart(progress: acceptedQuest.taskCompletionRate, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2)
+                    PieChart(progress: acceptedQuest.taskCompletionRate, barThick: 7, graphSize: 60, fontSize: 20, percentSize: .caption2, progressBackgroundColor: .white.opacity(0.75))
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 25)
@@ -47,11 +47,11 @@ struct AcceptedQuestCard: View {
 #endif
                 
             }
-            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
+            .background(.cyan.opacity(0.2), in: RoundedRectangle(cornerRadius: 15))
             .overlay {
                 RoundedRectangle(cornerRadius: 15)
                     .stroke(lineWidth: 2)
-                    .fill(.gray.gradient)
+                    .fill(.cyan.opacity(0.3).gradient)
             }
             .padding(.horizontal, 25)
         } else {

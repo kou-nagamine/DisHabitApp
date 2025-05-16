@@ -22,7 +22,7 @@ struct TicketCard: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 110) /// 高さを指定
-            .background(.white)
+            .background(Color.cyan.opacity(0.3))
             ///  左のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
@@ -52,7 +52,7 @@ struct TicketCard: View {
                 }
             }
             .frame(width: 100, height: 110) /// 高さを指定
-            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .gray.opacity(0.5) : .blue.opacity(0.2))
+            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .white : .cyan.opacity(0.2))
             ///  右のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
@@ -68,7 +68,7 @@ struct TicketCard: View {
                     .strokeBorder(
                         style: StrokeStyle(lineWidth: 2, dash: [2, 4])
                     )
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white)
                     .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
             }
             .onTapGesture {
@@ -89,10 +89,10 @@ struct TicketCard: View {
             RoundedRectangle(cornerRadius: 25)
                 .stroke(
                     .linearGradient(colors: [
-                        .gray.opacity(0.5),
-                        .gray.opacity(0.6),
-                        .gray.opacity(0.7),
-                        .gray.opacity(0.8)
+                        .cyan.opacity(0.5),
+                        .cyan.opacity(0.6),
+                        .cyan.opacity(0.7),
+                        .cyan.opacity(0.8)
                     ], startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
         }

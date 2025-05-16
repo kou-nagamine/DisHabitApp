@@ -51,7 +51,8 @@ struct StandbyQuestCard: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
-                        .background(.cyan.gradient.opacity(0.1), in: Circle())
+                        .background(.white, in: Circle())
+                        .foregroundColor(.cyan.opacity(0.8))
                 }
                 // NavigationLinkが反応しないようにする
                 .buttonStyle(.plain)
@@ -61,11 +62,11 @@ struct StandbyQuestCard: View {
             .padding(.horizontal, 25)
             .padding(.vertical, 25)
         }
-        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 15))
+        .background(.cyan.opacity(0.2), in: RoundedRectangle(cornerRadius: 15))
         .overlay {
             RoundedRectangle(cornerRadius: 15)
                 .stroke(lineWidth: 2)
-                .fill(.gray.gradient)
+                .fill(.cyan.opacity(0.3).gradient)
         }
     }
 }

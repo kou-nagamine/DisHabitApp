@@ -90,7 +90,7 @@ struct QuestDetailsPage: View {
                     .padding(.leading, 30)
                     .padding(.bottom, 45)
                 if isAccepted {
-                    PieChart(progress: acceptedQuest?.taskCompletionRate ?? 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2)
+                    PieChart(progress: acceptedQuest?.taskCompletionRate ?? 0, barThick: 15, graphSize: 180, fontSize: 50, percentSize: .title2, progressBackgroundColor: .gray.opacity(0.5))
                         .frame(maxWidth: .infinity) // Centerよせ
                         .padding(.bottom, 70)
                 } else {
