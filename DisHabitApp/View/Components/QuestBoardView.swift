@@ -280,6 +280,7 @@ struct QuestBoardView: View {
                         }
                     
                 }
+                .padding(.bottom, 120)
             }
             .frame(maxWidth: .infinity)
             
