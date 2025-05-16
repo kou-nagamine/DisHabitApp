@@ -68,16 +68,21 @@ class QuestSlotManager : Identifiable, Hashable, Equatable {
         }
     }
     
-    func reportQuestCompletion() async {
+    func reportQuestCompletion() async -> Bool {
         do {
             if let acceptedQuest = questSlot.acceptedQuest {
+                if acceptedQuest.isCompletionReported {
+                    return false
+                }
                 acceptedQuest.isCompletionReported = true
                 try modelContext.save()
+                return true
             } else {
                 throw QuestSlotError.notAccepted
             }
         } catch {
             print(error)
+            return false
         }
     }
     
