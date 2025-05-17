@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TicketCard: View {
     var manager: QuestSlotManager
+    let radius = 5
     
     /// チケットカードは、Ticket Title AreaとTicket Tear Off Areaの二つの部品を組み合わせて作成しているので、高さをそれぞれで設定してます！！！！
     var body: some View {
@@ -22,12 +23,12 @@ struct TicketCard: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 110) /// 高さを指定
-            .background(Color.cyan.opacity(0.3))
+            .background(/*Color.cyan.opacity(0.3)*/ .white)
             ///  左のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
-                    topLeadingRadius: 25,
-                    bottomLeadingRadius: 25,
+                    topLeadingRadius: 5,
+                    bottomLeadingRadius: 5,
                     bottomTrailingRadius: 0,
                     topTrailingRadius: 0
                 )
@@ -58,8 +59,8 @@ struct TicketCard: View {
                 .rect(
                     topLeadingRadius: 0,
                     bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 25,
-                    topTrailingRadius: 25
+                    bottomTrailingRadius: 5,
+                    topTrailingRadius: 5
                 )
             )
             /// 切り取り線
@@ -68,7 +69,7 @@ struct TicketCard: View {
                     .strokeBorder(
                         style: StrokeStyle(lineWidth: 2, dash: [2, 4])
                     )
-                    .foregroundColor(.white)
+                    .foregroundColor(.gray)
                     .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
             }
             .onTapGesture {
@@ -86,7 +87,7 @@ struct TicketCard: View {
         }
         /// card 全体のstroke
         .overlay() {
-            RoundedRectangle(cornerRadius: 25)
+            RoundedRectangle(cornerRadius: 5)
                 .stroke(
                     .linearGradient(colors: [
                         .cyan.opacity(0.5),
