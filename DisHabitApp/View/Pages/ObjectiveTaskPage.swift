@@ -6,6 +6,9 @@ struct ObjectiveTaskPage: View {
     @Query var objectives: [Objective]
     @Query var tasks: [StandbyTask]
     
+    var commonObjectives: [Objective] { objectives.filter { $0.text.contains("for:") } }
+    var indivisualObjectives: [Objective] { objectives.filter { !$0.text.contains("for:") } }
+    
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
@@ -15,36 +18,12 @@ struct ObjectiveTaskPage: View {
                 .padding(.vertical, 30)
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    if tasks.isEmpty {
-                        Button(action: {
-                            let objective1 = Objective(id: UUID(), text: "健康的な生活を送る")
-                            let objective2 = Objective(id: UUID(), text: "勉強習慣を身につける")
-                            let objective3 = Objective(id: UUID(), text: "運動を習慣化する")
-
-                            let task1 = StandbyTask(id: UUID(), text: "朝7時に起床する", objective: objective1)
-                            let task2 = StandbyTask(id: UUID(), text: "朝食を食べる", objective: objective1)
-                            let task3 = StandbyTask(id: UUID(), text: "1時間勉強する", objective: objective2)
-                            let task4 = StandbyTask(id: UUID(), text: "30分ジョギングする", objective: objective3)
-                            let task5 = StandbyTask(id: UUID(), text: "ストレッチをする", objective: objective3)
-                            
-                            modelContext.insert(objective1)
-                            modelContext.insert(objective2)
-                            modelContext.insert(objective3)
-                            modelContext.insert(task1)
-                            modelContext.insert(task2)
-                            modelContext.insert(task3)
-                            modelContext.insert(task4)
-                            modelContext.insert(task5)
-                            
-                        }, label: { Text("目標/タスク初期化") })
-                    }
-                    ForEach(objectives) { objective in
+                    
+                    ForEach(indivisualObjectives) { objective in
                         Text(objective.text)
                             .font(.title2)
                             .padding(.leading, 30)
                         ForEach(tasks) { task in
-                            /// checkedはselectedTasks.contains()で判定する
-                            /// toggleActionでappend/removeする
                             if let taskobj = task.objective {
                                 if taskobj.id == objective.id {
                                     CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, checkedStyle: .select,
@@ -53,6 +32,60 @@ struct ObjectiveTaskPage: View {
                             }
                         }
                     }
+                    ForEach(commonObjectives) { objective in
+                        Text(objective.text)
+                            .font(.title2)
+                            .padding(.leading, 30)
+                        ForEach(tasks) { task in
+                            if let taskobj = task.objective {
+                                if taskobj.id == objective.id {
+                                    CheckBoxList(isSelected: false, taskName: task.text, isReadonly: true, isLabelOnly: true, checkedStyle: .select,
+                                        toggleAction: {})
+                                }
+                            }
+                        }
+                    }
+                    
+                    if tasks.isEmpty {
+                        Button(action: {
+                            let objective_eng = Objective(id: UUID(), text: "TOEIC700点")
+                            let objective_well = Objective(id: UUID(), text: "健康維持")
+                            let objective_ipa = Objective(id: UUID(), text: "応用情報合格")
+                            let objective_nagamine = Objective(id: UUID(), text: "for:長峯")
+                            let objective_kashi = Objective(id: UUID(), text: "for:柏原")
+                            
+                            let tasks =  [
+                                StandbyTask(id: UUID(), text: "英単語 5個", objective: objective_eng),
+                                StandbyTask(id: UUID(), text: "腕立て 10回", objective: objective_well),
+                                StandbyTask(id: UUID(), text: "腹筋 10回", objective: objective_well),
+                                StandbyTask(id: UUID(), text: "懸垂 10回", objective: objective_well),
+                                StandbyTask(id: UUID(), text: "バックランジ 10回", objective: objective_well),
+                                StandbyTask(id: UUID(), text: "応用情報ドットコム 1問", objective: objective_ipa),
+                                StandbyTask(id: UUID(), text: "データベース", objective: objective_ipa),
+                                StandbyTask(id: UUID(), text: "微積分 3ページ", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "三角関数 3ページ", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "線形代数 3ページ", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "確率 1講座", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "AtCoder 過去問A", objective: objective_kashi),
+                                StandbyTask(id: UUID(), text: "AtCoder 過去問B", objective: objective_kashi),
+                                StandbyTask(id: UUID(), text: "論文サーベイ 30分", objective: objective_kashi),
+                                StandbyTask(id: UUID(), text: "技術本 5ページ", objective: objective_kashi),
+                            ]
+                            
+                            modelContext.insert(objective_eng)
+                            modelContext.insert(objective_well)
+                            modelContext.insert(objective_ipa)
+                            modelContext.insert(objective_nagamine)
+                            modelContext.insert(objective_kashi)
+                            
+                            for t in tasks {
+                                modelContext.insert(t)
+                            }
+                            
+                        }, label: { Text("目標/タスク初期化") })
+                    }
+                    
+                    
                 }
                 
             }

@@ -15,6 +15,9 @@ struct TaskSelectPage: View {
     @Query var objectives: [Objective]
     @Query var tasks: [StandbyTask]
     
+    var commonObjectives: [Objective] { objectives.filter { $0.text.contains("for:") } }
+    var indivisualObjectives: [Objective] { objectives.filter { !$0.text.contains("for:") } }
+    
     private func toggleAction(for task: StandbyTask) {
         if isTaskSelected(for: task) {
             selectedTasks.removeAll(where: { $0.id == task.id })
@@ -34,7 +37,24 @@ struct TaskSelectPage: View {
                 .padding(.vertical, 30)
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    ForEach(objectives) { objective in
+                    ForEach(indivisualObjectives) { objective in
+                        Text(objective.text)
+                            .font(.title)
+                            .padding(.leading, 30)
+                        ForEach(tasks) { task in
+                            /// checkedはselectedTasks.contains()で判定する
+                            /// toggleActionでappend/removeする
+                            if let taskobj = task.objective {
+                                if taskobj.id == objective.id {
+                                    CheckBoxList(isSelected: isTaskSelected(for: task), taskName: task.text, isReadonly: false, isLabelOnly: false, checkedStyle: .select,
+                                        toggleAction: {
+                                        toggleAction(for: task)
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    ForEach(commonObjectives) { objective in
                         Text(objective.text)
                             .font(.title)
                             .padding(.leading, 30)
