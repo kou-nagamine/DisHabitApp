@@ -14,9 +14,10 @@ struct QuestDetailsPage: View {
     @State private var menuPosition: CGRect = .zero
     @Environment(\.colorScheme) private var colorScheme
     
-    init(manager: QuestSlotManager) {
-        self.manager = manager
-    }
+//    init(manager: QuestSlotManager, isPresented: Binding<Bool>) {
+//        self.manager = manager
+//        self.isPresented = $isPresented
+//    }
     
     var body: some View {
         let quest = manager.questSlot.quest
@@ -170,7 +171,7 @@ struct QuestDetailsPage: View {
 //                                    .shadow(radius: 5, x: 2, y: 2)
 //                            }
                             DrawerButton(title: "リセット", config: $config)
-                                .padding(30)
+                                .padding(.horizontal, 30)
 //                            .alert(isPresented: $showDiscardAlert) {
 //                                /// alertのdialogの見た目
 //                                VStack(spacing: 0) {
@@ -228,7 +229,7 @@ struct QuestDetailsPage: View {
                                     .frame(height: 50)
                                     .background(Color.blue.gradient, in: RoundedRectangle(cornerRadius: 30))
                                     .padding(.horizontal, 30)
-                                    .padding(.bottom, 25)
+//                                    .padding(.bottom, 25)
                                     .shadow(radius: 5, x: 2, y: 2)
                             }
                             .alert(isPresented: $showCompletionAlert) {
@@ -292,8 +293,10 @@ struct QuestDetailsPage: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+//            .navigationBarTitleDisplayMode(.inline)
             .background(.gray.gradient.opacity(0.2))
         }
+        .edgeSwipe()
         .alertDrawer(config: $config, primaryTitle: "リセット", secondaryTitle: "キャンセル") {
             _Concurrency.Task {
                 await manager.discardAcceptedQuest()
