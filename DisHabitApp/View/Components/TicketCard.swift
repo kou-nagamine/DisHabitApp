@@ -18,15 +18,16 @@ struct TicketCard: View {
             HStack(spacing: 0) {
                 Text(manager.questSlot.acceptedQuest?.reward.text ?? "")
                     .font(.title2)
+                    .strikethrough(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 110) /// 高さを指定
-            .background(.white)
+            .background(Color.cyan.opacity(0.3))
             ///  左のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
-                    topLeadingRadius: 15,
-                    bottomLeadingRadius: 15,
+                    topLeadingRadius: 25,
+                    bottomLeadingRadius: 25,
                     bottomTrailingRadius: 0,
                     topTrailingRadius: 0
                 )
@@ -37,8 +38,10 @@ struct TicketCard: View {
                     if manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false {
                         Text("使用済み")
                             .font(.callout)
+                            .foregroundColor(.black.opacity(0.3))
                         Text(manager.questSlot.acceptedQuest?.reward.redeemedDate?.formatHourTime() ?? "")
                             .font(.title3)
+                            .foregroundColor(.black.opacity(0.3))
                     } else {
                         Text("期日")
                             .font(.callout)
@@ -49,15 +52,14 @@ struct TicketCard: View {
                 }
             }
             .frame(width: 100, height: 110) /// 高さを指定
-//            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .gray.gradient : .white)
-            .background(.blue) ///  ここが、チケットの切り取られる部分の色です今、青にしてる！！！！　何かしらがtrueかfalseになったら、グレイアウトをするコードを書いてくれー
+            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .white : .cyan.opacity(0.2))
             ///  右のみが丸みを帯びるように切り取ってる
             .clipShape(
                 .rect(
                     topLeadingRadius: 0,
                     bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 15,
-                    topTrailingRadius: 15
+                    bottomTrailingRadius: 25,
+                    topTrailingRadius: 25
                 )
             )
             /// 切り取り線
@@ -66,7 +68,7 @@ struct TicketCard: View {
                     .strokeBorder(
                         style: StrokeStyle(lineWidth: 2, dash: [2, 4])
                     )
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
                     .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
             }
             .onTapGesture {
@@ -87,10 +89,10 @@ struct TicketCard: View {
             RoundedRectangle(cornerRadius: 25)
                 .stroke(
                     .linearGradient(colors: [
-                        .gray.opacity(0.5),
-                        .gray.opacity(0.6),
-                        .gray.opacity(0.7),
-                        .gray.opacity(0.8)
+                        .cyan.opacity(0.5),
+                        .cyan.opacity(0.6),
+                        .cyan.opacity(0.7),
+                        .cyan.opacity(0.8)
                     ], startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
         }
