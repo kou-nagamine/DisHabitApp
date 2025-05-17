@@ -4,6 +4,8 @@ import SwiftUI
 struct QuestDetailsPage: View {
     var manager: QuestSlotManager
     
+    @State private var config: DrawerConfig = .init()
+    
     @State private var showCompletionAlert = false
     @State private var showDiscardAlert = false
     @Environment(\.dismiss) var dismiss
@@ -152,61 +154,63 @@ struct QuestDetailsPage: View {
                 if manager.tense == .today {
                     if let acceptedQuest = manager.questSlot.acceptedQuest {
                         if !acceptedQuest.isAllTaskCompleted {
-                            Button {
-                                showDiscardAlert.toggle()
-                            } label: {
-                                Text("諦める")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
-                                    .foregroundStyle(.white)
-                                    .background(.red)
-                                    .padding(.horizontal, 30)
-                                    .padding(.bottom, 25)
-                                    .shadow(radius: 5, x: 2, y: 2)
-                            }
-                            .alert(isPresented: $showDiscardAlert) {
-                                /// alertのdialogの見た目
-                                VStack(spacing: 0) {
-                                    Text("本当に諦めますか？")
-                                    
-                                    VStack(spacing: 15) {
-                                        Button {
-                                            _Concurrency.Task {
-                                                await manager.discardAcceptedQuest()
-                                                showDiscardAlert.toggle()
-                                            }
-                                        } label: {
-                                            Text("諦める")
-                                                .font(.system(size: 23, weight: .bold))
-                                                .frame(maxWidth: .infinity)
-                                                .frame(height: 50)
-                                                .background(.red.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal, 35)
-                                                .foregroundColor(.black)
-                                        }
-                                        Button {
-                                            showDiscardAlert.toggle()
-                                        } label: {
-                                            Text("もう少し頑張る")
-                                                .frame(maxWidth: .infinity)
-                                                .frame(height: 50)
-                                                .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal, 35)
-                                                .foregroundColor(.black)
-                                        }
-                                    }
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(.white, in: RoundedRectangle(cornerRadius: 45))
-                                .padding(.horizontal, 35)
-                                .padding(.vertical, 170)
-                            } background: {
-                                Rectangle()
-                                    .fill(.primary.opacity(0.35))
-                            }
+//                            Button {
+//                                showDiscardAlert.toggle()
+//                            } label: {
+//                                Text("諦める")
+//                                    .font(.title3)
+//                                    .fontWeight(.semibold)
+//                                    .foregroundStyle(.white)
+//                                    .frame(maxWidth: .infinity)
+//                                    .frame(height: 50)
+//                                    .foregroundStyle(.white)
+//                                    .background(.red)
+//                                    .padding(.horizontal, 30)
+//                                    .padding(.bottom, 25)
+//                                    .shadow(radius: 5, x: 2, y: 2)
+//                            }
+                            DrawerButton(title: "リセット", config: $config)
+                                .padding(30)
+//                            .alert(isPresented: $showDiscardAlert) {
+//                                /// alertのdialogの見た目
+//                                VStack(spacing: 0) {
+//                                    Text("本当に諦めますか？")
+//                                    
+//                                    VStack(spacing: 15) {
+//                                        Button {
+//                                            _Concurrency.Task {
+//                                                await manager.discardAcceptedQuest()
+//                                                showDiscardAlert.toggle()
+//                                            }
+//                                        } label: {
+//                                            Text("諦める")
+//                                                .font(.system(size: 23, weight: .bold))
+//                                                .frame(maxWidth: .infinity)
+//                                                .frame(height: 50)
+//                                                .background(.red.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+//                                                .padding(.horizontal, 35)
+//                                                .foregroundColor(.black)
+//                                        }
+//                                        Button {
+//                                            showDiscardAlert.toggle()
+//                                        } label: {
+//                                            Text("もう少し頑張る")
+//                                                .frame(maxWidth: .infinity)
+//                                                .frame(height: 50)
+//                                                .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
+//                                                .padding(.horizontal, 35)
+//                                                .foregroundColor(.black)
+//                                        }
+//                                    }
+//                                }
+//                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                                .background(.white, in: RoundedRectangle(cornerRadius: 45))
+//                                .padding(.horizontal, 35)
+//                                .padding(.vertical, 170)
+//                            } background: {
+//                                Rectangle()
+//                                    .fill(.primary.opacity(0.35))
+//                            }
                         } else {
                             Button {
                                 _Concurrency.Task {
@@ -283,11 +287,35 @@ struct QuestDetailsPage: View {
                             }
                         }
                     } else {
+                        
                     }
                 }
             }
             .navigationBarBackButtonHidden(true)
             .background(.gray.gradient.opacity(0.2))
+        }
+        .alertDrawer(config: $config, primaryTitle: "リセット", secondaryTitle: "キャンセル") {
+            _Concurrency.Task {
+                await manager.discardAcceptedQuest()
+            }
+            return true
+        } onSecondaryClick: {
+            return true
+        } content: {
+            VStack(alignment: .leading, spacing: 15) {
+                Image(systemName: "exclamationmark.circle")
+                    .font(.largeTitle)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text("本当にリセットしますか？")
+                    .font(.title2.bold())
+                
+                Text("進行中のタスクも全てリセットされます")
+                    .foregroundStyle(.gray)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(width: 300)
+            }
         }
     }
 }
