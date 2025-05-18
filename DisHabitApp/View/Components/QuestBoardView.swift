@@ -133,11 +133,11 @@ struct QuestBoardView: View {
             print("Skipping insertion for future date \(date)")
         }
         
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed to save: \(error)")
-        }
+       do {
+           try modelContext.save()
+       } catch {
+           print("Failed to save: \(error)")
+       }
         
         return questSlotManagers
     }
