@@ -17,7 +17,7 @@ struct DisHabitAppApp: App {
         let fileURL = directoryURL.appendingPathComponent("DisHabit.store")
         
         // Create a schema for your model (**Item 1**)
-        let schema = Schema(versionedSchema: SchemaValpha010.self)
+        let schema = Schema(versionedSchema: SchemaValpha011.self)
         
         do {
             // This next line will create a new directory called Example in Application Support if one doesn't already exist, and will do nothing if one already exists, so we have a valid place to put our store
@@ -30,7 +30,7 @@ struct DisHabitAppApp: App {
                 // Create our `ModelContainer`
                 modelContainer = try ModelContainer(
                     for: schema,
-//                    migrationPlan: MigrationPlan.self,
+                    migrationPlan: MigrationPlan.self,
                     configurations: defaultConfiguration
                 )
                 

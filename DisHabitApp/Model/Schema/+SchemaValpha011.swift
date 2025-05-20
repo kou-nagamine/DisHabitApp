@@ -1,24 +1,24 @@
 import Foundation
 import SwiftData
 
-//typealias Quest = SchemaValpha010.Quest
-//typealias StandbyTask = SchemaValpha010.StandbyTask
-//typealias Objective = SchemaValpha010.Objective
-//typealias DailyQuestBoard = SchemaValpha010.DailyQuestBoard
-//typealias QuestSlot = SchemaValpha010.QuestSlot
-//typealias AcceptedQuest = SchemaValpha010.AcceptedQuest
-//typealias AcceptedTask = SchemaValpha010.AcceptedTask
-//typealias Reward = SchemaValpha010.Reward
-//typealias RedeemableReward = SchemaValpha010.RedeemableReward
+typealias Quest = SchemaValpha011.Quest
+typealias StandbyTask = SchemaValpha011.StandbyTask
+typealias Objective = SchemaValpha011.Objective
+typealias DailyQuestBoard = SchemaValpha011.DailyQuestBoard
+typealias QuestSlot = SchemaValpha011.QuestSlot
+typealias AcceptedQuest = SchemaValpha011.AcceptedQuest
+typealias AcceptedTask = SchemaValpha011.AcceptedTask
+typealias Reward = SchemaValpha011.Reward
+typealias RedeemableReward = SchemaValpha011.RedeemableReward
 
-enum SchemaValpha010: VersionedSchema {
+enum SchemaValpha011: VersionedSchema {
     static var versionIdentifier: Schema.Version = Schema.Version(0, 1, 0)
     static var models: [any PersistentModel.Type] {
         [ Quest.self, StandbyTask.self, Objective.self, DailyQuestBoard.self, QuestSlot.self, AcceptedQuest.self, AcceptedTask.self, Reward.self, RedeemableReward.self ]
     }
 }
 
-extension SchemaValpha010 {
+extension SchemaValpha011 {
     @Model
     class Objective: Identifiable {
         var id: UUID
@@ -44,11 +44,13 @@ extension SchemaValpha010 {
         var id: UUID
         var text: String
         @Relationship var objective: Objective?
+        @Relationship(deleteRule: .nullify, inverse: \Quest.tasks) var quests: [Quest]
 
-        init(id: UUID = UUID(), text: String, objective: Objective? = nil) {
+        init(id: UUID = UUID(), text: String, objective: Objective? = nil, quests: [Quest] = []) {
             self.id = id
             self.text = text
             self.objective = objective
+            self.quests = quests
         }
         
         func copyValues(from source: StandbyTask) {
@@ -97,7 +99,7 @@ extension SchemaValpha010 {
         var isArchived: Bool
         var activatedDayOfWeeks: [Int: Bool] // 1:Sun - 7:Sat
         @Relationship var reward: Reward
-        @Relationship var tasks: [StandbyTask]
+        @Relationship(deleteRule: .nullify) var tasks: [StandbyTask]
 
         init(id: UUID = UUID(), isArchived: Bool = false, activatedDayOfWeeks: [Int: Bool], reward: Reward, tasks: [StandbyTask]) {
             self.id = id

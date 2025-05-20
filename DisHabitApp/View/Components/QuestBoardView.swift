@@ -51,6 +51,7 @@ struct QuestBoardView: View {
                 let currentCount =  currentQuestSlotManagers.count
                 let standbyCount = todayQuests.count
                 if currentCount < standbyCount { // クエストが増えていた時
+                    print("Quests have increased for this day. Creating corresponding questSlot...")
                     // 差分のクエスト(新規作成されたクエスト)を取り出す
                     for q in currentQuestSlotManagers {
                         todayQuests = todayQuests.filter { $0.id != q.questSlot.quest.id } // 既存Questから1つずつ消去する
@@ -60,10 +61,17 @@ struct QuestBoardView: View {
                     for q in todayQuests {
                         let questSlot = QuestSlot(board: board, quest: q)
                         modelContext.insert(questSlot)
-                        currentQuestSlotManagers.append(QuestSlotManager(modelContext: modelContext, board: board, questSlot: questSlot, tense: .today))
+                        let manager = QuestSlotManager(modelContext: modelContext, board: board, questSlot: questSlot, tense: .today)
+                        currentQuestSlotManagers.append(manager)
+                        
+                        // バグ対処用: 意味のない状態遷移を起こして正常な表示にする。力技。
+                        Task {
+                            await manager.acceptQuest()
+                            await manager.discardAcceptedQuest()
+                        }
                     }
                 } else if currentCount > standbyCount { // クエストが減っていた時
-                    print("wow")
+                    print("Quests have decreased for this day. Removing corresponding questSlot...")
                     // 削除アクションの方でvalidateするので、ここでは問答無用で削除する
                     let archived = currentQuestSlotManagers.filter { $0.questSlot.quest.isArchived }
                     for qsm in archived {
@@ -72,7 +80,6 @@ struct QuestBoardView: View {
                         modelContext.delete(qsm.questSlot)
                     }
                 } else {
-                    print("yes")
                     // 何もしない
                 }
             }
@@ -133,11 +140,11 @@ struct QuestBoardView: View {
             print("Skipping insertion for future date \(date)")
         }
         
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed to save: \(error)")
-        }
+       do {
+           try modelContext.save()
+       } catch {
+           print("Failed to save: \(error)")
+       }
         
         return questSlotManagers
     }
