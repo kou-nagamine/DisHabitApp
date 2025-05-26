@@ -24,6 +24,15 @@ struct TicketCard: View {
             .frame(maxWidth: .infinity)
             .frame(height: 110) /// 高さを指定
             .background(/*Color.cyan.opacity(0.3)*/ .white)
+            /// 切り取り線
+            .overlay(alignment: .trailing) {
+                Rectangle()
+                    .strokeBorder(
+                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
+                    )
+                    .foregroundColor(.gray)
+                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
+            }
             ///  左のみが丸みを帯びるように切り取ってる
             .clipShape(
                 TicketTitleArea(notchRadius: 10, cornerRadius: 0)
@@ -33,12 +42,12 @@ struct TicketCard: View {
             /// Ticket Tear Off Area
             VStack(spacing: 5) {
                 if manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false {
-                    Text("使用済み")
-                        .font(.callout)
-                        .foregroundColor(.black.opacity(0.3))
-                    Text(manager.questSlot.acceptedQuest?.reward.redeemedDate?.formatHourTime() ?? "")
-                        .font(.title3)
-                        .foregroundColor(.black.opacity(0.3))
+//                    Text("使用済み")
+//                        .font(.callout)
+//                        .foregroundColor(.black.opacity(0.3))
+//                    Text(manager.questSlot.acceptedQuest?.reward.redeemedDate?.formatHourTime() ?? "")
+//                        .font(.title3)
+//                        .foregroundColor(.black.opacity(0.3))
                 } else {
                     Text("期日")
                         .font(.callout)
@@ -48,18 +57,9 @@ struct TicketCard: View {
 
             }
             .frame(width: 100, height: 110) /// 高さを指定
-            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? .white : .cyan)
+            .background(manager.questSlot.acceptedQuest?.reward.isRedeemed ?? false ? Color.clear : .cyan)
             .compositingGroup()
             .shadow(radius: 1, x: 3, y: 3)
-            /// 切り取り線
-            .overlay(alignment: .leading) {
-                Rectangle()
-                    .strokeBorder(
-                        style: StrokeStyle(lineWidth: 2, dash: [2, 4])
-                    )
-                    .foregroundColor(.gray)
-                    .frame(width: 2)/// 横幅をlineWidthと同じにして線にする
-            }
             .clipShape(
                 TicketTearOffArea(notchRadius: 10, cornerRadius: 0)
             )
