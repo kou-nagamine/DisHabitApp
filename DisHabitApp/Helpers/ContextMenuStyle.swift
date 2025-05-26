@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct contextMenuStyle<Content: View>: View {
+struct ContextMenuStyle<Content: View>: View {
     var cornerRadius: CGFloat = 30
     @ViewBuilder var content: Content
     

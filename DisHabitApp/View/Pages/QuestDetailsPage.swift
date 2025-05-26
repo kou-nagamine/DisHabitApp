@@ -77,7 +77,7 @@ struct QuestDetailsPage: View {
                         
                         ZStack {
                             if isExpended {
-                                contextMenuStyle {
+                                ContextMenuStyle {
                                     MenuBarControls(manager: manager)
                                         .frame(width: 220, height: 120)
                                 }
