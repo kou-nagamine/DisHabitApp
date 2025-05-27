@@ -49,34 +49,42 @@ struct ObjectiveTaskPage: View {
                     if tasks.isEmpty {
                         Button(action: {
                             let objective_eng = Objective(id: UUID(), text: "TOEIC700点")
-                            let objective_well = Objective(id: UUID(), text: "健康維持")
-                            let objective_ipa = Objective(id: UUID(), text: "応用情報合格")
                             let objective_nagamine = Objective(id: UUID(), text: "for:長峯")
                             let objective_kashi = Objective(id: UUID(), text: "for:柏原")
+                            let objective_hirayama = Objective(id: UUID(), text: "for:平山")
+                            let objective_yoshida = Objective(id: UUID(), text: "for:吉田")
                             
                             let tasks =  [
                                 StandbyTask(id: UUID(), text: "英単語 5個", objective: objective_eng),
-                                StandbyTask(id: UUID(), text: "腕立て 10回", objective: objective_well),
-                                StandbyTask(id: UUID(), text: "腹筋 10回", objective: objective_well),
-                                StandbyTask(id: UUID(), text: "懸垂 10回", objective: objective_well),
-                                StandbyTask(id: UUID(), text: "バックランジ 10回", objective: objective_well),
-                                StandbyTask(id: UUID(), text: "応用情報ドットコム 1問", objective: objective_ipa),
-                                StandbyTask(id: UUID(), text: "データベース", objective: objective_ipa),
+                                StandbyTask(id: UUID(), text: "腕立て 10回", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "腹筋 10回", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "懸垂 10回", objective: objective_nagamine),
                                 StandbyTask(id: UUID(), text: "微積分 3ページ", objective: objective_nagamine),
                                 StandbyTask(id: UUID(), text: "三角関数 3ページ", objective: objective_nagamine),
                                 StandbyTask(id: UUID(), text: "線形代数 3ページ", objective: objective_nagamine),
-                                StandbyTask(id: UUID(), text: "確率 1講座", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "デスペ小テスト", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "基本情報5問", objective: objective_nagamine),
+                                StandbyTask(id: UUID(), text: "bono １時間", objective: objective_nagamine),
                                 StandbyTask(id: UUID(), text: "AtCoder 過去問A", objective: objective_kashi),
                                 StandbyTask(id: UUID(), text: "AtCoder 過去問B", objective: objective_kashi),
                                 StandbyTask(id: UUID(), text: "論文サーベイ 30分", objective: objective_kashi),
                                 StandbyTask(id: UUID(), text: "技術本 5ページ", objective: objective_kashi),
+                                StandbyTask(id: UUID(), text: "バックランジ 10回", objective: objective_kashi),
+                                StandbyTask(id: UUID(), text: "皿洗い", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "部屋の掃除", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "小説3ページ", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "CLFトレーニング", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "デスペ小テスト", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "基本情報5問", objective: objective_yoshida),
+                                StandbyTask(id: UUID(), text: "地域実習のロジックモデルに要素を付け加える", objective: objective_hirayama),
+                                StandbyTask(id: UUID(), text: "基本情報1問", objective: objective_hirayama),
                             ]
                             
                             modelContext.insert(objective_eng)
-                            modelContext.insert(objective_well)
-                            modelContext.insert(objective_ipa)
                             modelContext.insert(objective_nagamine)
                             modelContext.insert(objective_kashi)
+                            modelContext.insert(objective_hirayama)
+                            modelContext.insert(objective_yoshida)
                             
                             for t in tasks {
                                 modelContext.insert(t)
