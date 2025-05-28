@@ -96,6 +96,8 @@ struct ObjectiveTaskPage: View {
                             modelContext.insert(objective_kashi)
                             modelContext.insert(objective_hirayama)
                             modelContext.insert(objective_yoshida)
+                            modelContext.insert(objective_tora)
+                            modelContext.insert(objective_uribo)
                             
                             for t in tasks {
                                 modelContext.insert(t)
