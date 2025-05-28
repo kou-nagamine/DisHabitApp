@@ -53,6 +53,8 @@ struct ObjectiveTaskPage: View {
                             let objective_kashi = Objective(id: UUID(), text: "for:柏原")
                             let objective_hirayama = Objective(id: UUID(), text: "for:平山")
                             let objective_yoshida = Objective(id: UUID(), text: "for:吉田")
+                            let objective_tora = Objective(id: UUID(), text: "for:とら")
+                            let objective_uribo = Objective(id: UUID(), text: "for:うりぼ")
                             
                             let tasks =  [
                                 StandbyTask(id: UUID(), text: "英単語 5個", objective: objective_eng),
@@ -78,6 +80,15 @@ struct ObjectiveTaskPage: View {
                                 StandbyTask(id: UUID(), text: "基本情報5問", objective: objective_yoshida),
                                 StandbyTask(id: UUID(), text: "地域実習のロジックモデルに要素を付け加える", objective: objective_hirayama),
                                 StandbyTask(id: UUID(), text: "基本情報1問", objective: objective_hirayama),
+                                StandbyTask(id: UUID(), text: "日記を書く", objective: objective_hirayama),
+                                StandbyTask(id: UUID(), text: "AtCoder 過去問A", objective: objective_tora),
+                                StandbyTask(id: UUID(), text: "部屋の片付け", objective: objective_tora),
+                                StandbyTask(id: UUID(), text: "ジャーナルを書く", objective: objective_tora),
+                                StandbyTask(id: UUID(), text: "腕の日", objective: objective_uribo),
+                                StandbyTask(id: UUID(), text: "脚の日", objective: objective_uribo),
+                                StandbyTask(id: UUID(), text: "胸の日", objective: objective_uribo),
+                                StandbyTask(id: UUID(), text: "肩の日", objective: objective_uribo),
+                                StandbyTask(id: UUID(), text: "背中の日", objective: objective_uribo),
                             ]
                             
                             modelContext.insert(objective_eng)
@@ -92,8 +103,6 @@ struct ObjectiveTaskPage: View {
                             
                         }, label: { Text("目標/タスク初期化") })
                     }
-                    
-                    
                 }
                 
             }

@@ -38,55 +38,36 @@ struct QuestDetailsPage: View {
                     .font(.title)
                     .tint(.black)
                     Spacer(minLength: 0)
-                    Button {
-                        isExpended = true
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.title3)
-                            .foregroundStyle(isExpended ? colorScheme.currentColor : Color.primary)
-                            .frame(width: 45, height: 45)
-                            .background {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(.ultraThinMaterial)
-                                    
-                                    Rectangle()
-                                        .fill(Color.primary.opacity(isExpended ? 1 : 0.03))
-                                }
-                                .clipShape(.circle)
-                            }
-                    }
-                    .onGeometryChange(for: CGRect.self) {
-                        $0.frame(in: .global)
-                    } action: { newValue in
-                        menuPosition = newValue
-                    }
+                    Menu {
+                       Button(role: .destructive, action: {
+                           manager.archiveQuest()
+                           dismiss()
+                       }) {
+                           Label("Delete Quest", systemImage: "trash.fill")
+                       }
+                       Button(action: {
+                           
+                       }) {
+                           Label("Edit Quest", systemImage: "pencil")
+                       }
+                   } label: {
+                       Image(systemName: "ellipsis")
+                           .font(.title3)
+                           .foregroundStyle(.black)
+                           .frame(width: 40, height: 40)
+                           .background {
+                               ZStack {
+                                   Rectangle()
+                                       .fill(.ultraThinMaterial)
+                                   
+                                   Rectangle()
+                                       .fill(Color.primary.opacity(0.03))
+                               }
+                               .clipShape(.circle)
+                           }
+                   }
                 }
                 .padding(.horizontal, 30)
-                .overlay(alignment: .topLeading) {
-                    ZStack(alignment: .topLeading) {
-                        Rectangle()
-                            .foregroundStyle(.clear)
-                            .contentShape(.rect)
-                            .onTapGesture {
-                                withAnimation(.snappy(duration: 0.3, extraBounce: 0)) {
-                                    isExpended = false
-                                }
-                            }
-                            .allowsHitTesting(isExpended)
-                        
-                        ZStack {
-                            if isExpended {
-                                ContextMenuStyle {
-                                    MenuBarControls(manager: manager)
-                                        .frame(width: 220, height: 120)
-                                }
-                                .offset(x: menuPosition.minX - 220 + menuPosition.width, y: menuPosition.maxY + 10)
-                                .ignoresSafeArea()
-                            }
-                        }
-                    }
-                }
                 Text(isAccepted ? acceptedQuest?.reward.text ?? "" : quest.reward.text)
                     .font(.system(size: 40, weight: .bold))
                     .fontWeight(.bold)
@@ -319,45 +300,6 @@ struct QuestDetailsPage: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(width: 300)
             }
-        }
-    }
-}
-
-struct MenuBarControls: View {
-    var manager: QuestSlotManager
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            CustomButton(title: "クエストを編集", image: "square.and.pencil") {
-                // Editボタン処理
-                // 今回は動作させず
-            }
-            .foregroundStyle(.gray.opacity(0.3))
-            CustomButton(title: "クエストを削除", image: "trash"){
-                // Deleteボタン処理
-                manager.archiveQuest()
-                dismiss()
-            }
-            .foregroundStyle(.red)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
-    }
-    
-    @ViewBuilder
-    private func CustomButton(title: String, image: String, action: @escaping () -> () = { }) -> some View {
-        Button(action: action) {
-            HStack {
-                Text(title)
-                    .font(.callout.bold())
-                
-                Spacer(minLength: 0)
-                
-                Image(systemName: image)
-                    .font(.title3)
-            }
-            .frame(maxHeight: .infinity)
         }
     }
 }
