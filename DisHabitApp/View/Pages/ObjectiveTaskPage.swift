@@ -55,6 +55,7 @@ struct ObjectiveTaskPage: View {
                             let objective_yoshida = Objective(id: UUID(), text: "for:吉田")
                             let objective_tora = Objective(id: UUID(), text: "for:とら")
                             let objective_uribo = Objective(id: UUID(), text: "for:うりぼ")
+                            let objective_mikawa = Objective(id: UUID(), text: "for:三河")
                             
                             let tasks =  [
                                 StandbyTask(id: UUID(), text: "英単語 5個", objective: objective_eng),
@@ -89,6 +90,12 @@ struct ObjectiveTaskPage: View {
                                 StandbyTask(id: UUID(), text: "胸の日", objective: objective_uribo),
                                 StandbyTask(id: UUID(), text: "肩の日", objective: objective_uribo),
                                 StandbyTask(id: UUID(), text: "背中の日", objective: objective_uribo),
+                                StandbyTask(id: UUID(), text: "顔のマッサージ", objective: objective_mikawa),
+                                StandbyTask(id: UUID(), text: "脚のマッサージ", objective: objective_mikawa),
+                                StandbyTask(id: UUID(), text: "部屋の掃除", objective: objective_mikawa),
+                                StandbyTask(id: UUID(), text: "次の日の準備", objective: objective_mikawa),
+                                StandbyTask(id: UUID(), text: "全員に連絡を返す", objective: objective_mikawa),
+                                StandbyTask(id: UUID(), text: "水を300ml飲む", objective: objective_mikawa),
                             ]
                             
                             modelContext.insert(objective_eng)
