@@ -79,9 +79,9 @@ struct ObjectiveTaskPage: View {
                                 StandbyTask(id: UUID(), text: "CLFトレーニング", objective: objective_yoshida),
                                 StandbyTask(id: UUID(), text: "デスペ小テスト", objective: objective_yoshida),
                                 StandbyTask(id: UUID(), text: "基本情報5問", objective: objective_yoshida),
-                                StandbyTask(id: UUID(), text: "地域実習のロジックモデルに要素を付け加える", objective: objective_hirayama),
                                 StandbyTask(id: UUID(), text: "基本情報1問", objective: objective_hirayama),
                                 StandbyTask(id: UUID(), text: "日記を書く", objective: objective_hirayama),
+                                StandbyTask(id: UUID(), text: "皿洗い", objective: objective_hirayama),
                                 StandbyTask(id: UUID(), text: "AtCoder 過去問A", objective: objective_tora),
                                 StandbyTask(id: UUID(), text: "部屋の片付け", objective: objective_tora),
                                 StandbyTask(id: UUID(), text: "ジャーナルを書く", objective: objective_tora),
@@ -113,7 +113,6 @@ struct ObjectiveTaskPage: View {
                         }, label: { Text("目標/タスク初期化") })
                     }
                 }
-                
             }
         }
     }
