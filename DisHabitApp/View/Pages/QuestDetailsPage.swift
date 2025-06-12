@@ -202,7 +202,7 @@ struct QuestDetailsPage: View {
                                     }
                                 }
                             } label: {
-                                Text("完了")
+                                Text("チケット発行")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(.white)
@@ -216,47 +216,35 @@ struct QuestDetailsPage: View {
                             .alert(isPresented: $showCompletionAlert) {
                                 /// alertのdialogの見た目
                                 VStack(spacing: 0) {
-                                    VStack(spacing: 8) {
-                                        Image(systemName: "party.popper")
-                                            .resizable()
-                                            .frame(width: 125, height: 125)
-                                            .foregroundColor(.black.opacity(0.7))
-                                        Text(acceptedQuest.reward.text)
-                                            .font(.system(size: 35, weight: .bold))
-                                            .padding(.bottom, 40)
-                                    }
-                                    VStack(spacing: 15) {
-                                        Button {
-                                            _Concurrency.Task {
-                                                await manager.redeemTicket()
-                                                showCompletionAlert.toggle()
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                    Router.shared.path.removeLast()
-                                                }
-                                            }
-                                            
-                                        } label: {
-                                            Text("今すぐ遊ぶ")
-                                                .font(.system(size: 23, weight: .bold))
-                                                .frame(maxWidth: .infinity)
-                                                .frame(height: 50)
-                                                .background(.green.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal, 35)
-                                                .foregroundColor(.black)
+//                                    VStack(spacing: 8) {
+//                                        Image(systemName: "party.popper")
+//                                            .resizable()
+//                                            .frame(width: 125, height: 125)
+//                                            .foregroundColor(.black.opacity(0.7))
+//                                        Text(acceptedQuest.reward.text)
+//                                            .font(.system(size: 35, weight: .bold))
+//                                            .padding(.bottom, 40)
+//                                    }
+                                    Text("獲得!")
+                                        .font(.system(size: 35, weight: .bold))
+                                        .padding(.bottom, 40)
+                                    TicketCardPreview(rewardText: acceptedQuest.reward.text)
+                                    Button {
+                                        showCompletionAlert.toggle()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            Router.shared.path.removeLast()
                                         }
-                                        Button {
-                                            showCompletionAlert.toggle()
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                Router.shared.path.removeLast()
-                                            }
-                                        } label: {
-                                            Text("後で遊ぶ")
-                                                .frame(maxWidth: .infinity)
-                                                .frame(height: 50)
-                                                .background(.gray.gradient.opacity(0.8), in: RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal, 35)
-                                                .foregroundColor(.black)
-                                        }
+                                    } label: {
+                                        Text("ホームに戻る")
+                                            .font(.title3)
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 50)
+                                            .background(Color.blue.gradient, in: RoundedRectangle(cornerRadius: 30))
+                                            .padding(.horizontal, 30)
+        //                                    .padding(.bottom, 25)
+                                            .shadow(radius: 5, x: 2, y: 2)
                                     }
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
