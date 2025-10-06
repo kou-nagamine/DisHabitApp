@@ -48,29 +48,23 @@ struct ObjectiveTaskPage: View {
                     
                     if tasks.isEmpty {
                         Button(action: {
-                            let objective_nagamine = Objective(id: UUID(), text: "for:長峯")
-                            let objective_hirayama = Objective(id: UUID(), text: "for:平山")
-//                            let objective_sekine = Objective(id: UUID(), text: "for:関根")
+                            let objective_sotuken_english = Objective(id: UUID(), text: "英語")
                             
                             let tasks =  [
-                                StandbyTask(id: UUID(), text: "bono １時間", objective: objective_nagamine),
-                                StandbyTask(id: UUID(), text: "Swift文法　30分", objective: objective_nagamine),
-                                StandbyTask(id: UUID(), text: "SwiftUI　30分", objective: objective_nagamine),
-                                StandbyTask(id: UUID(), text: "統計　1章", objective: objective_nagamine),
-                                StandbyTask(id: UUID(), text: "基本情報1問", objective: objective_hirayama),
-                                StandbyTask(id: UUID(), text: "日記を書く", objective: objective_hirayama),
-                                StandbyTask(id: UUID(), text: "英単語5個", objective: objective_hirayama),
+                                StandbyTask(id: UUID(), text: "英文 3 Sentences", objective: objective_sotuken_english),
+                                StandbyTask(id: UUID(), text: "英文 5 Sentences", objective: objective_sotuken_english),
+                                StandbyTask(id: UUID(), text: "英文 10 Sentences", objective: objective_sotuken_english),
+                                StandbyTask(id: UUID(), text: "英文 15 Sentences", objective: objective_sotuken_english),
+                                StandbyTask(id: UUID(), text: "英文 20 Sentences", objective: objective_sotuken_english),
                             ]
                             
-                            modelContext.insert(objective_nagamine)
-                            modelContext.insert(objective_hirayama)
-//                            modelContext.insert(objective_sekine)
+                            modelContext.insert(objective_sotuken_english)
                             
                             for t in tasks {
                                 modelContext.insert(t)
                             }
                             
-                        }, label: { Text("目標/タスク初期化") })
+                        }, label: { Text("アプリの使用を開始する") })
                     }
                 }
             }

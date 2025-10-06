@@ -140,29 +140,29 @@ struct AddQuestPage: View {
                                         )
                                 }
                             }
-                            Text("ご褒美度")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.vertical, 10)
-                            HStack(spacing: 10) {
-                                ForEach(RewardScoreList, id: \.self) { score in
-                                    Text(score.description)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 60)
-                                        .background(score == self.rewardScore ? Color.blue : Color.white, in: RoundedRectangle(cornerRadius: 20))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.gray, lineWidth: 1)
-                                        )
-                                        .onTapGesture {
-                                            if self.rewardScore == score {
-                                                self.rewardScore = -1 // deselect
-                                            } else {
-                                                self.rewardScore = score
-                                            }
-                                        }
-                                }
-                            }
+//                            Text("ご褒美度")
+//                                .font(.title2)
+//                                .fontWeight(.bold)
+//                                .padding(.vertical, 10)
+//                            HStack(spacing: 10) {
+//                                ForEach(RewardScoreList, id: \.self) { score in
+//                                    Text(score.description)
+//                                        .frame(maxWidth: .infinity)
+//                                        .frame(height: 60)
+//                                        .background(score == self.rewardScore ? Color.blue : Color.white, in: RoundedRectangle(cornerRadius: 20))
+//                                        .overlay(
+//                                            RoundedRectangle(cornerRadius: 20)
+//                                                .stroke(Color.gray, lineWidth: 1)
+//                                        )
+//                                        .onTapGesture {
+//                                            if self.rewardScore == score {
+//                                                self.rewardScore = -1 // deselect
+//                                            } else {
+//                                                self.rewardScore = score
+//                                            }
+//                                        }
+//                                }
+//                            }
                         }
                     }
                 }
