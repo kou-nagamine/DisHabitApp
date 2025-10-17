@@ -82,7 +82,7 @@ struct AddQuestPage: View {
                                 dismiss()
                             }
                     }
-                    .padding(.top, 30)
+                    .padding(.top, 55)
                     Spacer()
                     VStack (spacing: 0){
                         VStack(alignment: .leading) {
@@ -170,7 +170,7 @@ struct AddQuestPage: View {
                 .padding(.horizontal, 30)
                 .padding(.bottom, 30)
             }
-            .frame(height: 400)
+            .frame(height: 360)
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .bottom) {
                     Text("やることリスト")
